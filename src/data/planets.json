@@ -1,0 +1,90 @@
+[
+  {
+    "id": "mercury",
+    "name": "Mercury",
+    "orderFromSun": 1,
+    "facts": [
+      {
+        "text": "Mercury is the smallest planet in our solar system.",
+        "sourceId": "nasa-mercury"
+      }
+    ]
+  },
+  {
+    "id": "venus",
+    "name": "Venus",
+    "orderFromSun": 2,
+    "facts": [
+      {
+        "text": "Venus is the hottest planet in our solar system.",
+        "sourceId": "nasa-venus"
+      }
+    ]
+  },
+  {
+    "id": "earth",
+    "name": "Earth",
+    "orderFromSun": 3,
+    "facts": [
+      {
+        "text": "Earth is the only planet known to support life.",
+        "sourceId": "nasa-earth"
+      }
+    ]
+  },
+  {
+    "id": "mars",
+    "name": "Mars",
+    "orderFromSun": 4,
+    "facts": [
+      {
+        "text": "Mars has two small moons, Phobos and Deimos.",
+        "sourceId": "nasa-mars"
+      }
+    ]
+  },
+  {
+    "id": "jupiter",
+    "name": "Jupiter",
+    "orderFromSun": 5,
+    "facts": [
+      {
+        "text": "Jupiter is the largest planet in our solar system.",
+        "sourceId": "nasa-jupiter"
+      }
+    ]
+  },
+  {
+    "id": "saturn",
+    "name": "Saturn",
+    "orderFromSun": 6,
+    "facts": [
+      {
+        "text": "Saturn is a gas giant with a spectacular system of rings.",
+        "sourceId": "nasa-saturn"
+      }
+    ]
+  },
+  {
+    "id": "uranus",
+    "name": "Uranus",
+    "orderFromSun": 7,
+    "facts": [
+      {
+        "text": "Uranus rotates on its side.",
+        "sourceId": "nasa-uranus"
+      }
+    ]
+  },
+  {
+    "id": "neptune",
+    "name": "Neptune",
+    "orderFromSun": 8,
+    "facts": [
+      {
+        "text": "Neptune is the eighth and most distant planet from the Sun.",
+        "sourceId": "nasa-neptune"
+      }
+    ]
+  }
+]

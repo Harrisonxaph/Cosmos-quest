@@ -1,0 +1,7 @@
+:root { color-scheme: dark; font-family: system-ui, sans-serif; background: #10172b; color: #f1f5ff; }
+body { margin: 0; padding: 2rem 1rem; }
+main { max-width: 64rem; margin: auto; }
+#planets { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
+article { padding: 1.3rem; border: 1px solid #6578aa; border-radius: 1rem; background: #192442; }
+a { color: #a9ddff; }
+a:focus-visible { outline: 3px solid #ffe082; outline-offset: 4px; }
