@@ -363,9 +363,9 @@ export function createSolarSystemScene({ canvas, labelLayer, bodies, earth, qual
     onContextLost?.();
   };
   const onVisibility = () => {
-    if (document.hidden) {
-      cancelAnimationFrame(frame);
-    } else if (!disposed) {
+    // Always cancel first: browsers can report "visible" more than once, which must not start a second loop.
+    cancelAnimationFrame(frame);
+    if (!document.hidden && !disposed) {
       lastTime = performance.now();
       needsRender = true;
       frame = requestAnimationFrame(render);

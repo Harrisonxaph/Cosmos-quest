@@ -14,11 +14,13 @@
       <h1>Cosmos Quest</h1>
       <p>Meet the eight planets, in order from the Sun.</p>
     </div>
-    <div class="site-header__actions">
-      <button type="button" class="quiz-entry" id="missions-entry" aria-controls="info-panel"><span aria-hidden="true">◎</span> Discovery Missions<span class="quiz-entry__progress"></span></button>
-      <button type="button" class="quiz-entry" id="experiments-entry" aria-controls="info-panel"><span aria-hidden="true">⚗</span> Science Experiments</button>
-      <button type="button" class="quiz-entry" id="quiz-entry" aria-controls="info-panel"><span aria-hidden="true">★</span> Planet Quiz<span class="quiz-entry__progress"></span></button>
-    </div>
+    <nav class="site-header__actions" aria-label="Activities">
+      <button type="button" class="quiz-entry" id="explore-entry" aria-controls="info-panel"><span aria-hidden="true">✦</span> Explore</button>
+      <button type="button" class="quiz-entry" id="missions-entry" aria-controls="info-panel"><span aria-hidden="true">◎</span> <span class="quiz-entry__extra">Discovery </span>Missions<span class="quiz-entry__progress"></span></button>
+      <button type="button" class="quiz-entry" id="experiments-entry" aria-controls="info-panel"><span aria-hidden="true">⚗</span> <span class="quiz-entry__extra">Science </span>Experiments</button>
+      <button type="button" class="quiz-entry" id="quiz-entry" aria-controls="info-panel"><span aria-hidden="true">★</span> <span class="quiz-entry__extra">Planet </span>Quiz<span class="quiz-entry__progress"></span></button>
+    </nav>
+    <p class="site-header__note">Your progress is kept until you close or reload this page.</p>
   </header>
 
   <main class="explorer" id="explorer">
@@ -41,9 +43,19 @@
         <button type="button" class="control control--icon" data-control="zoomOut" aria-label="Zoom out" data-needs-3d>−</button>
         <button type="button" class="control control--icon" data-control="rotateLeft" aria-label="Rotate view left" data-needs-3d>⟲</button>
         <button type="button" class="control control--icon" data-control="rotateRight" aria-label="Rotate view right" data-needs-3d>⟳</button>
-        <button type="button" class="control" data-control="textures" aria-pressed="true" data-needs-3d><span class="control__label">Surface detail</span></button>
-        <button type="button" class="control" data-control="labels" aria-pressed="true" data-needs-3d><span class="control__label">Labels</span></button>
+        <button type="button" class="control" data-control="textures" aria-pressed="true" data-needs-3d><span class="control__check" aria-hidden="true">✓</span> <span class="control__label">Surface detail</span></button>
+        <button type="button" class="control" data-control="labels" aria-pressed="true" data-needs-3d><span class="control__check" aria-hidden="true">✓</span> <span class="control__label">Labels</span></button>
       </div>
+      <details class="explore-help">
+        <summary>How to explore</summary>
+        <ul>
+          <li>Choose a world with the round buttons, or tap it in the picture.</li>
+          <li>Use Back and Next to visit the worlds in order, and Solar system to see them all.</li>
+          <li data-needs-3d>Drag the picture to turn it. Pinch, scroll or use + and − to zoom, and ⟲ ⟳ to rotate.</li>
+          <li data-needs-3d>Press Pause to stop the planets moving, and press it again to start.</li>
+          <li>With a keyboard: 0 to 8 choose a world, ← and → go back and next, and Esc shows the whole solar system.</li>
+        </ul>
+      </details>
       <p class="visually-hidden" id="explorer-status" role="status" aria-live="polite"></p>
     </section>
 

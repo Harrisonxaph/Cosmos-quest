@@ -11,6 +11,7 @@
     "lint": "eslint .",
     "test": "node --test",
     "test:e2e": "node --test \"tests/e2e/*.e2e.js\"",
+    "test:e2e:webkit": "BROWSER=webkit node --test tests/e2e/journeys.e2e.js",
     "build": "vite build",
     "preview": "vite preview"
   },

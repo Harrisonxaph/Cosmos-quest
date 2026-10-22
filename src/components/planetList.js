@@ -9,7 +9,7 @@ export function createPlanetList(planets, onExplore) {
     return el('article', { className: 'planet-card', 'data-body': planet.id },
       el('h3', {}, `${planet.orderFromSun}. ${planet.name}`),
       el('p', {}, fact.text),
-      el('a', { href: `${SCIENCE_PAGE}#${fact.sourceId}` }, 'Science source'),
+      el('a', { className: 'planet-card__source', href: `${SCIENCE_PAGE}#${fact.sourceId}` }, 'Science source', el('span', { className: 'visually-hidden' }, ` for ${planet.name}`)),
       el('button', { type: 'button', className: 'planet-card__explore', onClick: () => onExplore(planet.id) }, `Explore ${planet.name}`));
   });
 }

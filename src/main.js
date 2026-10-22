@@ -25,6 +25,7 @@ startExplorer({
     panel: byId('info-panel'),
     planetList: byId('planets'),
     quizEntry: byId('quiz-entry'),
+    exploreEntry: byId('explore-entry'),
     missionsEntry: byId('missions-entry'),
     experimentsEntry: byId('experiments-entry'),
   },
