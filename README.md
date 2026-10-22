@@ -9,7 +9,7 @@ A child-friendly solar system explorer. Fly around the Sun and the eight planets
 - **Simple or detailed:** switch between short child-friendly explanations and fuller detail. The choice is remembered.
 - **Compare with Earth:** how wide, how heavy you would feel, how long a day and year last, and how far from the Sun.
 - **Stay in control:** go back to the whole solar system, step to the next or previous world, pause the planets, and turn surface detail or labels on and off.
-- **Planet Quiz:** five friendly multiple-choice questions per round, with three answers each. Every answer gets a short explanation and a NASA source link. "Explore this planet" takes you to that world and keeps your place in the quiz. There is no timer and no penalty, and progress is only kept for this visit.
+- **Planet Quiz:** five friendly multiple-choice questions per round, with three answers each. Every answer gets a short explanation and a NASA source link. "Explore this planet", or "Back to exploring" before answering, keeps your place in the quiz so you can look something up and come back. There is no timer and no penalty, and progress is only kept for this visit.
 - **Honest science:** the 3D picture is clearly labelled as not to scale, every scale change is explained, and the gas and ice giants are never shown as having ground to stand on.
 
 It also works without 3D. On devices that can't show it, or with `?view=2d` added to the address, every world and fact is still available.

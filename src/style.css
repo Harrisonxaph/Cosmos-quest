@@ -159,6 +159,8 @@ summary { cursor: pointer; min-height: 44px; padding: 0.6rem 0; box-sizing: bord
 .quiz-feedback p { margin: 0.4rem 0; }
 .quiz-source { font-size: 0.9rem; color: var(--muted); }
 .quiz-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.quiz-actions--leave { align-items: center; margin-top: 0.4rem; }
+.quiz-hint { margin: 0; font-size: 0.9rem; color: var(--muted); }
 .quiz-summary { padding-left: 1.4rem; }
 .quiz-summary li { margin-bottom: 0.7rem; }
 .quiz-summary__question { display: block; font-weight: 600; }

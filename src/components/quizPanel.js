@@ -2,7 +2,7 @@
 // Each screen marks one element with data-focus-target so the app can move keyboard and
 // screen-reader focus to it (the new question, the feedback, or the results).
 import { el } from './dom.js';
-import { currentQuestion, lastResponse, progressLabel, score, feedbackHeading, resultMessage, ROUND_SIZE } from '../features/quiz.js';
+import { currentQuestion, lastResponse, progressLabel, score, feedbackAnnouncement, resultMessage, ROUND_SIZE } from '../features/quiz.js';
 
 const worldName = body => (body.kind === 'star' ? 'the Sun' : body.name);
 const capitalise = text => text[0].toUpperCase() + text.slice(1);
@@ -41,7 +41,7 @@ function progressSteps(state) {
     state.questions.map((_, i) => el('li', { className: i < state.index ? 'is-done' : i === state.index ? 'is-current' : '' })));
 }
 
-function questionScreen(state, { onAnswer }) {
+function questionScreen(state, { onAnswer, onLeave }) {
   const question = currentQuestion(state);
   return [
     progressSteps(state),
@@ -49,6 +49,10 @@ function questionScreen(state, { onAnswer }) {
     el('ul', { className: 'quiz-answers', 'aria-labelledby': 'quiz-title' },
       question.answers.map(answer => el('li', {},
         el('button', { type: 'button', className: 'quiz-answer', 'data-answer': answer.id, onClick: () => onAnswer(answer.id) }, answer.text)))),
+    // A visible way out, so a child can look something up before answering (Escape does the same).
+    el('div', { className: 'quiz-actions quiz-actions--leave' },
+      el('button', { type: 'button', className: 'secondary-button', 'data-quiz-action': 'leave', 'aria-describedby': 'quiz-leave-hint', onClick: onLeave }, 'Back to exploring'),
+      el('p', { id: 'quiz-leave-hint', className: 'quiz-hint' }, 'Your place in the quiz is saved, so you can look something up and come back.')),
   ];
 }
 
@@ -58,6 +62,7 @@ function feedbackScreen(state, { bodiesById, sourcesById, onNext, onExplore }) {
   const correctAnswer = question.answers.find(answer => answer.id === question.correctAnswerId);
   const body = bodiesById[question.planetId];
   const isLast = state.index + 1 >= state.questions.length;
+  const announcement = feedbackAnnouncement(question, response, state.index);
   return [
     progressSteps(state),
     questionHeading(state, question, false),
@@ -72,9 +77,11 @@ function feedbackScreen(state, { bodiesById, sourcesById, onNext, onExplore }) {
         }, el('span', { className: 'quiz-result__text' }, answer.text), label ? el('span', { className: 'quiz-result__label' }, label) : null);
       })),
     el('div', { className: `quiz-feedback${response.correct ? ' is-correct' : ''}`, 'data-correct': String(response.correct) },
-      focusHeading('h3', {}, feedbackHeading(response.correct, state.index)),
-      response.correct ? null : el('p', { className: 'quiz-feedback__answer' }, 'The answer is: ', el('strong', {}, correctAnswer.text)),
-      el('p', {}, question.explanation),
+      // Focused after answering: its accessible name carries the verdict and the correct answer.
+      focusHeading('h3', { id: 'quiz-feedback-title' }, announcement.heading, el('span', { className: 'visually-hidden' }, ` ${announcement.status}`)),
+      // Shown for sighted readers; hidden from screen readers because the heading already says it.
+      response.correct ? null : el('p', { className: 'quiz-feedback__answer', 'aria-hidden': 'true' }, 'The answer is: ', el('strong', {}, correctAnswer.text)),
+      el('p', { id: 'quiz-explanation', className: 'quiz-feedback__explanation' }, question.explanation),
       sourceLinks(question, sourcesById)),
     el('div', { className: 'quiz-actions' },
       el('button', { type: 'button', className: 'primary-button', 'data-quiz-action': 'next', onClick: onNext }, isLast ? 'See my results' : 'Next question'),

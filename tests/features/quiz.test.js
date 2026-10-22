@@ -4,7 +4,7 @@ import questions from '../../src/data/quiz.json' with { type: 'json' };
 import { mulberry32 } from '../../src/scenes/proceduralTextures.js';
 import {
   ROUND_SIZE, shuffle, pickQuestions, createRound, initialQuizState, reduceQuiz, createQuizStore,
-  currentQuestion, lastResponse, score, isInProgress, progressLabel, feedbackHeading, resultMessage,
+  currentQuestion, lastResponse, score, isInProgress, progressLabel, feedbackHeading, feedbackAnnouncement, resultMessage,
 } from '../../src/features/quiz.js';
 
 const seeded = seed => mulberry32(seed);
@@ -156,4 +156,17 @@ test('feedback and results are always encouraging', () => {
     assert.doesNotMatch(message, /wrong|bad|fail|poor|only/i);
   }
   assert.match(resultMessage(5, 5), /perfect/i);
+});
+
+test('screen-reader feedback states the verdict and the correct answer, whatever the answer order', () => {
+  const q = questions.find(item => item.id === 'earth-air');
+  for (const order of [q.answers, [...q.answers].reverse()]) {
+    const shuffled = { ...q, answers: order };
+    const right = feedbackAnnouncement(shuffled, { answerId: 'nitrogen', correct: true }, 0);
+    assert.equal(right.status, 'You chose Nitrogen. That is correct.');
+    const wrong = feedbackAnnouncement(shuffled, { answerId: 'oxygen', correct: false }, 1);
+    assert.equal(wrong.status, 'You chose Oxygen. The correct answer is Nitrogen.');
+    assert.equal(wrong.explanation, q.explanation);
+    assert.doesNotMatch(wrong.heading, /wrong|incorrect/i);
+  }
 });

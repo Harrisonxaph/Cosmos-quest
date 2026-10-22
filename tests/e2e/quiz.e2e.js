@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { chromium, devices } from 'playwright';
 import { startStaticServer } from './static-server.js';
+import { ANSWER_KEY } from '../data/quiz-answer-key.js';
 
 const questions = JSON.parse(readFileSync(new URL('../../src/data/quiz.json', import.meta.url), 'utf8'));
 const sources = JSON.parse(readFileSync(new URL('../../src/data/sources.json', import.meta.url), 'utf8'));
@@ -46,11 +47,19 @@ async function currentQuestionData(page) {
   return question;
 }
 
+/**
+ * Answer the question on screen. The right answer comes from the independent answer key (by its text),
+ * never from quiz.json's correctAnswerId, and the app's verdict is checked against it.
+ */
 async function answer(page, correct) {
   const question = await currentQuestionData(page);
-  const id = correct ? question.correctAnswerId : question.answers.find(a => a.id !== question.correctAnswerId).id;
-  await page.click(`.quiz-answer[data-answer="${id}"]`);
-  return question;
+  const expected = ANSWER_KEY[question.id].answer;
+  const buttons = await page.locator('.quiz-answer').evaluateAll(nodes => nodes.map(node => ({ id: node.dataset.answer, text: node.textContent.trim() })));
+  assert.equal(buttons.filter(button => button.text === expected).length, 1, `${question.id}: "${expected}" is offered once`);
+  const choice = buttons.find(button => (correct ? button.text === expected : button.text !== expected));
+  await page.click(`.quiz-answer[data-answer="${choice.id}"]`);
+  assert.equal(await page.locator('.quiz-feedback').getAttribute('data-correct'), String(correct), `${question.id}: app's verdict on "${choice.text}"`);
+  return { ...question, expectedText: expected };
 }
 
 test('a complete round: progress, feedback, sources, results, play again and back to exploring', async () => {
@@ -73,7 +82,8 @@ test('a complete round: progress, feedback, sources, results, play again and bac
     const links = await page.locator('.quiz-source a').evaluateAll(as => as.map(a => a.href));
     assert.ok(links.length >= 1 && links.every(href => sourceUrls.has(href)), 'source links point to the cited NASA pages');
     // Correctness is spelled out in words, not colour alone.
-    const correctLabel = await page.locator(`.quiz-result[data-answer="${question.correctAnswerId}"] .quiz-result__label`).textContent();
+    const exact = new RegExp(`^${question.expectedText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`);
+    const correctLabel = await page.locator('.quiz-result').filter({ has: page.locator('.quiz-result__text', { hasText: exact }) }).locator('.quiz-result__label').textContent();
     assert.match(correctLabel, correct ? /✓ Your answer is correct/ : /✓ Correct answer/);
     if (!correct) {
       assert.match(await page.locator('.quiz-result.is-chosen .quiz-result__label').textContent(), /Your answer/);
@@ -129,7 +139,7 @@ test('keyboard only: focus moves to each question and each piece of feedback', a
     await page.keyboard.press('Space');
     const feedback = await activeElement(page);
     assert.equal(feedback.tag, 'H3', 'feedback heading is focused and announced');
-    assert.match(feedback.text, /!$/);
+    assert.match(await page.locator('.quiz-feedback h3').ariaSnapshot(), /heading ".+! You chose .+\. (That is correct|The correct answer is .+)\." \[level=3\]/);
     if (i === 3) {
       // Explorer shortcuts don't pull the child out of the quiz.
       await page.keyboard.press('5');
@@ -197,7 +207,7 @@ test('phone layout: every quiz control is at least 44 × 44 pixels', async () =>
   await page.click('[data-quiz-action="open"]'); // the overview panel's entry point
   await check('[data-quiz-action="start"]');
   await page.click('[data-quiz-action="start"]');
-  await check('.quiz-answer');
+  await check('.quiz-answer, [data-quiz-action="leave"]');
   await answer(page, true);
   await check('[data-quiz-action="next"], [data-quiz-action="explore"]');
   await page.click('[data-quiz-action="explore"]');
@@ -229,5 +239,61 @@ test('the whole quiz works without 3D', async () => {
   await page.click('[data-quiz-action="next"]');
   assert.match(await page.locator('#info-panel h2').textContent(), /You got 5 out of 5!/);
   assert.deepEqual(errors, []);
+  await context.close();
+});
+
+test('screen readers hear the verdict, the correct answer and the explanation', async () => {
+  const { page, context } = await openPage();
+  await page.click('#quiz-entry');
+  await page.click('[data-quiz-action="start"]');
+
+  const first = await currentQuestionData(page);
+  const wrongText = first.answers.map(a => a.text).find(text => text !== ANSWER_KEY[first.id].answer);
+  await answer(page, false);
+  const heading = await page.locator('.quiz-feedback h3').ariaSnapshot();
+  assert.ok(heading.includes(`You chose ${wrongText}.`), heading);
+  assert.ok(heading.includes(`The correct answer is ${ANSWER_KEY[first.id].answer}.`), heading);
+  assert.equal(await page.evaluate(() => document.activeElement.id), 'quiz-feedback-title', 'the verdict heading has focus');
+  assert.equal(await page.locator('.quiz-feedback__answer').getAttribute('aria-hidden'), 'true', 'the visual correction is not read twice');
+  await page.waitForFunction(text => document.getElementById('explorer-status').textContent === text, first.explanation);
+
+  await page.click('[data-quiz-action="next"]');
+  const second = await currentQuestionData(page);
+  await answer(page, true);
+  assert.ok((await page.locator('.quiz-feedback h3').ariaSnapshot()).includes(`You chose ${ANSWER_KEY[second.id].answer}. That is correct.`));
+  await page.waitForFunction(text => document.getElementById('explorer-status').textContent === text, second.explanation);
+
+  for (let i = 0; i < 3; i++) {
+    await page.click('[data-quiz-action="next"]');
+    await answer(page, true);
+  }
+  await page.click('[data-quiz-action="next"]');
+  await page.waitForFunction(() => /Great exploring/.test(document.getElementById('explorer-status').textContent));
+  await context.close();
+});
+
+test('“Back to exploring” leaves an unanswered question and keeps the place', async () => {
+  const { page, context } = await openPage('', { ...devices['iPad Mini'], defaultBrowserType: undefined });
+  await page.click('#quiz-entry');
+  await page.click('[data-quiz-action="start"]');
+  await answer(page, true);
+  await page.click('[data-quiz-action="next"]');
+  const unanswered = await currentQuestionData(page);
+
+  const leave = page.locator('[data-quiz-action="leave"]');
+  assert.equal(await leave.textContent(), 'Back to exploring');
+  assert.match(await page.locator('#quiz-leave-hint').textContent(), /place in the quiz is saved/);
+  await leave.click();
+  assert.equal(await page.locator('#info-panel article').getAttribute('data-body'), 'overview');
+  assert.match(await page.locator('.quiz-resume').textContent(), /question 2 of 5/);
+
+  await page.click('.body-selector__button[data-body="saturn"]');
+  await page.click('[data-quiz-action="resume"]');
+  assert.equal(await quizStatus(page), 'question', 'still unanswered');
+  assert.equal((await page.locator('.quiz-question').textContent()).trim(), unanswered.question);
+  assert.equal((await page.locator('.quiz-progress').textContent()).trim(), 'Question 2 of 5');
+  await answer(page, true);
+  await page.click('[data-quiz-action="next"]');
+  assert.equal((await page.locator('.quiz-progress').textContent()).trim(), 'Question 3 of 5');
   await context.close();
 });

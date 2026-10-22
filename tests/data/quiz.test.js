@@ -8,6 +8,8 @@ import sun from '../../src/data/sun.json' with { type: 'json' };
 import sources from '../../src/data/sources.json' with { type: 'json' };
 import { bodySourceIds } from '../../src/utils/panelContent.js';
 import { ROUND_SIZE } from '../../src/features/quiz.js';
+import { ANSWER_KEY } from './quiz-answer-key.js';
+import { answerProblems } from './quiz-checks.js';
 
 const validate = new Ajv({ allErrors: true }).compile(schema);
 const bodies = [sun, ...planets];
@@ -130,4 +132,62 @@ test('explanations restate the correct answer, so feedback teaches the fact', ()
     assert.ok(q.explanation.length > correctText(q).length, q.id);
     assert.ok(q.explanation.endsWith('.') || q.explanation.endsWith('!'), q.id);
   }
+});
+
+const context = { bodiesById, planets };
+const withCorrect = (q, answerId) => ({ ...structuredClone(q), correctAnswerId: answerId });
+
+test('the independent answer key covers exactly the questions in the quiz', () => {
+  assert.deepEqual(Object.keys(ANSWER_KEY).sort(), questions.map(q => q.id).sort());
+});
+
+test('every designated answer agrees with the answer key, the data and its explanation', () => {
+  for (const q of questions) assert.deepEqual(answerProblems(q, context), [], q.id);
+});
+
+for (const kind of ['fact', 'text', 'measurement', 'rank']) {
+  test(`mutation: marking any wrong answer correct is caught (${kind} questions)`, () => {
+    const ofKind = questions.filter(q => q.basis.kind === kind);
+    assert.ok(ofKind.length > 0, `no ${kind} questions to mutate`);
+    for (const q of ofKind) {
+      for (const answer of q.answers.filter(a => a.id !== q.correctAnswerId)) {
+        const problems = answerProblems(withCorrect(q, answer.id), context);
+        assert.ok(problems.length > 0, `${q.id}: marking "${answer.text}" correct went unnoticed`);
+      }
+    }
+  });
+}
+
+test('mutation: teaching oxygen as the main gas in Earth’s air is caught', () => {
+  const earthAir = questions.find(q => q.id === 'earth-air');
+  const problems = answerProblems(withCorrect(earthAir, 'oxygen'), context);
+  assert.ok(problems.some(p => /answer key says "Nitrogen"/.test(p)), problems.join('\n'));
+});
+
+test('mutation: rewording the correct answer into a wrong one is caught', () => {
+  for (const q of questions) {
+    const mutated = structuredClone(q);
+    const wrongText = q.answers.find(a => a.id !== q.correctAnswerId).text;
+    const correct = mutated.answers.find(a => a.id === q.correctAnswerId);
+    mutated.answers = mutated.answers.filter(a => a.text !== wrongText);
+    correct.text = wrongText;
+    mutated.answers.push({ id: 'replacement', text: `Not ${wrongText}` });
+    assert.ok(answerProblems(mutated, context).length > 0, q.id);
+  }
+});
+
+test('mutation: changed measurements or rankings in the data are caught', () => {
+  const year = questions.find(q => q.id === 'mercury-year');
+  const fastMercury = { ...bodiesById, mercury: { ...bodiesById.mercury, measurements: { ...bodiesById.mercury.measurements, orbitalPeriodDays: 90 } } };
+  assert.ok(answerProblems(year, { bodiesById: fastMercury, planets }).length > 0, 'changed orbital period');
+  const closest = questions.find(q => q.id === 'mercury-closest');
+  const movedVenus = planets.map(p => (p.id === 'venus' ? { ...p, measurements: { ...p.measurements, meanDistanceFromSunE6Km: 10 } } : p));
+  assert.ok(answerProblems(closest, { bodiesById, planets: movedVenus }).length > 0, 'changed ranking');
+});
+
+test('mutation: removing the supporting fact from the app is caught', () => {
+  const earth = bodiesById.earth;
+  const noAir = { ...bodiesById, earth: { ...earth, facts: earth.facts.filter(f => !/nitrogen/.test(f.text)), summary: { ...earth.summary, detailed: earth.summary.detailed.replace(/78% nitrogen/, 'mostly gas') } } };
+  const problems = answerProblems(questions.find(q => q.id === 'earth-air'), { bodiesById: noAir, planets });
+  assert.ok(problems.some(p => /evidence/.test(p)), problems.join('\n'));
 });

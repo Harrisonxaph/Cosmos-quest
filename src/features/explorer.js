@@ -6,7 +6,7 @@ import { createBodySelector } from '../components/bodySelector.js';
 import { createPlanetList } from '../components/planetList.js';
 import { renderQuizPanel, renderQuizResume } from '../components/quizPanel.js';
 import { createNavigator, initialState, parseHash, formatHash, keyToAction, shouldIgnoreKey, actionAllowedInView, MODES } from './navigation.js';
-import { createQuizStore, progressLabel } from './quiz.js';
+import { createQuizStore, progressLabel, feedbackAnnouncement, resultMessage, score } from './quiz.js';
 
 const PREFS_KEY = 'cosmos-quest-prefs';
 
@@ -77,6 +77,7 @@ export function startExplorer({ elements, bodies, planets, earth, sourcesById, q
     onAnswer: answerId => quiz.dispatch({ type: 'answer', answerId }),
     onNext: () => quiz.dispatch({ type: 'next' }),
     onExplore: id => dispatch({ type: 'select', id }),
+    onLeave: () => dispatch({ type: 'overview' }), // keeps quiz progress; the panel shows "Back to the quiz"
     onPlayAgain: () => quiz.startRound(),
     onBackToExploring: () => {
       quiz.dispatch({ type: 'reset' });
@@ -192,9 +193,25 @@ export function startExplorer({ elements, bodies, planets, earth, sourcesById, q
     if (nav.getState().view === 'quiz') renderPanel(nav.getState(), { focusTarget: true });
     else dispatch({ type: 'openQuiz' });
   });
-  quiz.subscribe(() => {
+  // Read longer feedback aloud after focus has moved, through the existing polite live region.
+  let announceTimer = 0;
+  function announce(text) {
+    clearTimeout(announceTimer);
+    elements.status.textContent = '';
+    announceTimer = setTimeout(() => { elements.status.textContent = text; }, 300);
+  }
+
+  quiz.subscribe(quizState => {
     const state = nav.getState();
-    if (state.view === 'quiz') renderPanel(state, { focusTarget: true });
+    if (state.view === 'quiz') {
+      renderPanel(state, { focusTarget: true });
+      if (quizState.status === 'feedback') {
+        const response = quizState.responses.at(-1);
+        announce(feedbackAnnouncement(quizState.questions[quizState.index], response, quizState.index).explanation);
+      } else if (quizState.status === 'results') {
+        announce(resultMessage(score(quizState), quizState.questions.length));
+      }
+    }
     updateControls(state);
   });
 

@@ -99,6 +99,20 @@ export function feedbackHeading(correct, index) {
   return correct ? CORRECT_HEADINGS[index % CORRECT_HEADINGS.length] : TRY_HEADINGS[index % TRY_HEADINGS.length];
 }
 
+/**
+ * What assistive technology hears after an answer. `heading` is visible; `status` is added to the
+ * heading's accessible name so correctness and the correct answer are announced together on focus;
+ * `explanation` is announced through the page's live region straight afterwards.
+ */
+export function feedbackAnnouncement(question, response, index) {
+  const chosen = question.answers.find(answer => answer.id === response.answerId);
+  const correct = question.answers.find(answer => answer.id === question.correctAnswerId);
+  const status = response.correct
+    ? `You chose ${chosen.text}. That is correct.`
+    : `You chose ${chosen.text}. The correct answer is ${correct.text}.`;
+  return { heading: feedbackHeading(response.correct, index), status, explanation: question.explanation };
+}
+
 /** Encouraging end-of-round message for any score. */
 export function resultMessage(points, total) {
   if (points === total) return 'A perfect score! You’re a true space explorer.';
