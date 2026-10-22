@@ -6,6 +6,8 @@
 //   "I've found it" available; the child must then press it.
 // - A "question" step is completed only by choosing the correct answer. Wrong answers are
 //   remembered so they can't be chosen twice, and the child can keep trying.
+// - A question step with `visitRequired` accepts answers only after its `explore` world has been
+//   opened during that step. Answering is still the separate, deliberate action.
 
 export function initialMissionState() {
   return { activeMissionId: null, progress: {} };
@@ -49,7 +51,8 @@ export function reduceMissions(state, action, missions) {
         const p = next[m.id];
         if (!p || p.status !== 'active' || p.phase !== 'task') continue;
         const current = m.steps[p.stepIndex];
-        if (current.type === 'find' && current.target === action.target && !p.steps[current.id].visited) {
+        const waitingFor = current.type === 'find' ? current.target : current.visitRequired ? current.explore : null;
+        if (waitingFor === action.target && !p.steps[current.id].visited) {
           next[m.id] = updateStep(p, current.id, { visited: true });
           changed = true;
         }
@@ -63,6 +66,7 @@ export function reduceMissions(state, action, missions) {
     case 'answer': {
       if (!step || progress.status !== 'active' || progress.phase !== 'task' || step.type !== 'question') return state;
       const stepProgress = progress.steps[step.id];
+      if (step.visitRequired && !stepProgress.visited) return state; // explore the world first
       if (!step.answers.some(a => a.id === action.answerId) || stepProgress.tried.includes(action.answerId)) return state;
       const correct = action.answerId === step.correctAnswerId;
       const last = { answerId: action.answerId, correct };
@@ -92,6 +96,15 @@ export function currentStep(state, mission) {
   return progress && progress.status === 'active' ? mission.steps[progress.stepIndex] : null;
 }
 
+/**
+ * Identifies the mission screen being shown: which mission, its status, step and phase. A saved
+ * reading position or a delayed announcement only applies while this stays the same.
+ */
+export function screenKey(state) {
+  const progress = state.progress[state.activeMissionId];
+  return progress ? [state.activeMissionId, progress.status, progress.stepIndex, progress.phase].join('|') : 'list';
+}
+
 export const stepLabel = (index, total) => `Step ${index + 1} of ${total}`;
 
 /** The mission to offer a "Back to the mission" bar for: the one last opened, if unfinished. */
@@ -105,7 +118,9 @@ export function completionCriteria(step, place) {
   if (step.type === 'find') {
     return `To complete this step: explore ${place}, look for ${step.lookFor}, then press “I’ve found it”. Just opening ${place} doesn’t count.`;
   }
-  return 'To complete this step: choose the right answer. If your first choice isn’t right, you can have another go.';
+  const choose = 'choose the right answer. If your first choice isn’t right, you can have another go.';
+  if (step.visitRequired) return `To complete this step: explore ${place}, come back here, then ${choose}`;
+  return `To complete this step: ${choose}`;
 }
 
 /**

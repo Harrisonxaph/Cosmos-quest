@@ -8,7 +8,7 @@ import { renderQuizPanel, renderQuizResume } from '../components/quizPanel.js';
 import { renderMissionsPanel, renderMissionBar } from '../components/missionPanel.js';
 import { createNavigator, initialState, parseHash, formatHash, keyToAction, shouldIgnoreKey, actionAllowedInView, MODES } from './navigation.js';
 import { createQuizStore, progressLabel, feedbackAnnouncement, resultMessage, score } from './quiz.js';
-import { createMissionStore, resumableMission, stepAnnouncement, stepLabel } from './missions.js';
+import { createMissionStore, resumableMission, screenKey, stepAnnouncement, stepLabel } from './missions.js';
 
 const PREFS_KEY = 'cosmos-quest-prefs';
 
@@ -108,6 +108,30 @@ export function startExplorer({ elements, bodies, planets, earth, sourcesById, q
       },
     },
   };
+  // Where the child was reading a mission screen when they left to explore. Restored only when
+  // they come back to that same screen; advancing to another step or screen starts at the top.
+  let missionReading = null;
+  function saveMissionReading() {
+    const active = document.activeElement;
+    let focus = null;
+    if (active && elements.panel.contains(active) && active !== elements.panel) {
+      if (active.dataset.missionAction) focus = `[data-mission-action="${active.dataset.missionAction}"]`;
+      else if (active.dataset.answer) focus = `[data-answer="${active.dataset.answer}"]`;
+      else if (active.id) focus = `#${active.id}`;
+    }
+    const locked = Boolean(elements.panel.querySelector('.mission-locked'));
+    missionReading = { key: screenKey(missions.getState()), panelTop: elements.panel.scrollTop, pageY: window.scrollY, focus, locked };
+  }
+  function restoreMissionReading(reading) {
+    // If exploring unlocked a question's answers, start at the question so Tab reaches the answers next.
+    const unlocked = reading.locked && !elements.panel.querySelector('.mission-locked') ? elements.panel.querySelector('#mission-question') : null;
+    const target = unlocked ?? (reading.focus && elements.panel.querySelector(`article.missions ${reading.focus}`))
+      ?? elements.panel.querySelector('[data-focus-target]') ?? elements.panel;
+    target.focus({ preventScroll: true });
+    elements.panel.scrollTop = reading.panelTop;
+    window.scrollTo(0, reading.pageY);
+  }
+
   const placeOf = state => (state.view === 'body' ? state.selectedId : state.view === 'overview' ? 'overview' : null);
 
   // ----- Panel, selector and Stage 1 list -----
@@ -212,14 +236,35 @@ export function startExplorer({ elements, bodies, planets, earth, sourcesById, q
     elements.quizEntry.querySelector('.quiz-entry__progress').textContent = quizState.status === 'question' || quizState.status === 'feedback' ? ` · ${progressLabel(quizState)}` : '';
   }
 
+  // Read longer feedback aloud after focus has moved, through the existing polite live region.
+  // The delay is cancelled whenever the screen changes, and `stillShown` re-checks at the last moment
+  // that the screen the text belongs to is still displayed.
+  let announceTimer = 0;
+  function cancelAnnouncement() {
+    clearTimeout(announceTimer);
+    announceTimer = 0;
+  }
+  function announce(text, stillShown = () => true) {
+    cancelAnnouncement();
+    elements.status.textContent = '';
+    announceTimer = setTimeout(() => {
+      announceTimer = 0;
+      if (stillShown()) elements.status.textContent = text;
+    }, 300);
+  }
+
   // ----- React to navigation -----
   function apply(state, previous) {
     const selectionChanged = !previous || state.view !== previous.view || state.selectedId !== previous.selectedId;
+    if (selectionChanged) cancelAnnouncement(); // feedback for the screen being left must not be read out later
+    if (previous?.view === 'missions' && state.view !== 'missions') saveMissionReading();
+    const reading = previous && previous.view !== 'missions' && state.view === 'missions'
+      && missionReading?.key === screenKey(missions.getState()) ? missionReading : null;
     // Opening a world records the visit for a mission "find" step. It never completes the step by itself.
     const place = placeOf(state);
     if (selectionChanged && place) missions.dispatch({ type: 'visit', target: place });
     if (selectionChanged || state.mode !== previous.mode) {
-      renderPanel(state, { focusTarget: Boolean(previous) && selectionChanged && (state.view === 'quiz' || state.view === 'missions') });
+      renderPanel(state, { focusTarget: Boolean(previous) && selectionChanged && !reading && (state.view === 'quiz' || state.view === 'missions') });
     }
     updateControls(state);
     if (selectionChanged) {
@@ -231,6 +276,7 @@ export function startExplorer({ elements, bodies, planets, earth, sourcesById, q
       scene?.focus(state.selectedId);
       selector.revealActive(state.selectedId, { smooth: Boolean(previous) && !reducedMotion() });
       if (previous) elements.panel.scrollTop = 0;
+      if (reading) restoreMissionReading(reading);
     }
     if (!previous || state.paused !== previous.paused) scene?.setPaused(state.paused);
     if (previous && state.mode !== previous.mode) {
@@ -250,15 +296,20 @@ export function startExplorer({ elements, bodies, planets, earth, sourcesById, q
     const state = nav.getState();
     if (state.view === 'missions') {
       if (action.type === 'visit') return;
+      cancelAnnouncement();
       renderPanel(state, { focusTarget: true });
+      // A new step or screen starts at the top (focusing its heading also scrolls it into view on phones).
+      if (screenKey(missionState) !== screenKey(previousMissionState)) elements.panel.scrollTop = 0;
+      const shownKey = screenKey(missionState);
+      const stillShown = () => nav.getState().view === 'missions' && screenKey(missions.getState()) === shownKey;
       const mission = missionDefinitions.find(m => m.id === missionState.activeMissionId);
       const progress = mission ? missionState.progress[mission.id] : null;
       const step = progress?.status === 'active' ? mission.steps[progress.stepIndex] : null;
       const stepProgress = step ? progress.steps[step.id] : null;
       if (step && (progress.phase === 'feedback' || (action.type === 'answer' && stepProgress.last && !stepProgress.last.correct))) {
-        announce(stepAnnouncement(step, stepProgress, progress.stepIndex, mission.steps.length).detail);
+        announce(stepAnnouncement(step, stepProgress, progress.stepIndex, mission.steps.length).detail, stillShown);
       } else if (progress?.status === 'complete') {
-        announce(mission.recap);
+        announce(mission.recap, stillShown);
       }
     }
     updateControls(state);
@@ -268,23 +319,18 @@ export function startExplorer({ elements, bodies, planets, earth, sourcesById, q
     if (nav.getState().view === 'quiz') renderPanel(nav.getState(), { focusTarget: true });
     else dispatch({ type: 'openQuiz' });
   });
-  // Read longer feedback aloud after focus has moved, through the existing polite live region.
-  let announceTimer = 0;
-  function announce(text) {
-    clearTimeout(announceTimer);
-    elements.status.textContent = '';
-    announceTimer = setTimeout(() => { elements.status.textContent = text; }, 300);
-  }
-
   quiz.subscribe(quizState => {
     const state = nav.getState();
     if (state.view === 'quiz') {
+      cancelAnnouncement();
       renderPanel(state, { focusTarget: true });
+      const shown = `${quizState.status}|${quizState.index}`;
+      const stillShown = () => nav.getState().view === 'quiz' && `${quiz.getState().status}|${quiz.getState().index}` === shown;
       if (quizState.status === 'feedback') {
         const response = quizState.responses.at(-1);
-        announce(feedbackAnnouncement(quizState.questions[quizState.index], response, quizState.index).explanation);
+        announce(feedbackAnnouncement(quizState.questions[quizState.index], response, quizState.index).explanation, stillShown);
       } else if (quizState.status === 'results') {
-        announce(resultMessage(score(quizState), quizState.questions.length));
+        announce(resultMessage(score(quizState), quizState.questions.length), stillShown);
       }
     }
     updateControls(state);

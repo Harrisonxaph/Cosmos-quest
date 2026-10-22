@@ -182,7 +182,7 @@ summary { cursor: pointer; min-height: 44px; padding: 0.6rem 0; box-sizing: bord
 .mission-step__label { display: inline-block; margin-left: 0.5rem; padding: 0 0.5rem; border: 1px solid currentColor; border-radius: 999px; font-size: 0.8rem; font-weight: 700; }
 .mission-step-title { display: block; }
 .mission-criteria { padding: 0.6rem 0.8rem; border-left: 4px solid var(--accent); background: rgb(255 207 92 / 8%); border-radius: 0.4rem; }
-.mission-visited { font-weight: 600; }
+.mission-visited, .mission-locked { font-weight: 600; }
 .mission-answer { font-size: 1.05rem; }
 .mission-bar .quiz-actions { margin-top: 0.3rem; }
 .mission-bar p { margin: 0; }

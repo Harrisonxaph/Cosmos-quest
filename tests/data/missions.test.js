@@ -37,6 +37,9 @@ test('required fields are enforced for missions and both step types', () => {
       assert.equal(validate(invalid), false, `${definition}.${field}`);
     }
   }
+  const visitWithoutWorld = structuredClone(missions);
+  delete visitWithoutWorld[1].steps.find(step => step.visitRequired).explore;
+  assert.equal(validate(visitWithoutWorld), false, 'visitRequired needs a world to explore');
   const tooFew = structuredClone(missions);
   tooFew[0].steps = tooFew[0].steps.slice(0, 2);
   assert.equal(validate(tooFew), false, 'at least 3 steps');
@@ -60,6 +63,9 @@ test('every mission explores the worlds it promises', () => {
   for (const world of ['mercury', 'venus', 'earth', 'mars']) assert.ok(visits('rocky-neighbours').includes(world), world);
   for (const world of ['jupiter', 'saturn', 'uranus', 'neptune']) assert.ok(visits('giants-without-ground').includes(world), world);
   assert.ok(visits('understanding-space').includes('overview'), 'the true-scale comparisons live on the overview');
+  // Every giant has to be explored: find steps by their target, question steps by a required visit.
+  const required = byId('giants-without-ground').steps.map(step => (step.type === 'find' ? step.target : step.visitRequired ? step.explore : null)).filter(Boolean);
+  assert.deepEqual([...required].sort(), ['jupiter', 'neptune', 'saturn', 'uranus']);
   assert.equal(byId('rocky-neighbours').steps.filter(s => s.type === 'find').length, 4, 'one sourced fact for each rocky planet');
   assert.equal(byId('rocky-neighbours').steps.at(-1).type, 'question', 'then a comparison question');
 });
