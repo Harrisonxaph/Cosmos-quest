@@ -9,6 +9,7 @@ A child-friendly solar system explorer. Fly around the Sun and the eight planets
 - **Simple or detailed:** switch between short child-friendly explanations and fuller detail. The choice is remembered.
 - **Compare with Earth:** how wide, how heavy you would feel, how long a day and year last, and how far from the Sun.
 - **Stay in control:** go back to the whole solar system, step to the next or previous world, pause the planets, and turn surface detail or labels on and off.
+- **Discovery Missions:** three short guided missions: *Meet our rocky neighbours*, *Giants without ground* and *Understanding space*. Each has an introduction, 3–5 numbered steps shown one at a time, and a recap. A step asks you to explore a world and press “I’ve found it” when you spot something (just opening the world doesn’t count), or to choose an answer. Every discovery shows a short explanation with its NASA or ESA source. You can leave any time with “Back to exploring”, and a “Back to the mission” bar keeps your place for this visit. Missions and the quiz keep separate progress.
 - **Planet Quiz:** five friendly multiple-choice questions per round, with three answers each. Every answer gets a short explanation and a NASA source link. "Explore this planet", or "Back to exploring" before answering, keeps your place in the quiz so you can look something up and come back. There is no timer and no penalty, and progress is only kept for this visit.
 - **Honest science:** the 3D picture is clearly labelled as not to scale, every scale change is explained, and the gas and ice giants are never shown as having ground to stand on.
 
@@ -27,7 +28,7 @@ It also works without 3D. On devices that can't show it, or with `?view=2d` adde
 | `A` `D` | Rotate the view |
 | `M` | Simple / detailed facts |
 
-Each world has its own link, such as `#/saturn`, the quiz is at `#/quiz`, and the browser Back button works. During the quiz, answer with Tab and Enter or Space; the explorer shortcuts pause so a stray key can't jump away mid-question (Esc still goes back to exploring, and the quiz waits).
+Each world has its own link, such as `#/saturn`, the quiz is at `#/quiz`, missions are at `#/missions`, and the browser Back button works. During the quiz and missions, answer with Tab and Enter or Space; the explorer shortcuts pause so a stray key can't jump away mid-question (Esc still goes back to exploring, and the quiz or mission waits).
 
 ## Development
 
@@ -42,7 +43,7 @@ Before submitting a change:
 
 ```sh
 npm run lint
-npm test            # unit tests: data, citations, quiz questions and scoring, comparisons, scale, navigation
+npm test            # unit tests: data, citations, quiz questions and scoring, missions and their completion rules, comparisons, scale, navigation
 npm run build
 npx playwright install chromium   # first time only
 npm run test:e2e    # browser tests against the build in dist/
@@ -53,7 +54,7 @@ npm run test:e2e    # browser tests against the build in dist/
 ## Repository guide
 
 - [AGENTS.md](AGENTS.md): contributor rules; agent.md is a pointer.
-- `src/data/`: planet and Sun JSON, quiz questions, the source list and the JSON Schemas. Every value and question cites a NASA source.
+- `src/data/`: planet and Sun JSON, quiz questions, mission definitions, the source list and the JSON Schemas. Every value, question and mission step cites a NASA or ESA source.
 - `src/utils/`, `src/features/`, `src/components/`, `src/scenes/`: pure helpers, navigation and wiring, reusable UI, and the Three.js scene. See [architecture](docs/ARCHITECTURE.md).
 - `public/assets/`: bundled assets only after licence review (none yet; surface patterns are drawn by code).
 - `tests/`: mirrors `src/`; `tests/e2e/` holds the browser tests. No colocated tests.

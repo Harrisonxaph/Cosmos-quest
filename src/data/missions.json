@@ -1,0 +1,247 @@
+[
+  {
+    "id": "rocky-neighbours",
+    "title": "Meet our rocky neighbours",
+    "summary": "Visit Mercury, Venus, Earth and Mars, the four rocky planets.",
+    "intro": "The four planets closest to the Sun are made of rock and metal. Visit each one, find something amazing about it, then use what you've learned to compare them.",
+    "recap": "You met all four rocky planets: Mercury, Venus, Earth and Mars. They are made of rock and metal and have solid surfaces. Mercury is the smallest, and Venus is nearly as big as Earth.",
+    "steps": [
+      {
+        "id": "find-mercury",
+        "type": "find",
+        "title": "Explore Mercury",
+        "task": "Visit Mercury and read its Amazing facts. What makes Mercury special among the planets?",
+        "target": "mercury",
+        "lookFor": "the first of Mercury's Amazing facts",
+        "reveal": "Mercury is the smallest planet in our solar system.",
+        "sourceIds": ["nasa-mercury"],
+        "basis": { "kind": "fact", "worldId": "mercury", "text": "Mercury is the smallest planet in our solar system." }
+      },
+      {
+        "id": "find-venus",
+        "type": "find",
+        "title": "Explore Venus",
+        "task": "Visit Venus and read its Amazing facts. What is Venus famous for?",
+        "target": "venus",
+        "lookFor": "the first of Venus's Amazing facts",
+        "reveal": "Venus is the hottest planet in our solar system.",
+        "sourceIds": ["nasa-venus"],
+        "basis": { "kind": "fact", "worldId": "venus", "text": "Venus is the hottest planet in our solar system." }
+      },
+      {
+        "id": "find-earth",
+        "type": "find",
+        "title": "Explore Earth",
+        "task": "Visit Earth, our home, and read its Amazing facts. What makes Earth different from every other planet?",
+        "target": "earth",
+        "lookFor": "the first of Earth's Amazing facts",
+        "reveal": "Earth is the only planet known to support life.",
+        "sourceIds": ["nasa-earth"],
+        "basis": { "kind": "fact", "worldId": "earth", "text": "Earth is the only planet known to support life." }
+      },
+      {
+        "id": "find-mars",
+        "type": "find",
+        "title": "Explore Mars",
+        "task": "Visit Mars and read its Amazing facts. Find the giant mountain on Mars.",
+        "target": "mars",
+        "lookFor": "the fact about Olympus Mons",
+        "reveal": "Olympus Mons on Mars is more than 40 km tall from base to summit, dwarfing Mount Everest.",
+        "sourceIds": ["nasa-mars-facts"],
+        "basis": { "kind": "fact", "worldId": "mars", "text": "Olympus Mons on Mars is more than 40 km tall from base to summit, dwarfing Mount Everest." }
+      },
+      {
+        "id": "compare-size",
+        "type": "question",
+        "title": "Compare the rocky planets",
+        "task": "You've visited all four rocky neighbours. Use what you've found to answer this question.",
+        "question": "Which rocky neighbour is nearly as big as Earth?",
+        "answers": [
+          { "id": "mercury", "text": "Mercury" },
+          { "id": "venus", "text": "Venus" },
+          { "id": "mars", "text": "Mars" }
+        ],
+        "correctAnswerId": "venus",
+        "hint": "Look at the “Compared with Earth” part of each planet's page to see how wide it is.",
+        "explanation": "Venus is nearly as big as Earth: about 95% as wide. Mercury is about two-fifths as wide as Earth, and Mars is about half as wide.",
+        "sourceIds": ["nasa-venus", "nasa-fact-sheet"],
+        "basis": { "kind": "text", "worldId": "venus", "field": "summary", "contains": "nearly as big as Earth" }
+      }
+    ]
+  },
+  {
+    "id": "giants-without-ground",
+    "title": "Giants without ground",
+    "summary": "Visit Jupiter, Saturn, Uranus and Neptune, the four giant planets.",
+    "intro": "The four outer planets are giants, and none of them has solid ground. Find out what they are made of, and the difference between gas giants and ice giants.",
+    "recap": "Jupiter and Saturn are gas giants, made mostly of hydrogen and helium. Uranus and Neptune are ice giants, made mostly of a hot, thick fluid of water, methane and ammonia. None of the four giants has a solid surface.",
+    "steps": [
+      {
+        "id": "find-jupiter",
+        "type": "find",
+        "title": "Explore Jupiter",
+        "task": "Visit Jupiter and read “What it is made of”. Is it made of rock, ice or gas?",
+        "target": "jupiter",
+        "lookFor": "the “What it is made of” section",
+        "reveal": "Jupiter is a gas giant. It is mostly hydrogen and helium gas, like the Sun, and it has no solid surface.",
+        "sourceIds": ["nasa-jupiter-facts"],
+        "basis": { "kind": "text", "worldId": "jupiter", "field": "composition", "contains": "hydrogen and helium" }
+      },
+      {
+        "id": "find-neptune",
+        "type": "find",
+        "title": "Explore Neptune",
+        "task": "Visit Neptune and read “What it is made of”. How is it different from Jupiter?",
+        "target": "neptune",
+        "lookFor": "the “What it is made of” section",
+        "reveal": "Neptune is an ice giant. Most of it is a hot, thick fluid of water, methane and ammonia 'ices' around a small rocky core, and it has no solid surface.",
+        "sourceIds": ["nasa-neptune-facts"],
+        "basis": { "kind": "text", "worldId": "neptune", "field": "composition", "contains": "water, methane and ammonia" }
+      },
+      {
+        "id": "saturn-kind",
+        "type": "question",
+        "title": "What kind of giant is Saturn?",
+        "task": "Saturn is made mostly of hydrogen and helium, just like Jupiter. You can explore Saturn first if you like.",
+        "explore": "saturn",
+        "question": "What kind of planet is Saturn?",
+        "answers": [
+          { "id": "gas-giant", "text": "A gas giant" },
+          { "id": "ice-giant", "text": "An ice giant" },
+          { "id": "rocky-planet", "text": "A rocky planet" }
+        ],
+        "correctAnswerId": "gas-giant",
+        "hint": "Planets made mostly of hydrogen and helium, like Jupiter, are gas giants. Saturn's page says what kind of planet it is, just under its name.",
+        "explanation": "Saturn is a gas giant, made mostly of hydrogen and helium, just like Jupiter.",
+        "sourceIds": ["nasa-saturn-facts"],
+        "basis": { "kind": "worldKind", "worldId": "saturn" }
+      },
+      {
+        "id": "uranus-kind",
+        "type": "question",
+        "title": "Find Neptune's twin",
+        "task": "One of these planets is an ice giant, just like Neptune. You can explore Uranus first if you like.",
+        "explore": "uranus",
+        "question": "Which of these planets is an ice giant, like Neptune?",
+        "answers": [
+          { "id": "jupiter", "text": "Jupiter" },
+          { "id": "uranus", "text": "Uranus" },
+          { "id": "saturn", "text": "Saturn" }
+        ],
+        "correctAnswerId": "uranus",
+        "hint": "Jupiter and Saturn are made mostly of hydrogen and helium. Which planet is made mostly of water, methane and ammonia 'ices'?",
+        "explanation": "Uranus is an ice giant, like Neptune. Most of it is a hot, thick fluid of water, methane and ammonia 'ices'.",
+        "sourceIds": ["nasa-uranus-facts"],
+        "basis": { "kind": "kindMatch", "value": "ice-giant" }
+      },
+      {
+        "id": "no-ground",
+        "type": "question",
+        "title": "Is there anywhere to land?",
+        "task": "Think about all four giant planets you've learned about.",
+        "question": "Could you stand on any of the four giant planets?",
+        "answers": [
+          { "id": "none", "text": "No: none of them has a solid surface" },
+          { "id": "neptune-ice", "text": "Yes, on Neptune's frozen ground" },
+          { "id": "jupiter-only", "text": "Only on Jupiter" }
+        ],
+        "correctAnswerId": "none",
+        "hint": "Every giant planet's page has a “No solid surface” box near the top.",
+        "explanation": "None of the giant planets has a solid surface. That's why scientists measure their gravity and temperature high in the atmosphere, at the 1-bar level.",
+        "sourceIds": ["nasa-fact-sheet-notes", "nasa-jupiter-facts", "nasa-saturn-facts", "nasa-uranus-facts", "nasa-neptune-facts"],
+        "basis": { "kind": "noSolidSurface", "worldIds": ["jupiter", "saturn", "uranus", "neptune"] }
+      }
+    ]
+  },
+  {
+    "id": "understanding-space",
+    "title": "Understanding space",
+    "summary": "Discover the order of the planets, and how big and far apart they really are.",
+    "intro": "Space is huge! Find out what order the planets go in, how big and far apart they really are, and why the 3D picture can't be drawn to scale.",
+    "recap": "From the Sun, the planets go Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus and Neptune. Space is so big that the 3D picture has to change sizes and distances, but the numbers in the information panels are real measurements.",
+    "steps": [
+      {
+        "id": "find-not-to-scale",
+        "type": "find",
+        "title": "Explore the whole solar system",
+        "task": "Go to the whole solar system view and find the box that explains the picture.",
+        "target": "overview",
+        "lookFor": "the box called “This picture is not to scale”",
+        "reveal": "Space is so big that a true-scale picture would show only tiny dots. That's why the 3D view enlarges the planets and squeezes the distances between them.",
+        "sourceIds": ["nasa-fact-sheet", "nasa-sun-fact-sheet"],
+        "basis": { "kind": "model", "contains": "Space is so big that a true-scale picture would show only tiny dots." }
+      },
+      {
+        "id": "fourth-planet",
+        "type": "question",
+        "title": "The order of the planets",
+        "task": "The planets go round the Sun in order. You can explore the solar system view to count them.",
+        "explore": "overview",
+        "question": "Counting out from the Sun, which planet comes fourth?",
+        "answers": [
+          { "id": "earth", "text": "Earth" },
+          { "id": "mars", "text": "Mars" },
+          { "id": "jupiter", "text": "Jupiter" }
+        ],
+        "correctAnswerId": "mars",
+        "hint": "Start at the Sun and count: Mercury is first, Venus is second, Earth is third…",
+        "explanation": "Mars is the fourth planet from the Sun: Mercury, Venus, Earth, then Mars.",
+        "sourceIds": ["nasa-fact-sheet"],
+        "basis": { "kind": "order", "position": 4 }
+      },
+      {
+        "id": "sun-size",
+        "type": "question",
+        "title": "How big is the Sun?",
+        "task": "Imagine shrinking Earth down to a tiny bead 1 cm wide. The solar system view has a section called “The real size of space” that can help.",
+        "explore": "overview",
+        "question": "If Earth were a bead 1 cm wide, about how wide would the Sun be?",
+        "answers": [
+          { "id": "ten-cm", "text": "About 10 cm" },
+          { "id": "one-metre", "text": "About 1.1 metres" },
+          { "id": "eleven-metres", "text": "About 11 metres" }
+        ],
+        "correctAnswerId": "one-metre",
+        "hint": "The Sun is about 100 times wider than Earth. What is 100 × 1 cm?",
+        "explanation": "The Sun would be a ball about 1.1 metres wide: about 109 times as wide as the 1 cm Earth bead.",
+        "sourceIds": ["nasa-fact-sheet", "nasa-sun-fact-sheet"],
+        "basis": { "kind": "trueScale", "quantity": "sunWidthM" }
+      },
+      {
+        "id": "neptune-distance",
+        "type": "question",
+        "title": "How far is Neptune?",
+        "task": "Keep imagining Earth as a 1 cm bead, with the Sun as a 1.1 metre ball. On that scale, Earth would be about 117 metres from the Sun.",
+        "explore": "overview",
+        "question": "On that same scale, about how far from the Sun would Neptune be?",
+        "answers": [
+          { "id": "thirty-five-metres", "text": "About 35 metres" },
+          { "id": "hundred-seventeen-metres", "text": "About 117 metres" },
+          { "id": "three-point-five-km", "text": "About 3.5 km" }
+        ],
+        "correctAnswerId": "three-point-five-km",
+        "hint": "Neptune is more than 30 times as far from the Sun as Earth is. Earth would be 117 metres away…",
+        "explanation": "Neptune would be about 3.5 km away, while Earth would be only about 117 metres from the Sun. That's why the outer planets are so hard to fit in one picture!",
+        "sourceIds": ["nasa-fact-sheet"],
+        "basis": { "kind": "trueScale", "quantity": "neptuneDistanceKm" }
+      },
+      {
+        "id": "why-not-to-scale",
+        "type": "question",
+        "title": "Why change the picture?",
+        "task": "Now you know how huge space really is. Think about what the 3D picture does.",
+        "question": "Why does the 3D picture show the planets bigger and closer together than they really are?",
+        "answers": [
+          { "id": "so-we-can-see", "text": "So we can see them: at true scale they would be tiny dots" },
+          { "id": "really-close", "text": "Because the planets really are that close together" },
+          { "id": "nasa-photo", "text": "Because it is a photo taken by NASA" }
+        ],
+        "correctAnswerId": "so-we-can-see",
+        "hint": "Remember the box called “This picture is not to scale” in the solar system view.",
+        "explanation": "Space is so big that a true-scale picture would show only tiny dots, so the 3D view enlarges the planets and squeezes the distances. The numbers in the information panels are real measurements.",
+        "sourceIds": ["nasa-fact-sheet"],
+        "basis": { "kind": "model", "contains": "Planet sizes are enlarged compared with the distances between them." }
+      }
+    ]
+  }
+]

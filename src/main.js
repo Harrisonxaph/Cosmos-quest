@@ -2,6 +2,7 @@ import planets from './data/planets.json';
 import sun from './data/sun.json';
 import sources from './data/sources.json';
 import quizQuestions from './data/quiz.json';
+import missions from './data/missions.json';
 import { startExplorer } from './features/explorer.js';
 import './style.css';
 
@@ -23,10 +24,12 @@ startExplorer({
     panel: byId('info-panel'),
     planetList: byId('planets'),
     quizEntry: byId('quiz-entry'),
+    missionsEntry: byId('missions-entry'),
   },
   bodies,
   planets,
   earth,
   sourcesById,
   quizQuestions,
+  missions,
 });

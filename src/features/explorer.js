@@ -5,8 +5,10 @@ import { renderBodyPanel, renderOverviewPanel } from '../components/infoPanel.js
 import { createBodySelector } from '../components/bodySelector.js';
 import { createPlanetList } from '../components/planetList.js';
 import { renderQuizPanel, renderQuizResume } from '../components/quizPanel.js';
+import { renderMissionsPanel, renderMissionBar } from '../components/missionPanel.js';
 import { createNavigator, initialState, parseHash, formatHash, keyToAction, shouldIgnoreKey, actionAllowedInView, MODES } from './navigation.js';
 import { createQuizStore, progressLabel, feedbackAnnouncement, resultMessage, score } from './quiz.js';
+import { createMissionStore, resumableMission, stepAnnouncement, stepLabel } from './missions.js';
 
 const PREFS_KEY = 'cosmos-quest-prefs';
 
@@ -52,7 +54,7 @@ export function webglAvailable() {
   }
 }
 
-export function startExplorer({ elements, bodies, planets, earth, sourcesById, quizQuestions }) {
+export function startExplorer({ elements, bodies, planets, earth, sourcesById, quizQuestions, missions: missionDefinitions }) {
   const bodiesById = Object.fromEntries(bodies.map(body => [body.id, body]));
   const reducedMotionQuery = window.matchMedia?.('(prefers-reduced-motion: reduce)');
   const reducedMotion = () => reducedMotionQuery?.matches ?? false;
@@ -85,6 +87,29 @@ export function startExplorer({ elements, bodies, planets, earth, sourcesById, q
     },
   };
 
+  // Mission progress is separate from the quiz and also lives only in memory for this visit.
+  const missions = createMissionStore(missionDefinitions);
+  const missionContext = {
+    missions: missionDefinitions,
+    bodiesById,
+    sourcesById,
+    handlers: {
+      onOpen: id => missions.dispatch({ type: 'open', missionId: id }),
+      onStart: id => missions.dispatch({ type: 'start', missionId: id }),
+      onRestart: id => missions.dispatch({ type: 'restart', missionId: id }),
+      onFound: id => missions.dispatch({ type: 'found', missionId: id }),
+      onAnswer: (id, answerId) => missions.dispatch({ type: 'answer', missionId: id, answerId }),
+      onNext: id => missions.dispatch({ type: 'next', missionId: id }),
+      onExplore: target => dispatch(target === 'overview' ? { type: 'overview' } : { type: 'select', id: target }),
+      onLeave: () => dispatch({ type: 'overview' }), // keeps mission progress; panels show "Back to the mission"
+      onExploreFreely: () => {
+        missions.dispatch({ type: 'open', missionId: null });
+        dispatch({ type: 'overview' });
+      },
+    },
+  };
+  const placeOf = state => (state.view === 'body' ? state.selectedId : state.view === 'overview' ? 'overview' : null);
+
   // ----- Panel, selector and Stage 1 list -----
   const selector = createBodySelector(bodies, id => dispatch({ type: 'select', id }));
   elements.selector.append(selector.element);
@@ -97,6 +122,7 @@ export function startExplorer({ elements, bodies, planets, earth, sourcesById, q
     const quizState = quiz.getState();
     let panel;
     if (state.view === 'quiz') panel = renderQuizPanel(quizState, quizHandlers);
+    else if (state.view === 'missions') panel = renderMissionsPanel(missions.getState(), missionContext);
     else if (state.view === 'body') {
       panel = renderBodyPanel(bodiesById[state.selectedId], {
         earth,
@@ -105,16 +131,33 @@ export function startExplorer({ elements, bodies, planets, earth, sourcesById, q
         onModeChange: mode => dispatch({ type: 'setMode', mode }),
       });
     } else {
-      panel = renderOverviewPanel({ bodies, earth, onSelect: id => dispatch({ type: 'select', id }), onQuiz: () => dispatch({ type: 'openQuiz' }) });
+      panel = renderOverviewPanel({
+        bodies,
+        earth,
+        onSelect: id => dispatch({ type: 'select', id }),
+        onQuiz: () => dispatch({ type: 'openQuiz' }),
+        onMissions: () => dispatch({ type: 'openMissions' }),
+      });
     }
     const resume = state.view !== 'quiz' && quizState.status !== 'idle' ? renderQuizResume(quizState, () => dispatch({ type: 'openQuiz' })) : null;
+    const activeMission = state.view !== 'missions' ? resumableMission(missions.getState(), missionDefinitions) : null;
+    const missionBar = activeMission ? renderMissionBar(missions.getState(), activeMission, {
+      place: placeOf(state),
+      bodiesById,
+      onFound: id => {
+        // Open the mission first, so the "Great find!" feedback is focused and announced there.
+        dispatch({ type: 'openMissions' });
+        missions.dispatch({ type: 'found', missionId: id });
+      },
+      onResume: () => dispatch({ type: 'openMissions' }),
+    }) : null;
     // Re-rendering replaces the focused element, so remember where keyboard focus was and put it back.
     const active = document.activeElement;
     const focusWasInPanel = active && active !== elements.panel && elements.panel.contains(active);
     const restoreSelector = focusWasInPanel && active.dataset.mode ? `.mode-toggle__option[data-mode="${active.dataset.mode}"]` : null;
-    clear(elements.panel).append(...[resume, panel].filter(Boolean));
+    clear(elements.panel).append(...[missionBar, resume, panel].filter(Boolean));
     if (focusTarget) {
-      // Quiz screens: move focus to the new question, the feedback or the results so it is announced.
+      // Quiz and mission screens: move focus to the new task, the feedback or the results so it is announced.
       (elements.panel.querySelector('[data-focus-target]') ?? elements.panel).focus();
     } else if (focusWasInPanel) {
       const target = (restoreSelector && elements.panel.querySelector(restoreSelector)) || elements.panel;
@@ -160,6 +203,11 @@ export function startExplorer({ elements, bodies, planets, earth, sourcesById, q
     selector.setActive(state.selectedId);
     if (state.view === 'quiz') elements.quizEntry.setAttribute('aria-current', 'page');
     else elements.quizEntry.removeAttribute('aria-current');
+    if (state.view === 'missions') elements.missionsEntry.setAttribute('aria-current', 'page');
+    else elements.missionsEntry.removeAttribute('aria-current');
+    const mission = resumableMission(missions.getState(), missionDefinitions);
+    const missionProgress = mission ? missions.getState().progress[mission.id] : null;
+    elements.missionsEntry.querySelector('.quiz-entry__progress').textContent = mission ? ` · ${stepLabel(missionProgress.stepIndex, mission.steps.length)}` : '';
     const quizState = quiz.getState();
     elements.quizEntry.querySelector('.quiz-entry__progress').textContent = quizState.status === 'question' || quizState.status === 'feedback' ? ` · ${progressLabel(quizState)}` : '';
   }
@@ -167,14 +215,19 @@ export function startExplorer({ elements, bodies, planets, earth, sourcesById, q
   // ----- React to navigation -----
   function apply(state, previous) {
     const selectionChanged = !previous || state.view !== previous.view || state.selectedId !== previous.selectedId;
-    if (selectionChanged || state.mode !== previous.mode) renderPanel(state, { focusTarget: Boolean(previous) && selectionChanged && state.view === 'quiz' });
+    // Opening a world records the visit for a mission "find" step. It never completes the step by itself.
+    const place = placeOf(state);
+    if (selectionChanged && place) missions.dispatch({ type: 'visit', target: place });
+    if (selectionChanged || state.mode !== previous.mode) {
+      renderPanel(state, { focusTarget: Boolean(previous) && selectionChanged && (state.view === 'quiz' || state.view === 'missions') });
+    }
     updateControls(state);
     if (selectionChanged) {
       const target = formatHash(state);
       if (location.hash !== target && !(target === '#/' && location.hash === '')) history.pushState(null, '', target);
       elements.status.textContent = state.view === 'body'
         ? `Now exploring ${bodiesById[state.selectedId].name}`
-        : state.view === 'quiz' ? 'Planet Quiz' : 'Showing the whole solar system';
+        : state.view === 'quiz' ? 'Planet Quiz' : state.view === 'missions' ? 'Discovery Missions' : 'Showing the whole solar system';
       scene?.focus(state.selectedId);
       selector.revealActive(state.selectedId, { smooth: Boolean(previous) && !reducedMotion() });
       if (previous) elements.panel.scrollTop = 0;
@@ -188,6 +241,28 @@ export function startExplorer({ elements, bodies, planets, earth, sourcesById, q
   nav.subscribe(apply);
   apply(nav.getState(), null);
   updateToggles();
+
+  elements.missionsEntry.addEventListener('click', () => {
+    if (nav.getState().view === 'missions') renderPanel(nav.getState(), { focusTarget: true });
+    else dispatch({ type: 'openMissions' });
+  });
+  missions.subscribe((missionState, previousMissionState, action) => {
+    const state = nav.getState();
+    if (state.view === 'missions') {
+      if (action.type === 'visit') return;
+      renderPanel(state, { focusTarget: true });
+      const mission = missionDefinitions.find(m => m.id === missionState.activeMissionId);
+      const progress = mission ? missionState.progress[mission.id] : null;
+      const step = progress?.status === 'active' ? mission.steps[progress.stepIndex] : null;
+      const stepProgress = step ? progress.steps[step.id] : null;
+      if (step && (progress.phase === 'feedback' || (action.type === 'answer' && stepProgress.last && !stepProgress.last.correct))) {
+        announce(stepAnnouncement(step, stepProgress, progress.stepIndex, mission.steps.length).detail);
+      } else if (progress?.status === 'complete') {
+        announce(mission.recap);
+      }
+    }
+    updateControls(state);
+  });
 
   elements.quizEntry.addEventListener('click', () => {
     if (nav.getState().view === 'quiz') renderPanel(nav.getState(), { focusTarget: true });
@@ -219,6 +294,7 @@ export function startExplorer({ elements, bodies, planets, earth, sourcesById, q
     const target = parseHash(location.hash);
     if (target.view === 'body') dispatch({ type: 'select', id: target.selectedId });
     else if (target.view === 'quiz') dispatch({ type: 'openQuiz' });
+    else if (target.view === 'missions') dispatch({ type: 'openMissions' });
     else dispatch({ type: 'overview' });
   });
 

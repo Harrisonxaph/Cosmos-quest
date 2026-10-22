@@ -75,6 +75,10 @@ export function trueScaleSentences(bodies, earth) {
   ];
 }
 
+/** Why the 3D view can't be to scale, and what stays true. Shown in the overview and used by missions. */
+export const SCALE_INTRO = 'Space is so big that a true-scale picture would show only tiny dots.';
+export const SCALE_MEASUREMENTS_NOTE = 'The numbers in the information panels are real measurements.';
+
 /** What the 3D view changes compared with reality. Shown wherever the scene is visible. */
 export const SCALE_CHANGES = [
   'Planet sizes are enlarged compared with the distances between them.',

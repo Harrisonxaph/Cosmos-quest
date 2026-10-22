@@ -3,7 +3,7 @@
 import { el } from './dom.js';
 import { earthComparisons } from '../utils/compare.js';
 import { bodyHeadline, noSurfaceNotice, measurementRows, bodySourceIds, modelNote } from '../utils/panelContent.js';
-import { trueScaleSentences, SCALE_CHANGES } from '../utils/scale.js';
+import { trueScaleSentences, SCALE_CHANGES, SCALE_INTRO, SCALE_MEASUREMENTS_NOTE } from '../utils/scale.js';
 import { SHORTCUTS } from '../features/navigation.js';
 
 export const SCIENCE_PAGE = 'https://github.com/Harrisonxaph/Cosmos-quest/blob/main/docs/SCIENCE.md';
@@ -85,7 +85,7 @@ export function renderBodyPanel(body, { earth, mode, sourcesById, onModeChange }
       el('p', {}, el('a', { href: SCIENCE_PAGE, target: '_blank', rel: 'noopener' }, 'How we check our facts'))));
 }
 
-export function renderOverviewPanel({ bodies, earth, onSelect, onQuiz }) {
+export function renderOverviewPanel({ bodies, earth, onSelect, onQuiz, onMissions }) {
   return el('article', { className: 'panel', 'data-body': 'overview', 'aria-labelledby': 'panel-title-overview' },
     el('header', { className: 'panel__header' },
       el('h2', { id: 'panel-title-overview' }, 'Our solar system'),
@@ -93,6 +93,9 @@ export function renderOverviewPanel({ bodies, earth, onSelect, onQuiz }) {
     el('p', { className: 'panel__intro' }, 'Choose a world with the buttons, or tap it in the picture, to fly there and find out what it is like. Drag to turn the view and pinch or scroll to zoom.'),
     el('button', { type: 'button', className: 'primary-button', onClick: () => onSelect('sun') }, 'Start with the Sun'),
 
+    onMissions ? section('Discovery Missions', null,
+      el('p', {}, 'Explore with a purpose: three short missions take you to the worlds with something to discover.'),
+      el('button', { type: 'button', className: 'secondary-button', 'data-mission-action': 'open', onClick: onMissions }, 'Choose a mission')) : null,
     onQuiz ? section('Planet Quiz', null,
       el('p', {}, 'Explored a few worlds? Try five friendly questions to see what you remember.'),
       el('button', { type: 'button', className: 'secondary-button', 'data-quiz-action': 'open', onClick: onQuiz }, 'Play the Planet Quiz')) : null,
@@ -101,9 +104,9 @@ export function renderOverviewPanel({ bodies, earth, onSelect, onQuiz }) {
       trueScaleSentences(bodies, earth).map(text => el('p', {}, text))),
 
     section('This picture is not to scale', badge('Model', 'model'),
-      el('p', {}, 'Space is so big that a true-scale picture would show only tiny dots. To help you explore, this view changes some things:'),
+      el('p', {}, `${SCALE_INTRO} To help you explore, this view changes some things:`),
       el('ul', {}, SCALE_CHANGES.map(text => el('li', {}, text))),
-      el('p', {}, 'The numbers in the information panels are real measurements.')),
+      el('p', {}, SCALE_MEASUREMENTS_NOTE)),
 
     el('details', { className: 'shortcuts' },
       el('summary', {}, 'Keyboard shortcuts'),
