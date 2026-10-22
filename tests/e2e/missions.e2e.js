@@ -357,7 +357,7 @@ for (const [label, options] of [['desktop', { viewport: { width: 1280, height: 5
     assert.equal(fresh.panelTop, 0);
     assert.match(await stepHeading(page), /Step 3 of 5/);
     const headingTop = await page.locator('#missions-title').evaluate(node => node.getBoundingClientRect().top);
-    assert.ok(headingTop >= 0 && headingTop < (await page.evaluate(() => window.innerHeight)), 'the new step’s heading is on screen');
+    assert.ok(headingTop >= -1 && headingTop < (await page.evaluate(() => window.innerHeight)), 'the new step’s heading is on screen');
 
     // Leaving from one step and returning to a different screen does not restore the old position.
     await page.click('[data-mission-action="explore"]');

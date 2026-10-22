@@ -1,0 +1,156 @@
+// Critical family journeys, written to run in Chromium (default) or WebKit: BROWSER=webkit npm run test:e2e:webkit.
+// WebKit here is Playwright's WebKit build with iPad emulation, not Safari on a real iPad.
+// Correct answers come from the independent answer keys, never from the data being tested.
+import { test, before, after } from 'node:test';
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { chromium, webkit, devices } from 'playwright';
+import { startStaticServer } from './static-server.js';
+import { ANSWER_KEY } from '../data/quiz-answer-key.js';
+import { MISSION_ANSWER_KEY } from '../data/mission-answer-key.js';
+
+const engineName = process.env.BROWSER ?? 'chromium';
+const engine = { chromium, webkit }[engineName];
+if (!engine) throw new Error(`Unknown BROWSER "${engineName}"`);
+const quizQuestions = JSON.parse(readFileSync(new URL('../../src/data/quiz.json', import.meta.url), 'utf8'));
+const missions = JSON.parse(readFileSync(new URL('../../src/data/missions.json', import.meta.url), 'utf8'));
+let server;
+let browser;
+
+before(async () => {
+  server = await startStaticServer(process.env.DIST_DIR ?? 'dist');
+  browser = await engine.launch(engineName === 'chromium' ? { args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] } : {});
+});
+
+after(async () => {
+  await browser?.close();
+  await server?.close();
+});
+
+const ipad = (landscape = false) => {
+  const device = { ...devices[landscape ? 'iPad Mini landscape' : 'iPad Mini'] };
+  delete device.defaultBrowserType; // the same iPad emulation is used with either engine
+  return device;
+};
+
+async function openPage(path = '', options = ipad()) {
+  const context = await browser.newContext(options);
+  const page = await context.newPage();
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.goto(server.url + path);
+  await page.waitForSelector('#info-panel article');
+  // The 3D view either loads or falls back; both must leave every activity usable.
+  await page.waitForSelector('#scene[data-scene-state="ready"], #scene[data-scene-state="fallback"]', { timeout: 20000 });
+  return { page, context, errors };
+}
+
+const panelBody = page => page.locator('#info-panel article.panel').last().getAttribute('data-body');
+const overflow = page => page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+
+async function smallTargets(page) {
+  return page.evaluate(() => [...document.querySelectorAll('button, input:not([type="radio"]), select, summary, .planet-card__source')]
+    .filter(node => node.getClientRects().length && !node.closest('[hidden]') && !node.classList.contains('scene-label') && !node.classList.contains('skip-link'))
+    .map(node => ({ name: node.id || node.dataset.quizAction || node.dataset.missionAction || node.dataset.experimentAction || node.textContent.trim().slice(0, 30), box: node.getBoundingClientRect() }))
+    .filter(({ box }) => box.width < 44 || box.height < 44)
+    .map(({ name, box }) => `${name} ${Math.round(box.width)}×${Math.round(box.height)}`));
+}
+
+test(`[${engineName}] explore: choose worlds, use the help and the activity bar`, async () => {
+  const { page, context, errors } = await openPage();
+  await page.tap('.body-selector__button[data-body="saturn"]');
+  assert.equal(await panelBody(page), 'saturn');
+  assert.match(await page.locator('#info-panel').innerText(), /no solid surface/i);
+  await page.tap('[data-control="next"]');
+  assert.equal(await panelBody(page), 'uranus');
+  await page.tap('.explore-help summary');
+  assert.match(await page.locator('.explore-help').innerText(), /round buttons/);
+  assert.equal(await page.getAttribute('#explore-entry', 'aria-current'), 'page');
+  assert.deepEqual(await smallTargets(page), []);
+  assert.equal(await overflow(page), 0);
+  assert.deepEqual(errors, []);
+  await context.close();
+});
+
+test(`[${engineName}] quiz: a full round with feedback, leaving and resuming`, async () => {
+  const { page, context, errors } = await openPage();
+  await page.tap('#quiz-entry');
+  await page.tap('[data-quiz-action="start"]');
+  for (let i = 1; i <= 5; i++) {
+    const text = (await page.locator('.quiz-question').textContent()).trim();
+    const question = quizQuestions.find(q => q.question === text);
+    const expected = ANSWER_KEY[question.id].answer;
+    if (i === 2) {
+      await page.tap('[data-quiz-action="leave"]');
+      assert.equal(await panelBody(page), 'overview');
+      await page.tap('.quiz-resume [data-quiz-action="resume"]');
+      assert.equal((await page.locator('.quiz-question').textContent()).trim(), text, 'the same question is waiting');
+    }
+    await page.locator('.quiz-answer', { hasText: expected }).first().tap();
+    assert.equal(await page.locator('.quiz-feedback').getAttribute('data-correct'), 'true', question.id);
+    assert.deepEqual(await smallTargets(page), []);
+    await page.tap('[data-quiz-action="next"]');
+  }
+  assert.match(await page.locator('#info-panel h2').textContent(), /You got 5 out of 5!/);
+  assert.deepEqual(errors, []);
+  await context.close();
+});
+
+test(`[${engineName}] mission: complete “Meet our rocky neighbours”`, async () => {
+  const { page, context, errors } = await openPage('', ipad(true));
+  const mission = missions.find(m => m.id === 'rocky-neighbours');
+  await page.tap('#missions-entry');
+  await page.tap('.mission-card[data-mission="rocky-neighbours"] [data-mission-action="choose"]');
+  await page.tap('[data-mission-action="start"]');
+  for (const step of mission.steps) {
+    if (step.type === 'find') {
+      await page.tap('[data-mission-action="explore"]');
+      assert.equal(await panelBody(page), step.target);
+      await page.tap('.mission-bar [data-mission-action="found-here"]');
+    } else {
+      await page.locator('.quiz-answer', { hasText: MISSION_ANSWER_KEY[mission.id][step.id].answer }).first().tap();
+    }
+    assert.equal(await page.locator('.quiz-feedback').getAttribute('data-correct'), 'true', step.id);
+    await page.tap('[data-mission-action="next"]');
+  }
+  assert.equal(await page.locator('#info-panel article.missions').getAttribute('data-mission-screen'), 'recap');
+  assert.deepEqual(await smallTargets(page), []);
+  assert.equal(await overflow(page), 0);
+  assert.deepEqual(errors, []);
+  await context.close();
+});
+
+test(`[${engineName}] experiments: gravity lab and tiny solar system, with settings kept`, async () => {
+  const { page, context, errors } = await openPage();
+  await page.tap('#experiments-entry');
+  await page.tap('.mission-card[data-experiment="gravity-lab"] [data-experiment-action="choose"]');
+  await page.tap('[data-experiment-action="reveal"]');
+  assert.match(await page.locator('.experiment-result').innerText(), /10 kg × 3\.7 m\/s² = 37 N/);
+  await page.tap('[data-experiment-action="list"]');
+  await page.tap('.mission-card[data-experiment="tiny-solar-system"] [data-experiment-action="choose"]');
+  await page.fill('#experiment-earth-diameter', '2.25');
+  assert.equal(await page.inputValue('#experiment-earth-diameter-slider'), '2.25');
+  await page.tap('[data-experiment-action="reveal"]');
+  assert.match(await page.locator('.experiment-result').innerText(), /With Earth 2\.25 cm wide/);
+  await page.tap('[data-experiment-action="leave"]');
+  await page.tap('#experiments-entry');
+  assert.equal(await page.inputValue('#experiment-earth-diameter'), '2.25', 'settings kept for this visit');
+  assert.deepEqual(await smallTargets(page), []);
+  assert.equal(await overflow(page), 0);
+  assert.deepEqual(errors, []);
+  await context.close();
+});
+
+test(`[${engineName}] 2D view, 200% text and portrait/landscape iPad layouts`, async () => {
+  for (const landscape of [false, true]) {
+    const { page, context, errors } = await openPage('?view=2d', ipad(landscape));
+    assert.equal(await page.getAttribute('#scene', 'data-scene-state'), 'fallback');
+    await page.addStyleTag({ content: 'html { font-size: 200% !important; }' });
+    for (const entry of ['#missions-entry', '#experiments-entry', '#quiz-entry', '#explore-entry']) {
+      await page.tap(entry);
+      assert.ok(await overflow(page) <= 1, `${landscape ? 'landscape' : 'portrait'} ${entry}: ${await overflow(page)}px sideways`);
+    }
+    assert.deepEqual(errors, []);
+    await context.close();
+  }
+});

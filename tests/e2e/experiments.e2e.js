@@ -310,10 +310,12 @@ test('quiz and mission progress stay intact while experimenting', async () => {
   await openExperiment(page, 'gravity-lab');
   await page.click('[data-experiment-action="reveal"]');
   await page.click('[data-experiment-action="reset"]');
-  assert.match(await page.locator('.mission-bar').textContent(), /Step 1 of 5/);
-  assert.equal(await page.locator('.quiz-resume:not(.mission-bar)').count(), 1);
-  assert.match(await page.locator('#missions-entry').textContent(), /Step 1 of 5/);
+  assert.equal(await page.locator('.mission-bar, .quiz-resume').count(), 0, 'other activities’ bars do not crowd the experiment');
+  assert.match(await page.locator('#missions-entry').textContent(), /Step 1 of 5/, 'the activity bar still shows progress');
   assert.match(await page.locator('#quiz-entry').textContent(), /Question 1 of 5/);
+  await page.click('[data-experiment-action="leave"]');
+  assert.match(await page.locator('.mission-bar').textContent(), /Step 1 of 5/, 'back to exploring, both wait');
+  assert.equal(await page.locator('.quiz-resume:not(.mission-bar)').count(), 1);
 
   await page.click('.quiz-resume:not(.mission-bar) [data-quiz-action="resume"]');
   assert.equal(await page.locator('#info-panel article.quiz').getAttribute('data-quiz-status'), 'feedback');

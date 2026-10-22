@@ -2,14 +2,21 @@
 
 A child-friendly solar system explorer. Fly around the Sun and the eight planets in 3D and find out what each world is like, with facts and measurements from NASA.
 
+## Release status
+
+First family release candidate (Release 1): the explorer, Planet Quiz, Discovery Missions and Science Experiments, checked for iPad use. Automated tests cover Chromium, WebKit (iPad emulation) and the 2D view. Testing on a real iPad, in Safari and with VoiceOver is done by hand with [docs/RELEASE_CHECKLIST.md](docs/RELEASE_CHECKLIST.md) before each release. Progress and settings last only until the page is closed or reloaded. Nothing is stored, and there are no accounts or tracking.
+
 ## What you can do
+
+The activity bar at the top switches between **Explore**, **Discovery Missions**, **Science Experiments** and **Planet Quiz**, and highlights the one you are in. Each activity has a visible way back to exploring, and its progress waits for you. **How to explore**, under the 3D view, gives short tips for choosing, turning, zooming and pausing.
+
 
 - **Explore in 3D:** choose the Sun or any planet with the buttons, by tapping it in the picture, or from the planet list. The camera flies there smoothly. Drag to turn the view, pinch or scroll to zoom, or use the on-screen zoom and rotate buttons.
 - **Learn about each world:** size, mass, gravity, distance from the Sun, length of day and year, temperature, dated moon counts, what it is made of and amazing facts, each linked to its NASA source.
 - **Simple or detailed:** switch between short child-friendly explanations and fuller detail. The choice is remembered.
 - **Compare with Earth:** how wide, how heavy you would feel, how long a day and year last, and how far from the Sun.
 - **Stay in control:** go back to the whole solar system, step to the next or previous world, pause the planets, and turn surface detail or labels on and off.
-- **Discovery Missions:** three short guided missions: *Meet our rocky neighbours*, *Giants without ground* and *Understanding space*. Each has an introduction, 3–5 numbered steps shown one at a time, and a recap. A step asks you to explore a world and press “I’ve found it” when you spot something (just opening the world doesn’t count), or to choose an answer (for Saturn and Uranus, after exploring that planet). Every discovery shows a short explanation with its NASA or ESA source. You can leave any time with “Back to exploring”, and a “Back to the mission” bar keeps your place for this visit, returning you to the same spot on the page. Missions and the quiz keep separate progress.
+- **Discovery Missions:** three short guided missions: *Meet our rocky neighbours*, *Giants without ground* and *Understanding space*. Each has an introduction, 3–5 numbered steps shown one at a time, and a recap. A step asks you to explore a world and press “I’ve found it” when you spot something (just opening the world doesn’t count), or to choose an answer (for Saturn and Uranus, after exploring that planet). Every discovery shows a short explanation with its NASA source. You can leave any time with “Back to exploring”, and a “Back to the mission” bar keeps your place for this visit, returning you to the same spot on the page. Missions and the quiz keep separate progress.
 - **Science Experiments:** two hands-on learning models. In the **Gravity lab**, choose a mass in kilograms and a planet, make an optional guess, then see the pull of gravity in newtons worked out with F = m × g, compared with Earth. Your mass stays the same, and the giant planets are measured at the 1-bar level because they have no ground. In **Build a tiny solar system**, choose a model Earth from 0.5 to 5 cm wide and see how big the Sun and planets would be, and how far apart, at that scale. Results show which numbers are NASA measurements and which are calculated. Settings are kept for this visit.
 - **Planet Quiz:** five friendly multiple-choice questions per round, with three answers each. Every answer gets a short explanation and a NASA source link. "Explore this planet", or "Back to exploring" before answering, keeps your place in the quiz so you can look something up and come back. There is no timer and no penalty, and progress is only kept for this visit.
 - **Honest science:** the 3D picture is clearly labelled as not to scale, every scale change is explained, and the gas and ice giants are never shown as having ground to stand on.
@@ -48,6 +55,8 @@ npm test            # unit tests: data, citations, quiz questions and scoring, m
 npm run build
 npx playwright install chromium   # first time only
 npm run test:e2e    # browser tests against the build in dist/
+npx playwright install webkit     # optional, first time only
+npm run test:e2e:webkit           # critical journeys in WebKit with iPad emulation (CI runs this too)
 ```
 
 `npm run preview` serves the production build locally.
@@ -55,7 +64,7 @@ npm run test:e2e    # browser tests against the build in dist/
 ## Repository guide
 
 - [AGENTS.md](AGENTS.md): contributor rules; agent.md is a pointer.
-- `src/data/`: planet and Sun JSON, quiz questions, mission and experiment definitions, the source list and the JSON Schemas. Every value, question and mission step cites a NASA or ESA source.
+- `src/data/`: planet and Sun JSON, quiz questions, mission and experiment definitions, the source list and the JSON Schemas. Every value, question and mission step cites a NASA source.
 - `src/utils/`, `src/features/`, `src/components/`, `src/scenes/`: pure helpers, navigation and wiring, reusable UI, and the Three.js scene. See [architecture](docs/ARCHITECTURE.md).
 - `public/assets/`: bundled assets only after licence review (none yet; surface patterns are drawn by code).
 - `tests/`: mirrors `src/`; `tests/e2e/` holds the browser tests. No colocated tests.

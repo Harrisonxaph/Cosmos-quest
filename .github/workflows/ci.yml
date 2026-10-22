@@ -22,6 +22,10 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Browser tests (navigation, panels, fallback, phone layout)
         run: npm run test:e2e
+      - name: Install WebKit for the critical journeys
+        run: npx playwright install --with-deps webkit
+      - name: Critical journeys in WebKit (iPad emulation, not a real iPad)
+        run: npm run test:e2e:webkit
       - uses: actions/upload-pages-artifact@v3
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         with:

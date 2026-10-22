@@ -132,6 +132,7 @@ export function startExplorer({ elements, bodies, planets, earth, sourcesById, q
   // Where the child was reading a mission or experiment screen when they left. Restored only when
   // they come back to that same screen; advancing to another step or screen starts at the top.
   const readingViews = {
+    quiz: () => `${quiz.getState().status}|${quiz.getState().index}`,
     missions: () => screenKey(missions.getState()),
     experiments: () => experimentScreenKey(experiments.getState()),
   };
@@ -142,6 +143,7 @@ export function startExplorer({ elements, bodies, planets, earth, sourcesById, q
     if (active && elements.panel.contains(active) && active !== elements.panel) {
       if (active.dataset.missionAction) focus = `[data-mission-action="${active.dataset.missionAction}"]`;
       else if (active.dataset.experimentAction) focus = `[data-experiment-action="${active.dataset.experimentAction}"]`;
+      else if (active.dataset.quizAction) focus = `[data-quiz-action="${active.dataset.quizAction}"]`;
       else if (active.dataset.answer) focus = `[data-answer="${active.dataset.answer}"]`;
       else if (active.id) focus = `#${active.id}`;
     }
@@ -191,8 +193,10 @@ export function startExplorer({ elements, bodies, planets, earth, sourcesById, q
         onExperiments: () => dispatch({ type: 'openExperiments' }),
       });
     }
-    const resume = state.view !== 'quiz' && quizState.status !== 'idle' ? renderQuizResume(quizState, () => dispatch({ type: 'openQuiz' })) : null;
-    const activeMission = state.view !== 'missions' ? resumableMission(missions.getState(), missionDefinitions) : null;
+    // "Waiting" bars appear only while exploring, so they never crowd another activity; the activity bar shows progress too.
+    const exploring = state.view === 'overview' || state.view === 'body';
+    const resume = exploring && quizState.status !== 'idle' ? renderQuizResume(quizState, () => dispatch({ type: 'openQuiz' })) : null;
+    const activeMission = exploring ? resumableMission(missions.getState(), missionDefinitions) : null;
     const missionBar = activeMission ? renderMissionBar(missions.getState(), activeMission, {
       place: placeOf(state),
       bodiesById,
@@ -253,6 +257,8 @@ export function startExplorer({ elements, bodies, planets, earth, sourcesById, q
     pauseButton.setAttribute('aria-label', state.paused ? 'Play planet motion' : 'Pause planet motion');
     control('overview').disabled = state.view === 'overview';
     selector.setActive(state.selectedId);
+    if (state.view === 'overview' || state.view === 'body') elements.exploreEntry.setAttribute('aria-current', 'page');
+    else elements.exploreEntry.removeAttribute('aria-current');
     if (state.view === 'quiz') elements.quizEntry.setAttribute('aria-current', 'page');
     else elements.quizEntry.removeAttribute('aria-current');
     if (state.view === 'missions') elements.missionsEntry.setAttribute('aria-current', 'page');
@@ -300,9 +306,12 @@ export function startExplorer({ elements, bodies, planets, earth, sourcesById, q
     if (selectionChanged) {
       const target = formatHash(state);
       if (location.hash !== target && !(target === '#/' && location.hash === '')) history.pushState(null, '', target);
+      // Entering an activity moves focus to its heading, which is announced; saying the name in the live
+      // region as well would be read twice. When a saved position is restored instead, say where they are.
+      const activityName = { quiz: 'Planet Quiz', missions: 'Discovery Missions', experiments: 'Science Experiments' }[state.view];
       elements.status.textContent = state.view === 'body'
         ? `Now exploring ${bodiesById[state.selectedId].name}`
-        : { quiz: 'Planet Quiz', missions: 'Discovery Missions', experiments: 'Science Experiments' }[state.view] ?? 'Showing the whole solar system';
+        : activityName ? (reading ? `Back to ${activityName}` : (previous ? '' : activityName)) : 'Showing the whole solar system';
       scene?.focus(state.selectedId);
       selector.revealActive(state.selectedId, { smooth: Boolean(previous) && !reducedMotion() });
       if (previous) elements.panel.scrollTop = 0;
@@ -345,6 +354,21 @@ export function startExplorer({ elements, bodies, planets, earth, sourcesById, q
     updateControls(state);
   });
 
+  // Explore returns to wherever the child was last exploring: a world, or the whole solar system.
+  let lastExplorePlace = null;
+  nav.subscribe(state => {
+    if (state.view === 'body') lastExplorePlace = state.selectedId;
+    else if (state.view === 'overview') lastExplorePlace = null;
+  });
+  if (nav.getState().view === 'body') lastExplorePlace = nav.getState().selectedId;
+  elements.exploreEntry.addEventListener('click', () => {
+    const state = nav.getState();
+    if (state.view === 'overview' || state.view === 'body') {
+      elements.panel.focus({ preventScroll: true });
+      return;
+    }
+    dispatch(lastExplorePlace ? { type: 'select', id: lastExplorePlace } : { type: 'overview' });
+  });
   elements.experimentsEntry.addEventListener('click', () => {
     if (nav.getState().view === 'experiments') renderPanel(nav.getState(), { focusTarget: true });
     else dispatch({ type: 'openExperiments' });
@@ -423,7 +447,7 @@ export function startExplorer({ elements, bodies, planets, earth, sourcesById, q
   // ----- 3D scene (optional enhancement) -----
   function showFallback(message) {
     elements.sceneContainer.dataset.sceneState = 'fallback';
-    elements.controls.querySelectorAll('[data-needs-3d]').forEach(button => { button.hidden = true; });
+    elements.stage.querySelectorAll('[data-needs-3d]').forEach(node => { node.hidden = true; });
     elements.sceneStatus.hidden = false;
     elements.sceneStatus.textContent = message;
   }
