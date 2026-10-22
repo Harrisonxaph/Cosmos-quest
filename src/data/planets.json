@@ -3,88 +3,408 @@
     "id": "mercury",
     "name": "Mercury",
     "orderFromSun": 1,
+    "kind": "rocky-planet",
+    "hasSolidSurface": true,
+    "hasRings": false,
+    "summary": {
+      "simple": "Mercury is the smallest planet and the closest to the Sun. It is a rocky world only a little bigger than Earth's Moon, and it is the fastest planet.",
+      "detailed": "Mercury is the smallest planet in our solar system and the nearest to the Sun. It is a little more than a third as wide as Earth and only slightly larger than our Moon. It races around the Sun every 88 Earth days, which makes it the fastest planet.",
+      "sourceIds": ["nasa-mercury", "nasa-mercury-facts"]
+    },
+    "measurements": {
+      "sourceIds": ["nasa-fact-sheet", "nasa-mercury-fact-sheet"],
+      "diameterKm": 4879,
+      "diameterType": "equatorial",
+      "volumetricMeanRadiusKm": 2439.7,
+      "massE24Kg": 0.330,
+      "gravityMs2": 3.7,
+      "gravityReference": "surface",
+      "meanDistanceFromSunE6Km": 57.9,
+      "rotationPeriodHours": 1407.6,
+      "dayLengthHours": 4222.6,
+      "orbitalPeriodDays": 88.0,
+      "obliquityDeg": 0.034,
+      "temperatureC": 167,
+      "temperatureReference": "surface-mean"
+    },
+    "temperatureContext": {
+      "simple": "Wild swings! Days can reach 430 °C, but nights fall to −180 °C.",
+      "detailed": "NASA's fact sheet gives a mean of 167 °C, but that average hides huge swings: daytime highs can reach 430 °C, and nights can fall to −180 °C.",
+      "sourceIds": ["nasa-fact-sheet", "nasa-mercury-facts"]
+    },
+    "moons": {
+      "count": 0,
+      "asOf": "2026-07-31",
+      "sourceIds": ["nasa-moon-counts", "nasa-mercury-facts"],
+      "note": "Mercury has no moons and no rings."
+    },
+    "composition": {
+      "simple": "Rock on the outside, with a giant metal core that fills most of the inside.",
+      "detailed": "Mercury has a huge metallic core about 2,074 km in radius, about 85% of the planet's radius, and there is evidence that it is partly molten. Above it are a rocky mantle and crust only about 400 km thick. Instead of a true atmosphere it has a thin exosphere made mostly of oxygen, sodium, hydrogen, helium and potassium.",
+      "sourceIds": ["nasa-mercury-facts"]
+    },
     "facts": [
-      {
-        "text": "Mercury is the smallest planet in our solar system.",
-        "sourceId": "nasa-mercury"
-      }
+      { "text": "Mercury is the smallest planet in our solar system.", "sourceId": "nasa-mercury" },
+      { "text": "One solar day on Mercury, from one sunrise to the next, lasts 176 Earth days: just over two Mercury years.", "sourceId": "nasa-mercury-facts" },
+      { "text": "From Mercury, the Sun would look more than three times as large as it does from Earth.", "sourceId": "nasa-mercury-facts" },
+      { "text": "Mercury is the second densest planet, after Earth.", "sourceId": "nasa-mercury-facts" }
     ]
   },
   {
     "id": "venus",
     "name": "Venus",
     "orderFromSun": 2,
+    "kind": "rocky-planet",
+    "hasSolidSurface": true,
+    "hasRings": false,
+    "summary": {
+      "simple": "Venus is the hottest planet in our solar system. It is nearly as big as Earth, but it is wrapped in thick clouds of acid and it spins backwards.",
+      "detailed": "Venus is nearly as big around as Earth and has a similar structure: an iron core, a hot rocky mantle and a thin crust. That is why it is sometimes called Earth's twin. But it has a thick carbon dioxide atmosphere, clouds of sulfuric acid and the hottest surface of any planet in our solar system.",
+      "sourceIds": ["nasa-venus", "nasa-venus-facts"]
+    },
+    "measurements": {
+      "sourceIds": ["nasa-fact-sheet", "nasa-venus-fact-sheet"],
+      "diameterKm": 12104,
+      "diameterType": "equatorial",
+      "volumetricMeanRadiusKm": 6051.8,
+      "massE24Kg": 4.87,
+      "gravityMs2": 8.9,
+      "gravityReference": "surface",
+      "meanDistanceFromSunE6Km": 108.2,
+      "rotationPeriodHours": -5832.5,
+      "dayLengthHours": 2802.0,
+      "orbitalPeriodDays": 224.7,
+      "obliquityDeg": 177.4,
+      "temperatureC": 464,
+      "temperatureReference": "surface-mean"
+    },
+    "temperatureContext": {
+      "simple": "About 464 °C: hot enough to melt lead.",
+      "detailed": "NASA's fact sheet gives a mean surface temperature of 464 °C, and NASA describes the surface as hot enough to melt lead.",
+      "sourceIds": ["nasa-fact-sheet", "nasa-venus-facts"]
+    },
+    "moons": {
+      "count": 0,
+      "asOf": "2026-07-31",
+      "sourceIds": ["nasa-moon-counts", "nasa-venus-facts"],
+      "note": "Venus and Mercury are the only planets without a moon. Venus does have a quasi-satellite, an asteroid called Zoozve that stays near it."
+    },
+    "composition": {
+      "simple": "Rock and metal like Earth, under a thick blanket of carbon dioxide gas and acid clouds.",
+      "detailed": "Like Earth, Venus has an iron core surrounded by a hot rocky mantle and a thin crust. Its atmosphere is mostly carbon dioxide, with dense clouds of sulfuric acid. The pressure at the surface is about 93 times the air pressure at sea level on Earth.",
+      "sourceIds": ["nasa-venus-facts"]
+    },
     "facts": [
-      {
-        "text": "Venus is the hottest planet in our solar system.",
-        "sourceId": "nasa-venus"
-      }
+      { "text": "Venus is the hottest planet in our solar system.", "sourceId": "nasa-venus" },
+      { "text": "Venus spins backwards compared with Earth.", "sourceId": "nasa-venus-facts" },
+      { "text": "Venus takes 243 Earth days to spin around once, which is longer than its whole year of 225 Earth days.", "sourceId": "nasa-venus-facts" },
+      { "text": "The air on Venus presses down as hard as being more than 900 metres (3,000 feet) underwater on Earth.", "sourceId": "nasa-venus-facts" }
     ]
   },
   {
     "id": "earth",
     "name": "Earth",
     "orderFromSun": 3,
+    "kind": "rocky-planet",
+    "hasSolidSurface": true,
+    "hasRings": false,
+    "summary": {
+      "simple": "Our home! Earth is the only planet known to support life, and about 71% of its surface is covered by ocean.",
+      "detailed": "Earth is a rocky planet and the only world known to support life. Its global ocean covers about 71% of the surface, and its air is 78% nitrogen, 21% oxygen and 1% other gases. It is the only planet in our solar system with only one moon.",
+      "sourceIds": ["nasa-earth", "nasa-earth-facts"]
+    },
+    "measurements": {
+      "sourceIds": ["nasa-fact-sheet", "nasa-earth-fact-sheet"],
+      "diameterKm": 12756,
+      "diameterType": "equatorial",
+      "volumetricMeanRadiusKm": 6371.0,
+      "massE24Kg": 5.97,
+      "gravityMs2": 9.8,
+      "gravityReference": "surface",
+      "meanDistanceFromSunE6Km": 149.6,
+      "rotationPeriodHours": 23.9,
+      "dayLengthHours": 24.0,
+      "orbitalPeriodDays": 365.2,
+      "obliquityDeg": 23.4,
+      "temperatureC": 15,
+      "temperatureReference": "surface-mean"
+    },
+    "temperatureContext": {
+      "simple": "About 15 °C on average: a welcoming temperature for life.",
+      "detailed": "NASA's fact sheet gives a global mean of 15 °C, and NASA describes Earth's temperature as very hospitable to life. Deep inside, the inner core reaches about 5,400 °C.",
+      "sourceIds": ["nasa-fact-sheet", "nasa-earth-facts"]
+    },
+    "moons": {
+      "count": 1,
+      "asOf": "2026-07-31",
+      "sourceIds": ["nasa-moon-counts", "nasa-earth-facts"],
+      "note": "Our Moon. Earth is the only planet in our solar system with only one moon."
+    },
+    "composition": {
+      "simple": "A metal core, a thick layer of hot rock and a thin rocky crust, with oceans and air on top.",
+      "detailed": "Earth has four main layers: a solid inner core of iron and nickel about 1,221 km in radius, a liquid iron and nickel outer core about 2,300 km thick, a hot, viscous rocky mantle about 2,900 km thick, and a crust that goes about 30 km deep on average under land.",
+      "sourceIds": ["nasa-earth-facts"]
+    },
     "facts": [
-      {
-        "text": "Earth is the only planet known to support life.",
-        "sourceId": "nasa-earth"
-      }
+      { "text": "Earth is the only planet known to support life.", "sourceId": "nasa-earth" },
+      { "text": "Earth's global ocean covers about 71% of the planet's surface.", "sourceId": "nasa-earth-facts" },
+      { "text": "Earth is the only planet in our solar system with only one moon.", "sourceId": "nasa-earth-facts" },
+      { "text": "Earth's air is 78% nitrogen, 21% oxygen and 1% other gases.", "sourceId": "nasa-earth-facts" }
     ]
   },
   {
     "id": "mars",
     "name": "Mars",
     "orderFromSun": 4,
+    "kind": "rocky-planet",
+    "hasSolidSurface": true,
+    "hasRings": false,
+    "summary": {
+      "simple": "Mars is a cold, dusty, rocky planet about half as wide as Earth. Rusty dust makes it look red, and robots are exploring it.",
+      "detailed": "Mars is a rocky planet about half the size of Earth. Iron minerals in its dirt oxidise, or rust, which makes the surface look red. Its atmosphere is thin and made mostly of carbon dioxide, nitrogen and argon, and it is home to Olympus Mons, a volcano more than 40 km tall.",
+      "sourceIds": ["nasa-mars-facts"]
+    },
+    "measurements": {
+      "sourceIds": ["nasa-fact-sheet", "nasa-mars-fact-sheet"],
+      "diameterKm": 6792,
+      "diameterType": "equatorial",
+      "volumetricMeanRadiusKm": 3389.5,
+      "massE24Kg": 0.642,
+      "gravityMs2": 3.7,
+      "gravityReference": "surface",
+      "meanDistanceFromSunE6Km": 228.0,
+      "rotationPeriodHours": 24.6,
+      "dayLengthHours": 24.7,
+      "orbitalPeriodDays": 687.0,
+      "obliquityDeg": 25.2,
+      "temperatureC": -65,
+      "temperatureReference": "surface-mean"
+    },
+    "temperatureContext": {
+      "simple": "Usually freezing: about −65 °C on average, from around 20 °C on a warm day down to −153 °C.",
+      "detailed": "NASA's fact sheet gives a mean of −65 °C. Temperatures on Mars can be as high as about 20 °C or as low as about −153 °C.",
+      "sourceIds": ["nasa-fact-sheet", "nasa-mars-facts"]
+    },
+    "moons": {
+      "count": 2,
+      "asOf": "2026-07-31",
+      "sourceIds": ["nasa-moon-counts", "nasa-mars-facts"],
+      "note": "Phobos and Deimos, two small moons that may be captured asteroids."
+    },
+    "composition": {
+      "simple": "Rock with a metal core, covered in iron-rich dust that has rusted red.",
+      "detailed": "Mars has a core of iron, nickel and sulfur between about 1,500 and 2,100 km in radius, a rocky mantle and a crust. Iron minerals in the Martian dirt have rusted, giving the surface its red colour. The thin atmosphere is mostly carbon dioxide, nitrogen and argon.",
+      "sourceIds": ["nasa-mars-facts"]
+    },
     "facts": [
-      {
-        "text": "Mars has two small moons, Phobos and Deimos.",
-        "sourceId": "nasa-mars"
-      }
+      { "text": "Mars has two small moons, Phobos and Deimos.", "sourceId": "nasa-mars" },
+      { "text": "Olympus Mons on Mars is more than 40 km tall from base to summit, dwarfing Mount Everest.", "sourceId": "nasa-mars-facts" },
+      { "text": "Mars is the only planet we know of inhabited entirely by robots.", "sourceId": "nasa-mars-facts" },
+      { "text": "A day on Mars is called a sol, short for solar day.", "sourceId": "nasa-mars-facts" }
     ]
   },
   {
     "id": "jupiter",
     "name": "Jupiter",
     "orderFromSun": 5,
+    "kind": "gas-giant",
+    "hasSolidSurface": false,
+    "hasRings": true,
+    "summary": {
+      "simple": "Jupiter is the biggest planet: a giant ball of gas about 11 times wider than Earth. There is no solid ground to land on, just swirling clouds and gas.",
+      "detailed": "Jupiter is the largest planet in our solar system and more than twice as massive as all the other planets combined. It is a gas giant made mostly of hydrogen and helium, like the Sun, so it has no true surface. Its stripes and swirls are cold, windy clouds of ammonia and water, and the Great Red Spot is a storm about twice as wide as Earth.",
+      "sourceIds": ["nasa-jupiter", "nasa-jupiter-facts"]
+    },
+    "measurements": {
+      "sourceIds": ["nasa-fact-sheet", "nasa-jupiter-fact-sheet", "nasa-fact-sheet-notes"],
+      "diameterKm": 142984,
+      "diameterType": "equatorial",
+      "volumetricMeanRadiusKm": 69911,
+      "massE24Kg": 1898,
+      "gravityMs2": 23.1,
+      "gravityReference": "1-bar",
+      "meanDistanceFromSunE6Km": 778.5,
+      "rotationPeriodHours": 9.9,
+      "dayLengthHours": 9.9,
+      "orbitalPeriodDays": 4331,
+      "obliquityDeg": 3.1,
+      "temperatureC": -110,
+      "temperatureReference": "1-bar-mean"
+    },
+    "temperatureContext": {
+      "simple": "About −110 °C high in its clouds, at the height where the gas pressure matches Earth's air at sea level.",
+      "detailed": "NASA's fact sheet gives −110 °C at the 1-bar level: the height in the atmosphere where the pressure is about the same as Earth's air at sea level. Jupiter has no solid surface, so scientists use this level to compare giant planets.",
+      "sourceIds": ["nasa-fact-sheet", "nasa-fact-sheet-notes"]
+    },
+    "moons": {
+      "count": 115,
+      "asOf": "2026-04",
+      "sourceIds": ["nasa-moon-counts", "nasa-jupiter-facts"],
+      "note": "NASA's fact sheet still lists 95 (last updated March 2025). The count keeps growing as new moons are confirmed."
+    },
+    "composition": {
+      "simple": "Mostly hydrogen and helium gas, like the Sun. Jupiter has no solid surface!",
+      "detailed": "Mostly hydrogen and helium, similar to the Sun. As a gas giant, Jupiter has no true surface for a spacecraft to land on. Its stripes are clouds of ammonia and water, and its faint rings are made of small, dark particles.",
+      "sourceIds": ["nasa-jupiter-facts"]
+    },
     "facts": [
-      {
-        "text": "Jupiter is the largest planet in our solar system.",
-        "sourceId": "nasa-jupiter"
-      }
+      { "text": "Jupiter is the largest planet in our solar system.", "sourceId": "nasa-jupiter" },
+      { "text": "Jupiter has the shortest day in the solar system: about 9.9 hours.", "sourceId": "nasa-jupiter-facts" },
+      { "text": "The Great Red Spot is a giant storm about twice as wide as Earth.", "sourceId": "nasa-jupiter-facts" },
+      { "text": "If Earth were the size of a grape, Jupiter would be about as big as a basketball.", "sourceId": "nasa-jupiter-facts" }
     ]
   },
   {
     "id": "saturn",
     "name": "Saturn",
     "orderFromSun": 6,
+    "kind": "gas-giant",
+    "hasSolidSurface": false,
+    "hasRings": true,
+    "summary": {
+      "simple": "Saturn is a giant ball of gas with beautiful rings of ice and rock. It is so light for its size that it could float in a bathtub, if one were big enough!",
+      "detailed": "Saturn is the second-largest planet, about 9 times wider than Earth. Like Jupiter, it is a gas giant made mostly of hydrogen and helium, with no true surface. It is the only planet with an average density less than water, and its rings are made of billions of chunks of ice and rock.",
+      "sourceIds": ["nasa-saturn", "nasa-saturn-facts"]
+    },
+    "measurements": {
+      "sourceIds": ["nasa-fact-sheet", "nasa-saturn-fact-sheet", "nasa-fact-sheet-notes"],
+      "diameterKm": 120536,
+      "diameterType": "equatorial",
+      "volumetricMeanRadiusKm": 58232,
+      "massE24Kg": 568,
+      "gravityMs2": 9.0,
+      "gravityReference": "1-bar",
+      "meanDistanceFromSunE6Km": 1432.0,
+      "rotationPeriodHours": 10.7,
+      "dayLengthHours": 10.7,
+      "orbitalPeriodDays": 10747,
+      "obliquityDeg": 26.7,
+      "temperatureC": -140,
+      "temperatureReference": "1-bar-mean"
+    },
+    "temperatureContext": {
+      "simple": "About −140 °C high in its clouds, at the height where the gas pressure matches Earth's air at sea level.",
+      "detailed": "NASA's fact sheet gives −140 °C at the 1-bar level: the height in the atmosphere where the pressure is about the same as Earth's air at sea level. Saturn has no solid surface, so scientists use this level to compare giant planets.",
+      "sourceIds": ["nasa-fact-sheet", "nasa-fact-sheet-notes"]
+    },
+    "moons": {
+      "count": 293,
+      "asOf": "2026-06",
+      "sourceIds": ["nasa-moon-counts", "nasa-saturn"],
+      "note": "NASA's Saturn facts page gave 274 confirmed moons as of March 2025. Saturn has more known moons than any other planet."
+    },
+    "composition": {
+      "simple": "Mostly hydrogen and helium gas, with rings of ice and rock. Saturn has no solid surface!",
+      "detailed": "Mostly hydrogen and helium. As a gas giant, Saturn has no true surface. Its rings are made of billions of small chunks of ice and rock coated with other materials such as dust.",
+      "sourceIds": ["nasa-saturn-facts"]
+    },
     "facts": [
-      {
-        "text": "Saturn is a gas giant with a spectacular system of rings.",
-        "sourceId": "nasa-saturn"
-      }
+      { "text": "Saturn is a gas giant with a spectacular system of rings.", "sourceId": "nasa-saturn" },
+      { "text": "Saturn is the only planet in our solar system with an average density less than water.", "sourceId": "nasa-saturn-facts" },
+      { "text": "Saturn's rings are made of billions of small chunks of ice and rock.", "sourceId": "nasa-saturn-facts" },
+      { "text": "Saturn's largest moon, Titan, is bigger than the planet Mercury.", "sourceId": "nasa-saturn" }
     ]
   },
   {
     "id": "uranus",
     "name": "Uranus",
     "orderFromSun": 7,
+    "kind": "ice-giant",
+    "hasSolidSurface": false,
+    "hasRings": true,
+    "summary": {
+      "simple": "Uranus is an icy giant planet that spins on its side. Methane gas in its air gives it a blue-green colour.",
+      "detailed": "Uranus is an ice giant about four times wider than Earth. Most of its mass is a hot, dense fluid of 'icy' materials (water, methane and ammonia) above a small rocky core, so it has no true surface. Its axis is tilted by about 98°, so it rotates on its side, and methane in its atmosphere gives it a blue-green colour.",
+      "sourceIds": ["nasa-uranus-facts", "nasa-fact-sheet"]
+    },
+    "measurements": {
+      "sourceIds": ["nasa-fact-sheet", "nasa-uranus-fact-sheet", "nasa-fact-sheet-notes"],
+      "diameterKm": 51118,
+      "diameterType": "equatorial",
+      "volumetricMeanRadiusKm": 25362,
+      "massE24Kg": 86.8,
+      "gravityMs2": 8.7,
+      "gravityReference": "1-bar",
+      "meanDistanceFromSunE6Km": 2867.0,
+      "rotationPeriodHours": -17.2,
+      "dayLengthHours": 17.2,
+      "orbitalPeriodDays": 30589,
+      "obliquityDeg": 97.8,
+      "temperatureC": -195,
+      "temperatureReference": "1-bar-mean"
+    },
+    "temperatureContext": {
+      "simple": "About −195 °C high in its clouds, at the height where the gas pressure matches Earth's air at sea level.",
+      "detailed": "NASA's fact sheet gives −195 °C at the 1-bar level, where the pressure is about the same as Earth's air at sea level. NASA has measured a minimum atmospheric temperature of about −224 °C (49 K) on Uranus.",
+      "sourceIds": ["nasa-fact-sheet", "nasa-fact-sheet-notes", "nasa-uranus-facts"]
+    },
+    "moons": {
+      "count": 29,
+      "asOf": "2026-07-31",
+      "sourceIds": ["nasa-moon-counts"],
+      "note": "NASA's Uranus facts page lists 28 known moons. Counts can differ between pages while new discoveries are being confirmed."
+    },
+    "composition": {
+      "simple": "A hot, thick fluid of water, methane and ammonia 'ices' around a small rocky core, under hydrogen and helium gas. Uranus has no solid surface!",
+      "detailed": "At least 80% of Uranus's mass is a hot, dense fluid of 'icy' materials (water, methane and ammonia) above a small rocky core. Its atmosphere is mostly hydrogen and helium, with some methane. As an ice giant, Uranus has no true surface.",
+      "sourceIds": ["nasa-uranus-facts"]
+    },
     "facts": [
-      {
-        "text": "Uranus rotates on its side.",
-        "sourceId": "nasa-uranus"
-      }
+      { "text": "Uranus rotates on its side.", "sourceId": "nasa-uranus" },
+      { "text": "Uranus was the first planet found with a telescope, discovered by William Herschel in 1781.", "sourceId": "nasa-uranus-facts" },
+      { "text": "Uranus's moons are named after characters from the works of William Shakespeare and Alexander Pope.", "sourceId": "nasa-uranus-facts" },
+      { "text": "Only one spacecraft, Voyager 2, has explored Uranus, with a close approach in January 1986.", "sourceId": "nasa-uranus" }
     ]
   },
   {
     "id": "neptune",
     "name": "Neptune",
     "orderFromSun": 8,
+    "kind": "ice-giant",
+    "hasSolidSurface": false,
+    "hasRings": true,
+    "summary": {
+      "simple": "Neptune is the farthest planet from the Sun: a dark, cold, icy giant with winds faster than the speed of sound.",
+      "detailed": "Neptune is the eighth and most distant planet, more than 30 times as far from the Sun as Earth. It is an ice giant about four times wider than Earth, with a hot, dense fluid of water, methane and ammonia above a small rocky core and no solid surface. Its winds can blow at more than 2,000 km/h.",
+      "sourceIds": ["nasa-neptune", "nasa-neptune-facts"]
+    },
+    "measurements": {
+      "sourceIds": ["nasa-fact-sheet", "nasa-neptune-fact-sheet", "nasa-fact-sheet-notes"],
+      "diameterKm": 49528,
+      "diameterType": "equatorial",
+      "volumetricMeanRadiusKm": 24622,
+      "massE24Kg": 102,
+      "gravityMs2": 11.0,
+      "gravityReference": "1-bar",
+      "meanDistanceFromSunE6Km": 4515.0,
+      "rotationPeriodHours": 16.1,
+      "dayLengthHours": 16.1,
+      "orbitalPeriodDays": 59800,
+      "obliquityDeg": 28.3,
+      "temperatureC": -200,
+      "temperatureReference": "1-bar-mean"
+    },
+    "temperatureContext": {
+      "simple": "About −200 °C high in its clouds, at the height where the gas pressure matches Earth's air at sea level.",
+      "detailed": "NASA's fact sheet gives −200 °C at the 1-bar level: the height in the atmosphere where the pressure is about the same as Earth's air at sea level. Neptune has no solid surface, so scientists use this level to compare giant planets.",
+      "sourceIds": ["nasa-fact-sheet", "nasa-fact-sheet-notes"]
+    },
+    "moons": {
+      "count": 16,
+      "asOf": "2026-07-31",
+      "sourceIds": ["nasa-moon-counts", "nasa-neptune-facts"],
+      "note": "Its largest moon, Triton, orbits in the opposite direction to Neptune's spin."
+    },
+    "composition": {
+      "simple": "A hot, thick fluid of water, methane and ammonia 'ices' around a small rocky core, under hydrogen and helium gas. Neptune has no solid surface!",
+      "detailed": "Most of Neptune's mass is a hot, dense fluid of 'icy' materials (water, methane and ammonia) above a small rocky core. Its atmosphere is mostly hydrogen and helium with a little methane, which absorbs other colours and reflects blue. Neptune does not have a solid surface.",
+      "sourceIds": ["nasa-neptune-facts"]
+    },
     "facts": [
-      {
-        "text": "Neptune is the eighth and most distant planet from the Sun.",
-        "sourceId": "nasa-neptune"
-      }
+      { "text": "Neptune is the eighth and most distant planet from the Sun.", "sourceId": "nasa-neptune" },
+      { "text": "Neptune was the first planet located through mathematical predictions rather than through observations of the sky.", "sourceId": "nasa-neptune" },
+      { "text": "Neptune is the only planet in our solar system not visible to the naked eye.", "sourceId": "nasa-neptune-facts" },
+      { "text": "Neptune's winds can blow at more than 2,000 km/h, about three times as fast as Jupiter's strongest winds.", "sourceId": "nasa-neptune-facts" }
     ]
   }
 ]

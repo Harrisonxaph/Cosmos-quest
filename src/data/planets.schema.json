@@ -1,70 +1,148 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Cosmos Quest planets",
+  "description": "The eight planets in order from the Sun. The Sun (src/data/sun.json) uses definitions/body from this file.",
   "type": "array",
   "minItems": 8,
   "maxItems": 8,
-  "items": {
-    "type": "object",
-    "additionalProperties": false,
-    "required": [
-      "id",
-      "name",
-      "orderFromSun",
-      "facts"
-    ],
-    "properties": {
-      "id": {
-        "enum": [
-          "mercury",
-          "venus",
-          "earth",
-          "mars",
-          "jupiter",
-          "saturn",
-          "uranus",
-          "neptune"
-        ]
-      },
-      "name": {
-        "enum": [
-          "Mercury",
-          "Venus",
-          "Earth",
-          "Mars",
-          "Jupiter",
-          "Saturn",
-          "Uranus",
-          "Neptune"
-        ]
-      },
-      "orderFromSun": {
-        "type": "integer",
-        "minimum": 1,
-        "maximum": 8
-      },
-      "facts": {
-        "type": "array",
-        "minItems": 1,
-        "items": {
+  "items": { "$ref": "#/definitions/planet" },
+  "definitions": {
+    "sourceId": {
+      "type": "string",
+      "pattern": "^nasa-[a-z]+(-[a-z]+)*$"
+    },
+    "sourceIds": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/definitions/sourceId" }
+    },
+    "textBlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["simple", "detailed", "sourceIds"],
+      "properties": {
+        "simple": { "type": "string", "minLength": 20, "maxLength": 240 },
+        "detailed": { "type": "string", "minLength": 40, "maxLength": 600 },
+        "sourceIds": { "$ref": "#/definitions/sourceIds" }
+      }
+    },
+    "fact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text", "sourceId"],
+      "properties": {
+        "text": { "type": "string", "minLength": 10 },
+        "sourceId": { "$ref": "#/definitions/sourceId" }
+      }
+    },
+    "nullableNumber": { "type": ["number", "null"] },
+    "measurements": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sourceIds",
+        "diameterKm",
+        "diameterType",
+        "volumetricMeanRadiusKm",
+        "massE24Kg",
+        "gravityMs2",
+        "gravityReference",
+        "meanDistanceFromSunE6Km",
+        "rotationPeriodHours",
+        "dayLengthHours",
+        "orbitalPeriodDays",
+        "obliquityDeg",
+        "temperatureC",
+        "temperatureReference"
+      ],
+      "properties": {
+        "sourceIds": { "$ref": "#/definitions/sourceIds" },
+        "diameterKm": { "type": "number", "exclusiveMinimum": 0 },
+        "diameterType": { "enum": ["equatorial", "volumetric-mean"] },
+        "volumetricMeanRadiusKm": { "type": "number", "exclusiveMinimum": 0 },
+        "massE24Kg": { "type": "number", "exclusiveMinimum": 0 },
+        "gravityMs2": { "type": "number", "exclusiveMinimum": 0 },
+        "gravityReference": { "enum": ["surface", "1-bar", "photosphere"] },
+        "meanDistanceFromSunE6Km": { "$ref": "#/definitions/nullableNumber" },
+        "meanDistanceFromEarthE6Km": { "type": "number", "exclusiveMinimum": 0 },
+        "rotationPeriodHours": { "type": "number" },
+        "rotationLatitudeDeg": { "type": "number" },
+        "dayLengthHours": { "$ref": "#/definitions/nullableNumber" },
+        "orbitalPeriodDays": { "$ref": "#/definitions/nullableNumber" },
+        "obliquityDeg": { "$ref": "#/definitions/nullableNumber" },
+        "temperatureC": { "type": "number" },
+        "temperatureReference": { "enum": ["surface-mean", "1-bar-mean", "photosphere-effective"] }
+      }
+    },
+    "moons": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["count", "asOf", "sourceIds"],
+      "properties": {
+        "count": { "type": "integer", "minimum": 0 },
+        "asOf": { "type": "string", "pattern": "^\\d{4}-\\d{2}(-\\d{2})?$" },
+        "sourceIds": { "$ref": "#/definitions/sourceIds" },
+        "note": { "type": "string", "minLength": 10 }
+      }
+    },
+    "body": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "orderFromSun",
+        "kind",
+        "hasSolidSurface",
+        "hasRings",
+        "summary",
+        "measurements",
+        "temperatureContext",
+        "moons",
+        "composition",
+        "facts"
+      ],
+      "properties": {
+        "id": { "enum": ["sun", "mercury", "venus", "earth", "mars", "jupiter", "saturn", "uranus", "neptune"] },
+        "name": { "enum": ["Sun", "Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune"] },
+        "orderFromSun": { "type": "integer", "minimum": 0, "maximum": 8 },
+        "kind": { "enum": ["star", "rocky-planet", "gas-giant", "ice-giant"] },
+        "hasSolidSurface": { "type": "boolean" },
+        "hasRings": { "type": "boolean" },
+        "summary": { "$ref": "#/definitions/textBlock" },
+        "measurements": { "$ref": "#/definitions/measurements" },
+        "temperatureContext": { "$ref": "#/definitions/textBlock" },
+        "moons": { "$ref": "#/definitions/moons" },
+        "composition": { "$ref": "#/definitions/textBlock" },
+        "facts": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/definitions/fact" }
+        }
+      }
+    },
+    "planet": {
+      "allOf": [
+        { "$ref": "#/definitions/body" },
+        {
           "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "text",
-            "sourceId"
-          ],
           "properties": {
-            "text": {
-              "type": "string",
-              "minLength": 10
-            },
-            "sourceId": {
-              "type": "string",
-              "pattern": "^nasa-[a-z]+$"
+            "id": { "not": { "const": "sun" } },
+            "orderFromSun": { "type": "integer", "minimum": 1 },
+            "kind": { "not": { "const": "star" } },
+            "measurements": {
+              "type": "object",
+              "properties": {
+                "meanDistanceFromSunE6Km": { "type": "number" },
+                "dayLengthHours": { "type": "number" },
+                "orbitalPeriodDays": { "type": "number" },
+                "obliquityDeg": { "type": "number" }
+              }
             }
           }
         }
-      }
+      ]
     }
   }
 }
