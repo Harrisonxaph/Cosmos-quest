@@ -6,9 +6,11 @@ import { createBodySelector } from '../components/bodySelector.js';
 import { createPlanetList } from '../components/planetList.js';
 import { renderQuizPanel, renderQuizResume } from '../components/quizPanel.js';
 import { renderMissionsPanel, renderMissionBar } from '../components/missionPanel.js';
+import { renderExperimentsPanel, experimentAnnouncement } from '../components/experimentPanel.js';
 import { createNavigator, initialState, parseHash, formatHash, keyToAction, shouldIgnoreKey, actionAllowedInView, MODES } from './navigation.js';
 import { createQuizStore, progressLabel, feedbackAnnouncement, resultMessage, score } from './quiz.js';
 import { createMissionStore, resumableMission, screenKey, stepAnnouncement, stepLabel } from './missions.js';
+import { createExperimentStore, experimentScreenKey } from './experiments.js';
 
 const PREFS_KEY = 'cosmos-quest-prefs';
 
@@ -54,7 +56,7 @@ export function webglAvailable() {
   }
 }
 
-export function startExplorer({ elements, bodies, planets, earth, sourcesById, quizQuestions, missions: missionDefinitions }) {
+export function startExplorer({ elements, bodies, planets, earth, sourcesById, quizQuestions, missions: missionDefinitions, experiments: experimentDefinitions }) {
   const bodiesById = Object.fromEntries(bodies.map(body => [body.id, body]));
   const reducedMotionQuery = window.matchMedia?.('(prefers-reduced-motion: reduce)');
   const reducedMotion = () => reducedMotionQuery?.matches ?? false;
@@ -108,24 +110,48 @@ export function startExplorer({ elements, bodies, planets, earth, sourcesById, q
       },
     },
   };
-  // Where the child was reading a mission screen when they left to explore. Restored only when
+  // Science Experiments: settings are kept in memory for this visit, separate from the quiz and missions.
+  const experiments = createExperimentStore(experimentDefinitions);
+  const experimentContext = {
+    experiments: experimentDefinitions,
+    bodies,
+    bodiesById,
+    earth,
+    sourcesById,
+    handlers: {
+      onOpen: id => experiments.dispatch({ type: 'open', id }),
+      onInput: (id, text) => experiments.dispatch({ type: 'input', id, text }),
+      onWorld: (id, worldId) => experiments.dispatch({ type: 'world', id, worldId }),
+      onPredict: (id, optionId) => experiments.dispatch({ type: 'predict', id, optionId }),
+      onReveal: id => experiments.dispatch({ type: 'reveal', id }),
+      onReset: id => experiments.dispatch({ type: 'reset', id }),
+      onLeave: () => dispatch({ type: 'overview' }), // keeps the settings for this visit
+    },
+  };
+
+  // Where the child was reading a mission or experiment screen when they left. Restored only when
   // they come back to that same screen; advancing to another step or screen starts at the top.
-  let missionReading = null;
-  function saveMissionReading() {
+  const readingViews = {
+    missions: () => screenKey(missions.getState()),
+    experiments: () => experimentScreenKey(experiments.getState()),
+  };
+  const readings = {};
+  function saveReading(view) {
     const active = document.activeElement;
     let focus = null;
     if (active && elements.panel.contains(active) && active !== elements.panel) {
       if (active.dataset.missionAction) focus = `[data-mission-action="${active.dataset.missionAction}"]`;
+      else if (active.dataset.experimentAction) focus = `[data-experiment-action="${active.dataset.experimentAction}"]`;
       else if (active.dataset.answer) focus = `[data-answer="${active.dataset.answer}"]`;
       else if (active.id) focus = `#${active.id}`;
     }
     const locked = Boolean(elements.panel.querySelector('.mission-locked'));
-    missionReading = { key: screenKey(missions.getState()), panelTop: elements.panel.scrollTop, pageY: window.scrollY, focus, locked };
+    readings[view] = { key: readingViews[view](), panelTop: elements.panel.scrollTop, pageY: window.scrollY, focus, locked };
   }
-  function restoreMissionReading(reading) {
+  function restoreReading(view, reading) {
     // If exploring unlocked a question's answers, start at the question so Tab reaches the answers next.
     const unlocked = reading.locked && !elements.panel.querySelector('.mission-locked') ? elements.panel.querySelector('#mission-question') : null;
-    const target = unlocked ?? (reading.focus && elements.panel.querySelector(`article.missions ${reading.focus}`))
+    const target = unlocked ?? (reading.focus && elements.panel.querySelector(`article[data-body="${view}"] ${reading.focus}`))
       ?? elements.panel.querySelector('[data-focus-target]') ?? elements.panel;
     target.focus({ preventScroll: true });
     elements.panel.scrollTop = reading.panelTop;
@@ -147,6 +173,7 @@ export function startExplorer({ elements, bodies, planets, earth, sourcesById, q
     let panel;
     if (state.view === 'quiz') panel = renderQuizPanel(quizState, quizHandlers);
     else if (state.view === 'missions') panel = renderMissionsPanel(missions.getState(), missionContext);
+    else if (state.view === 'experiments') panel = renderExperimentsPanel(experiments.getState(), experimentContext);
     else if (state.view === 'body') {
       panel = renderBodyPanel(bodiesById[state.selectedId], {
         earth,
@@ -161,6 +188,7 @@ export function startExplorer({ elements, bodies, planets, earth, sourcesById, q
         onSelect: id => dispatch({ type: 'select', id }),
         onQuiz: () => dispatch({ type: 'openQuiz' }),
         onMissions: () => dispatch({ type: 'openMissions' }),
+        onExperiments: () => dispatch({ type: 'openExperiments' }),
       });
     }
     const resume = state.view !== 'quiz' && quizState.status !== 'idle' ? renderQuizResume(quizState, () => dispatch({ type: 'openQuiz' })) : null;
@@ -229,6 +257,8 @@ export function startExplorer({ elements, bodies, planets, earth, sourcesById, q
     else elements.quizEntry.removeAttribute('aria-current');
     if (state.view === 'missions') elements.missionsEntry.setAttribute('aria-current', 'page');
     else elements.missionsEntry.removeAttribute('aria-current');
+    if (state.view === 'experiments') elements.experimentsEntry.setAttribute('aria-current', 'page');
+    else elements.experimentsEntry.removeAttribute('aria-current');
     const mission = resumableMission(missions.getState(), missionDefinitions);
     const missionProgress = mission ? missions.getState().progress[mission.id] : null;
     elements.missionsEntry.querySelector('.quiz-entry__progress').textContent = mission ? ` · ${stepLabel(missionProgress.stepIndex, mission.steps.length)}` : '';
@@ -257,14 +287,14 @@ export function startExplorer({ elements, bodies, planets, earth, sourcesById, q
   function apply(state, previous) {
     const selectionChanged = !previous || state.view !== previous.view || state.selectedId !== previous.selectedId;
     if (selectionChanged) cancelAnnouncement(); // feedback for the screen being left must not be read out later
-    if (previous?.view === 'missions' && state.view !== 'missions') saveMissionReading();
-    const reading = previous && previous.view !== 'missions' && state.view === 'missions'
-      && missionReading?.key === screenKey(missions.getState()) ? missionReading : null;
+    if (previous && readingViews[previous.view] && state.view !== previous.view) saveReading(previous.view);
+    const saved = previous && readingViews[state.view] && previous.view !== state.view ? readings[state.view] : null;
+    const reading = saved && saved.key === readingViews[state.view]() ? saved : null;
     // Opening a world records the visit for a mission "find" step. It never completes the step by itself.
     const place = placeOf(state);
     if (selectionChanged && place) missions.dispatch({ type: 'visit', target: place });
     if (selectionChanged || state.mode !== previous.mode) {
-      renderPanel(state, { focusTarget: Boolean(previous) && selectionChanged && !reading && (state.view === 'quiz' || state.view === 'missions') });
+      renderPanel(state, { focusTarget: Boolean(previous) && selectionChanged && !reading && ['quiz', 'missions', 'experiments'].includes(state.view) });
     }
     updateControls(state);
     if (selectionChanged) {
@@ -272,11 +302,11 @@ export function startExplorer({ elements, bodies, planets, earth, sourcesById, q
       if (location.hash !== target && !(target === '#/' && location.hash === '')) history.pushState(null, '', target);
       elements.status.textContent = state.view === 'body'
         ? `Now exploring ${bodiesById[state.selectedId].name}`
-        : state.view === 'quiz' ? 'Planet Quiz' : state.view === 'missions' ? 'Discovery Missions' : 'Showing the whole solar system';
+        : { quiz: 'Planet Quiz', missions: 'Discovery Missions', experiments: 'Science Experiments' }[state.view] ?? 'Showing the whole solar system';
       scene?.focus(state.selectedId);
       selector.revealActive(state.selectedId, { smooth: Boolean(previous) && !reducedMotion() });
       if (previous) elements.panel.scrollTop = 0;
-      if (reading) restoreMissionReading(reading);
+      if (reading) restoreReading(state.view, reading);
     }
     if (!previous || state.paused !== previous.paused) scene?.setPaused(state.paused);
     if (previous && state.mode !== previous.mode) {
@@ -315,6 +345,29 @@ export function startExplorer({ elements, bodies, planets, earth, sourcesById, q
     updateControls(state);
   });
 
+  elements.experimentsEntry.addEventListener('click', () => {
+    if (nav.getState().view === 'experiments') renderPanel(nav.getState(), { focusTarget: true });
+    else dispatch({ type: 'openExperiments' });
+  });
+  experiments.subscribe((experimentState, previousExperimentState, action) => {
+    const state = nav.getState();
+    // Typing, sliding, choosing a planet or a guess re-render nothing: the panel updates itself, and nothing is announced.
+    if (state.view !== 'experiments' || !['open', 'reveal', 'reset'].includes(action.type)) return;
+    cancelAnnouncement();
+    renderPanel(state, { focusTarget: true });
+    // A newly opened or reset activity starts at the top; a result is focused (and scrolled to) below the form.
+    if (action.type !== 'reveal') elements.panel.scrollTop = 0;
+    const shownKey = experimentScreenKey(experimentState);
+    const stillShown = () => nav.getState().view === 'experiments' && experimentScreenKey(experiments.getState()) === shownKey;
+    const experiment = experimentDefinitions.find(e => e.id === experimentState.activeId);
+    if (action.type === 'reveal' && experiment) {
+      const text = experimentAnnouncement(experiment, experimentState.activities[experiment.id], experimentContext);
+      if (text) announce(text, stillShown);
+    } else if (action.type === 'reset' && experiment) {
+      announce(`${experiment.title} is back to its starting values.`, stillShown);
+    }
+  });
+
   elements.quizEntry.addEventListener('click', () => {
     if (nav.getState().view === 'quiz') renderPanel(nav.getState(), { focusTarget: true });
     else dispatch({ type: 'openQuiz' });
@@ -341,6 +394,7 @@ export function startExplorer({ elements, bodies, planets, earth, sourcesById, q
     if (target.view === 'body') dispatch({ type: 'select', id: target.selectedId });
     else if (target.view === 'quiz') dispatch({ type: 'openQuiz' });
     else if (target.view === 'missions') dispatch({ type: 'openMissions' });
+    else if (target.view === 'experiments') dispatch({ type: 'openExperiments' });
     else dispatch({ type: 'overview' });
   });
 

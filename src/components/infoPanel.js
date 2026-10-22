@@ -85,7 +85,7 @@ export function renderBodyPanel(body, { earth, mode, sourcesById, onModeChange }
       el('p', {}, el('a', { href: SCIENCE_PAGE, target: '_blank', rel: 'noopener' }, 'How we check our facts'))));
 }
 
-export function renderOverviewPanel({ bodies, earth, onSelect, onQuiz, onMissions }) {
+export function renderOverviewPanel({ bodies, earth, onSelect, onQuiz, onMissions, onExperiments }) {
   return el('article', { className: 'panel', 'data-body': 'overview', 'aria-labelledby': 'panel-title-overview' },
     el('header', { className: 'panel__header' },
       el('h2', { id: 'panel-title-overview' }, 'Our solar system'),
@@ -96,6 +96,9 @@ export function renderOverviewPanel({ bodies, earth, onSelect, onQuiz, onMission
     onMissions ? section('Discovery Missions', null,
       el('p', {}, 'Explore with a purpose: three short missions take you to the worlds with something to discover.'),
       el('button', { type: 'button', className: 'secondary-button', 'data-mission-action': 'open', onClick: onMissions }, 'Choose a mission')) : null,
+    onExperiments ? section('Science Experiments', null,
+      el('p', {}, 'Change the numbers and see what happens: try the Gravity lab, or build a tiny solar system.'),
+      el('button', { type: 'button', className: 'secondary-button', 'data-experiment-action': 'open', onClick: onExperiments }, 'Try an experiment')) : null,
     onQuiz ? section('Planet Quiz', null,
       el('p', {}, 'Explored a few worlds? Try five friendly questions to see what you remember.'),
       el('button', { type: 'button', className: 'secondary-button', 'data-quiz-action': 'open', onClick: onQuiz }, 'Play the Planet Quiz')) : null,

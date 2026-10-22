@@ -142,3 +142,13 @@ test('Discovery Missions have their own view and link, and pause explorer shortc
   assert.equal(actionAllowedInView(keyToAction('3'), 'missions'), false);
   assert.equal(actionAllowedInView(keyToAction('Escape'), 'missions'), true);
 });
+
+test('Science Experiments have their own view and link, and pause explorer shortcuts', () => {
+  const state = reduce(reduce(initialState(), { type: 'select', id: 'mars' }), { type: 'openExperiments' });
+  assert.equal(state.view, 'experiments');
+  assert.equal(state.selectedId, null);
+  assert.equal(formatHash(state), '#/experiments');
+  assert.deepEqual(parseHash('#/experiments'), { view: 'experiments', selectedId: null });
+  assert.equal(actionAllowedInView(keyToAction('4'), 'experiments'), false);
+  assert.equal(actionAllowedInView(keyToAction('Escape'), 'experiments'), true);
+});

@@ -1,0 +1,85 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Science Experiments",
+  "description": "Illustrative learning activities. Texts only; every number shown comes from src/data/ measurements and the calculations in src/utils/experiments.js.",
+  "type": "array",
+  "minItems": 2,
+  "maxItems": 2,
+  "items": { "$ref": "#/definitions/experiment" },
+  "definitions": {
+    "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+    "text": { "type": "string", "minLength": 10, "maxLength": 320 },
+    "sourceIds": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/definitions/id" } },
+    "planetId": { "enum": ["mercury", "venus", "earth", "mars", "jupiter", "saturn", "uranus", "neptune"] },
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "unit", "unitName", "min", "max", "step", "default", "hint"],
+      "properties": {
+        "id": { "$ref": "#/definitions/id" },
+        "label": { "type": "string", "minLength": 2, "maxLength": 40 },
+        "unit": { "enum": ["kg", "cm"] },
+        "unitName": { "enum": ["kilograms", "centimetres"] },
+        "min": { "type": "number", "exclusiveMinimum": 0 },
+        "max": { "type": "number", "exclusiveMinimum": 0 },
+        "step": { "type": "number", "exclusiveMinimum": 0 },
+        "default": { "type": "number", "exclusiveMinimum": 0 },
+        "slider": { "type": "boolean" },
+        "hint": { "$ref": "#/definitions/text" }
+      }
+    },
+    "prediction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["question", "options"],
+      "properties": {
+        "question": { "$ref": "#/definitions/text" },
+        "options": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "text"],
+            "properties": { "id": { "$ref": "#/definitions/id" }, "text": { "type": "string", "minLength": 3, "maxLength": 60 } }
+          }
+        }
+      }
+    },
+    "experiment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "summary", "intro", "modelNote", "input", "prediction", "revealLabel", "sourceIds"],
+      "properties": {
+        "id": { "enum": ["gravity-lab", "tiny-solar-system"] },
+        "title": { "type": "string", "minLength": 3, "maxLength": 40 },
+        "summary": { "$ref": "#/definitions/text" },
+        "intro": { "$ref": "#/definitions/text" },
+        "modelNote": { "$ref": "#/definitions/text" },
+        "input": { "$ref": "#/definitions/input" },
+        "prediction": { "$ref": "#/definitions/prediction" },
+        "revealLabel": { "type": "string", "minLength": 3, "maxLength": 30 },
+        "sourceIds": { "$ref": "#/definitions/sourceIds" },
+        "worldLabel": { "type": "string", "minLength": 3, "maxLength": 30 },
+        "worlds": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/definitions/planetId" } },
+        "defaultWorld": { "$ref": "#/definitions/planetId" },
+        "explanations": { "type": "array", "minItems": 1, "items": { "$ref": "#/definitions/text" } },
+        "noSurfaceSourceIds": { "$ref": "#/definitions/sourceIds" },
+        "diameterNote": { "$ref": "#/definitions/text" },
+        "distanceNote": { "$ref": "#/definitions/text" },
+        "pictureNote": { "$ref": "#/definitions/text" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "id": { "const": "gravity-lab" } } },
+          "then": { "required": ["worldLabel", "worlds", "defaultWorld", "explanations", "noSurfaceSourceIds"] }
+        },
+        {
+          "if": { "properties": { "id": { "const": "tiny-solar-system" } } },
+          "then": { "required": ["diameterNote", "distanceNote", "pictureNote"] }
+        }
+      ]
+    }
+  }
+}
