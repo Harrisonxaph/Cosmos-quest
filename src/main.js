@@ -1,19 +1,29 @@
 import planets from './data/planets.json';
+import sun from './data/sun.json';
+import sources from './data/sources.json';
+import { startExplorer } from './features/explorer.js';
 import './style.css';
 
-const container = document.querySelector('#planets');
-for (const planet of planets) {
-  const card = document.createElement('article');
-  const heading = document.createElement('h2');
-  heading.textContent = `${planet.orderFromSun}. ${planet.name}`;
-  card.append(heading);
-  for (const fact of planet.facts) {
-    const paragraph = document.createElement('p');
-    paragraph.textContent = fact.text;
-    const source = document.createElement('a');
-    source.href = `https://github.com/Harrisonxaph/Cosmos-quest/blob/main/docs/SCIENCE.md#${fact.sourceId}`;
-    source.textContent = 'Science source';
-    card.append(paragraph, source);
-  }
-  container.append(card);
-}
+const bodies = [sun, ...planets];
+const earth = planets.find(planet => planet.id === 'earth');
+const sourcesById = Object.fromEntries(sources.map(source => [source.id, source]));
+const byId = id => document.getElementById(id);
+
+startExplorer({
+  elements: {
+    stage: byId('stage'),
+    sceneContainer: byId('scene'),
+    canvas: byId('scene-canvas'),
+    labels: byId('scene-labels'),
+    sceneStatus: byId('scene-status'),
+    selector: byId('body-selector'),
+    controls: byId('controls'),
+    status: byId('explorer-status'),
+    panel: byId('info-panel'),
+    planetList: byId('planets'),
+  },
+  bodies,
+  planets,
+  earth,
+  sourcesById,
+});

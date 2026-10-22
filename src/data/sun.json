@@ -1,0 +1,52 @@
+{
+  "id": "sun",
+  "name": "Sun",
+  "orderFromSun": 0,
+  "kind": "star",
+  "hasSolidSurface": false,
+  "hasRings": false,
+  "summary": {
+    "simple": "The Sun is a star: a huge, glowing ball of hot gas at the centre of our solar system. Its gravity keeps every planet travelling around it.",
+    "detailed": "The Sun is a yellow dwarf star (type G2 V) that formed about 4.6 billion years ago. It is a huge ball of hydrogen and helium held together by its own gravity, and that gravity holds the whole solar system together.",
+    "sourceIds": ["nasa-sun-facts", "nasa-sun"]
+  },
+  "measurements": {
+    "sourceIds": ["nasa-sun-fact-sheet"],
+    "diameterKm": 1391400,
+    "diameterType": "volumetric-mean",
+    "massE24Kg": 1988400,
+    "gravityMs2": 274.0,
+    "gravityReference": "photosphere",
+    "meanDistanceFromSunE6Km": null,
+    "meanDistanceFromEarthE6Km": 149.6,
+    "rotationPeriodHours": 609.12,
+    "rotationLatitudeDeg": 16,
+    "dayLengthHours": null,
+    "orbitalPeriodDays": null,
+    "obliquityDeg": null,
+    "temperatureC": 5499,
+    "temperatureReference": "photosphere-effective"
+  },
+  "temperatureContext": {
+    "simple": "About 5,500 °C at the glowing layer we can see, and about 15 million °C deep in the core!",
+    "detailed": "The photosphere, the Sun's visible 'surface' of glowing gas, is about 5,500 °C. NASA's fact sheet gives an effective temperature of 5,772 K (about 5,499 °C). The core reaches about 15 million °C.",
+    "sourceIds": ["nasa-sun-facts", "nasa-sun-fact-sheet"]
+  },
+  "moons": {
+    "count": 0,
+    "asOf": "2026-10-22",
+    "sourceIds": ["nasa-sun-facts"],
+    "note": "The Sun has no moons. Instead, the planets and their moons travel around it."
+  },
+  "composition": {
+    "simple": "Mostly hydrogen and helium gas. There is no solid ground anywhere on the Sun.",
+    "detailed": "A huge ball of hydrogen and helium held together by its own gravity. In the photosphere, about 91% of the atoms are hydrogen and about 9% are helium. The Sun doesn't have a solid surface like Earth and the rocky planets.",
+    "sourceIds": ["nasa-sun-facts", "nasa-sun-fact-sheet"]
+  },
+  "facts": [
+    { "text": "The Sun is about 100 times wider than Earth and about 10 times wider than Jupiter.", "sourceId": "nasa-sun-facts" },
+    { "text": "It would take about 1.3 million Earths to fill the Sun.", "sourceId": "nasa-sun-facts" },
+    { "text": "The Sun's connection with Earth drives our seasons, ocean currents, weather and climate.", "sourceId": "nasa-sun" },
+    { "text": "Solar flares are by far the most powerful explosions in the solar system.", "sourceId": "nasa-sun-facts" }
+  ]
+}

@@ -1,2 +1,58 @@
 <!doctype html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Cosmos Quest</title></head><body><main><h1>Cosmos Quest</h1><p>Meet the eight planets, in order from the Sun.</p><div id="planets"></div></main><script type="module" src="/src/main.js"></script></body></html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Cosmos Quest: explore the Sun and the eight planets in 3D, with child-friendly facts from NASA.">
+  <meta name="theme-color" content="#0b1124">
+  <title>Cosmos Quest</title>
+</head>
+<body>
+  <a class="skip-link" href="#info-panel">Skip to the facts</a>
+  <header class="site-header">
+    <h1>Cosmos Quest</h1>
+    <p>Meet the eight planets, in order from the Sun.</p>
+  </header>
+
+  <main class="explorer" id="explorer">
+    <section class="stage" id="stage" aria-label="Planet explorer">
+      <div class="scene" id="scene" data-scene-state="loading">
+        <canvas id="scene-canvas" role="img" aria-label="3D model of the Sun and planets. Sizes and distances are not to scale."></canvas>
+        <div class="scene-labels" id="scene-labels"></div>
+        <p class="scene-status" id="scene-status" role="status">Loading the 3D solar system…</p>
+        <p class="scale-badge">Not to scale · illustrative model</p>
+      </div>
+
+      <nav class="body-selector" id="body-selector" aria-label="Choose a world"></nav>
+
+      <div class="controls" id="controls" role="toolbar" aria-label="Explorer controls">
+        <button type="button" class="control" data-control="overview"><span aria-hidden="true">◎</span> <span class="control__label">Solar system</span></button>
+        <button type="button" class="control" data-control="previous" aria-label="Previous world"><span aria-hidden="true">‹</span> <span class="control__label">Back</span></button>
+        <button type="button" class="control" data-control="next" aria-label="Next world"><span class="control__label">Next</span> <span aria-hidden="true">›</span></button>
+        <button type="button" class="control" data-control="pause" aria-pressed="false" data-needs-3d><span aria-hidden="true">⏯</span> <span class="control__label">Pause</span></button>
+        <button type="button" class="control control--icon" data-control="zoomIn" aria-label="Zoom in" data-needs-3d>+</button>
+        <button type="button" class="control control--icon" data-control="zoomOut" aria-label="Zoom out" data-needs-3d>−</button>
+        <button type="button" class="control control--icon" data-control="rotateLeft" aria-label="Rotate view left" data-needs-3d>⟲</button>
+        <button type="button" class="control control--icon" data-control="rotateRight" aria-label="Rotate view right" data-needs-3d>⟳</button>
+        <button type="button" class="control" data-control="textures" aria-pressed="true" data-needs-3d><span class="control__label">Surface detail</span></button>
+        <button type="button" class="control" data-control="labels" aria-pressed="true" data-needs-3d><span class="control__label">Labels</span></button>
+      </div>
+      <p class="visually-hidden" id="explorer-status" role="status" aria-live="polite"></p>
+    </section>
+
+    <aside class="info-panel" id="info-panel" aria-label="Facts about the selected world" tabindex="-1"></aside>
+  </main>
+
+  <section class="planet-list-section" aria-labelledby="planet-list-title">
+    <h2 id="planet-list-title">All eight planets</h2>
+    <div id="planets" class="planet-list"></div>
+  </section>
+
+  <footer class="site-footer">
+    <p>Facts and measurements from NASA. The 3D picture is an illustrative model, not to scale.</p>
+  </footer>
+
+  <noscript><p class="noscript">Cosmos Quest needs JavaScript to show the planets.</p></noscript>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
