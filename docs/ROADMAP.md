@@ -13,3 +13,5 @@
 7. **Later release review:** check facts against primary sources again, inspect every asset licence, and record device testing.
 
 Ideas for later, not yet agreed: real NASA imagery as planet textures (each with a licence record), planet positions for today's date, major moons in 3D, and offline (PWA) support.
+
+Proposed, not yet agreed: **Cosmos**, a child-friendly galaxy explorer beside the solar system. See [COSMOS_FEASIBILITY.md](COSMOS_FEASIBILITY.md) for sources, licences, risks and a bounded first version.
