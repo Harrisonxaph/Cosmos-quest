@@ -16,6 +16,8 @@ export function reduce(state, action, order = BODY_ORDER) {
       return { ...state, view: 'body', selectedId: action.id };
     case 'overview':
       return { ...state, view: 'overview', selectedId: null };
+    case 'openQuiz':
+      return { ...state, view: 'quiz', selectedId: null };
     case 'next':
     case 'previous': {
       const step = action.type === 'next' ? 1 : -1;
@@ -55,14 +57,25 @@ export function createNavigator(initial = initialState(), order = BODY_ORDER) {
   };
 }
 
-/** "#/jupiter" → { view: 'body', selectedId: 'jupiter' }; anything else → overview. */
+/** "#/jupiter" → { view: 'body', selectedId: 'jupiter' }; "#/quiz" → quiz; anything else → overview. */
 export function parseHash(hash, order = BODY_ORDER) {
   const id = String(hash ?? '').replace(/^#\/?/, '').trim().toLowerCase();
+  if (id === 'quiz') return { view: 'quiz', selectedId: null };
   return order.includes(id) ? { view: 'body', selectedId: id } : { view: 'overview', selectedId: null };
 }
 
 export function formatHash(state) {
+  if (state.view === 'quiz') return '#/quiz';
   return state.view === 'body' && state.selectedId ? `#/${state.selectedId}` : '#/';
+}
+
+/**
+ * During the quiz, explorer shortcuts are switched off so a number or arrow key can't jump away
+ * mid-question. Escape still returns to exploring (quiz progress is kept).
+ */
+export function actionAllowedInView(action, view) {
+  if (view !== 'quiz') return true;
+  return action.type === 'overview';
 }
 
 /**

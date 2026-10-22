@@ -1,6 +1,7 @@
 import planets from './data/planets.json';
 import sun from './data/sun.json';
 import sources from './data/sources.json';
+import quizQuestions from './data/quiz.json';
 import { startExplorer } from './features/explorer.js';
 import './style.css';
 
@@ -21,9 +22,11 @@ startExplorer({
     status: byId('explorer-status'),
     panel: byId('info-panel'),
     planetList: byId('planets'),
+    quizEntry: byId('quiz-entry'),
   },
   bodies,
   planets,
   earth,
   sourcesById,
+  quizQuestions,
 });

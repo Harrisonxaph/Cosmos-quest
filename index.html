@@ -10,8 +10,11 @@
 <body>
   <a class="skip-link" href="#info-panel">Skip to the facts</a>
   <header class="site-header">
-    <h1>Cosmos Quest</h1>
-    <p>Meet the eight planets, in order from the Sun.</p>
+    <div class="site-header__text">
+      <h1>Cosmos Quest</h1>
+      <p>Meet the eight planets, in order from the Sun.</p>
+    </div>
+    <button type="button" class="quiz-entry" id="quiz-entry" aria-controls="info-panel"><span aria-hidden="true">★</span> Planet Quiz<span class="quiz-entry__progress"></span></button>
   </header>
 
   <main class="explorer" id="explorer">
@@ -40,7 +43,7 @@
       <p class="visually-hidden" id="explorer-status" role="status" aria-live="polite"></p>
     </section>
 
-    <aside class="info-panel" id="info-panel" aria-label="Facts about the selected world" tabindex="-1"></aside>
+    <aside class="info-panel" id="info-panel" aria-label="Facts and Planet Quiz" tabindex="-1"></aside>
   </main>
 
   <section class="planet-list-section" aria-labelledby="planet-list-title">

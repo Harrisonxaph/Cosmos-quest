@@ -85,13 +85,17 @@ export function renderBodyPanel(body, { earth, mode, sourcesById, onModeChange }
       el('p', {}, el('a', { href: SCIENCE_PAGE, target: '_blank', rel: 'noopener' }, 'How we check our facts'))));
 }
 
-export function renderOverviewPanel({ bodies, earth, onSelect }) {
+export function renderOverviewPanel({ bodies, earth, onSelect, onQuiz }) {
   return el('article', { className: 'panel', 'data-body': 'overview', 'aria-labelledby': 'panel-title-overview' },
     el('header', { className: 'panel__header' },
       el('h2', { id: 'panel-title-overview' }, 'Our solar system'),
       el('p', { className: 'panel__kind' }, 'The Sun and eight planets')),
     el('p', { className: 'panel__intro' }, 'Choose a world with the buttons, or tap it in the picture, to fly there and find out what it is like. Drag to turn the view and pinch or scroll to zoom.'),
     el('button', { type: 'button', className: 'primary-button', onClick: () => onSelect('sun') }, 'Start with the Sun'),
+
+    onQuiz ? section('Planet Quiz', null,
+      el('p', {}, 'Explored a few worlds? Try five friendly questions to see what you remember.'),
+      el('button', { type: 'button', className: 'secondary-button', 'data-quiz-action': 'open', onClick: onQuiz }, 'Play the Planet Quiz')) : null,
 
     section('The real size of space', badge('Calculated', 'calculated'),
       trueScaleSentences(bodies, earth).map(text => el('p', {}, text))),
