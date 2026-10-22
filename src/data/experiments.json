@@ -1,0 +1,72 @@
+[
+  {
+    "id": "gravity-lab",
+    "title": "Gravity lab",
+    "summary": "Choose a mass and a planet, and see how hard gravity would pull on it.",
+    "intro": "Everything with mass is pulled by gravity. Pick an example mass and a planet, guess what will happen, then work out the pull with a simple formula.",
+    "modelNote": "This is a learning model, not a realistic physics simulation. It uses one measured gravity value for each planet.",
+    "input": {
+      "id": "mass",
+      "label": "Mass",
+      "unit": "kg",
+      "unitName": "kilograms",
+      "min": 0.1,
+      "max": 1000,
+      "step": 0.1,
+      "default": 10,
+      "hint": "Type any mass from 0.1 to 1,000 kilograms, for example 10."
+    },
+    "worldLabel": "Planet",
+    "worlds": ["mercury", "venus", "earth", "mars", "jupiter", "saturn", "uranus", "neptune"],
+    "defaultWorld": "mars",
+    "prediction": {
+      "question": "Before you look: will gravity pull on this mass less, about the same or more than on Earth?",
+      "options": [
+        { "id": "less", "text": "Less than on Earth" },
+        { "id": "same", "text": "About the same as on Earth" },
+        { "id": "more", "text": "More than on Earth" }
+      ]
+    },
+    "revealLabel": "Show the result",
+    "explanations": [
+      "Mass is how much stuff something is made of. It is measured in kilograms (kg), and it stays the same on every planet.",
+      "Weight is a force: how hard gravity pulls on that mass. Forces are measured in newtons (N), so weight changes from planet to planet.",
+      "To work out the pull, multiply the mass by the planet's gravity: force = mass × gravity, or F = m × g."
+    ],
+    "sourceIds": ["nasa-fact-sheet"],
+    "noSurfaceSourceIds": ["nasa-fact-sheet-notes"]
+  },
+  {
+    "id": "tiny-solar-system",
+    "title": "Build a tiny solar system",
+    "summary": "Shrink Earth to a bead and work out how big and how far away everything else would be.",
+    "intro": "Choose how wide your model Earth is. Everything else is shrunk by the same amount, so you can see the true sizes and distances of the solar system.",
+    "modelNote": "This is a learning model. The sizes and distances are calculated from real measurements, all shrunk by the same amount.",
+    "input": {
+      "id": "earth-diameter",
+      "label": "Model Earth's diameter",
+      "unit": "cm",
+      "unitName": "centimetres",
+      "min": 0.5,
+      "max": 5,
+      "step": 0.01,
+      "decimals": 2,
+      "default": 1,
+      "slider": true,
+      "hint": "Type any width from 0.5 to 5 centimetres, with up to 2 decimal places, or use the slider. The slider and the number always match."
+    },
+    "prediction": {
+      "question": "Optional guess: with Earth this size, how far from the Sun would Neptune be?",
+      "options": [
+        { "id": "under-5-km", "text": "Less than 5 kilometres" },
+        { "id": "5-to-10-km", "text": "Between 5 and 10 kilometres" },
+        { "id": "over-10-km", "text": "More than 10 kilometres" }
+      ]
+    },
+    "revealLabel": "Calculate my model",
+    "diameterNote": "Diameters used: NASA's equatorial diameters for the planets, measured across the middle. For the Sun, twice NASA's volumetric mean radius: the width of a perfect ball with the same volume.",
+    "distanceNote": "Distances are averages. Each planet's path around the Sun is not a perfect circle, so its real distance changes as it moves, and the planets are almost never lined up in a row like this table.",
+    "pictureNote": "There is no picture here on purpose: a drawing that showed these sizes and distances to the same scale would be far too big for the screen.",
+    "sourceIds": ["nasa-fact-sheet", "nasa-sun-fact-sheet"]
+  }
+]

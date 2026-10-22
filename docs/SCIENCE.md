@@ -264,3 +264,31 @@ Use NASA or ESA primary sources. Cite the specific page for each new fact, add i
 ## Discovery Missions
 
 Discovery Missions (`src/data/missions.json`) add no new science. Each step's `basis` points at a fact, panel text, a world's kind or surface flag, the order from the Sun, a true-scale comparison the overview already calculates (the Sun about 1.1 metres wide, Neptune about 3.5 km away), or the app's own note that the 3D view is not to scale. Step sources are ones the information panels already cite, and tests check that mission text introduces no other numbers apart from clearly wrong quiz-style distractors.
+
+## Science Experiments
+
+The Science Experiments (`src/data/experiments.json`, calculations in `src/utils/experiments.js`) are illustrative learning models, not realistic physics simulations. They add no new measurements: every input value comes from the measured values table above.
+
+### Gravity lab
+
+- **Formula:** force = mass × gravity, **F = m × g**. Mass *m* is in kilograms (kg), gravity *g* in metres per second squared (m/s²), and the force *F* in newtons (N). Worked examples used by the tests: 10 kg × 9.8 m/s² = 98 N (Earth) and 10 kg × 3.7 m/s² = 37 N (Mars).
+- **Gravity values:** the fact sheet's gravity for each planet (`gravityMs2`, source `nasa-fact-sheet`). For Jupiter, Saturn, Uranus and Neptune this is at the **1-bar level** in the atmosphere (definition from `nasa-fact-sheet-notes`), and the app says there is no solid surface and nobody could stand there. The Sun is not offered.
+- **Mass and weight:** the mass the child chooses never changes. Weight is the force from gravity on that mass, so only the force in newtons changes from planet to planet. The app never gives weight in kilograms.
+- **Comparison:** the ratio is the planet's gravity ÷ Earth's 9.8 m/s². Within ±3% counts as "about the same", matching the Earth comparisons in the information panels. Less than that is shown as a percentage, and more as "about N times".
+- **Inputs:** a mass from 0.1 to 1,000 kg. Empty, non-numeric, zero, negative and out-of-range values are refused with a message saying what to type.
+- **Assumptions:** one gravity value per planet. Real gravity varies slightly with latitude, height and spin, which this model ignores.
+
+### Build a tiny solar system
+
+- **Formula:** model size = real size × (model Earth diameter ÷ Earth's real diameter of 12,756 km). It reuses `trueScaleModel` in `src/utils/scale.js`, the same calculation as the overview's "The real size of space".
+- **Measurements used:** planet diameters are the fact sheet's **equatorial** diameters. The Sun's diameter is **twice its volumetric mean radius** (2 × 695,700 = 1,391,400 km). Distances are each planet's **mean distance from the Sun**. Sources: `nasa-fact-sheet` and `nasa-sun-fact-sheet`.
+- **Averages:** orbits are not perfect circles, so each planet's real distance changes as it moves, and the planets are almost never lined up. The app says so beside the results.
+- **Inputs:** a model Earth diameter from 0.5 to 5 cm with up to 2 decimal places, typed or chosen with a slider. The slider moves in 0.01 cm steps (arrow keys move 0.1 cm), so it can show every value the field accepts and the two always match. A third decimal place is refused with a message.
+- **Prediction:** an optional, unscored guess of Neptune's model distance: under 5 km, 5–10 km or over 10 km. Neptune is 3,539.5 m away per centimetre of model Earth, so the answer changes across the allowed sizes (about 1.8 km at 0.5 cm, 5 km at about 1.41 cm, 10 km at about 2.83 cm and 17.7 km at 5 cm).
+- **No same-scale picture:** results are cards, not a diagram, because a drawing at one scale would not fit on screen.
+- **Worked examples used by the tests:** with Earth 1 cm wide, the Sun is 109.08 cm wide and Neptune is 3,539.5 m away. With Earth 2 cm, Jupiter is 22.42 cm. With Earth 0.5 cm, Mercury is 22.70 m away. With Earth 5 cm, Neptune is 17,697.6 m away.
+
+### Rounding
+
+Calculations keep full precision. Inputs are always shown exactly as entered: the mass in every heading and equation, and the model Earth's width. Only results are rounded for display: forces to two decimal places below 10 N and one above (45.6765 N shows as 45.7 N, 0.98 N stays 0.98 N), gravity to one decimal place (as in the fact sheet), model sizes to one decimal place in millimetres below 1 cm, centimetres below 1 m and metres above, and model distances to whole metres below 1 km and to 0.1 km above. Equations use “=” when the shown result is exact and “≈” when it has been rounded, so a child can repeat them by hand: 10 kg × 3.7 m/s² = 37 N, but 0.1049 kg × 23.1 m/s² ≈ 2.42 N (exactly 2.42319 N).
+

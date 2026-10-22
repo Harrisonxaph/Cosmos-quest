@@ -58,7 +58,7 @@ export function trueScaleModel(bodies, earth, earthCm = 1) {
   }));
 }
 
-function lengthText(metres) {
+export function lengthText(metres) {
   if (metres >= 1000) return `${(Math.round(metres / 100) / 10).toLocaleString('en-GB')} km`;
   return `${Math.round(metres).toLocaleString('en-GB')} metres`;
 }

@@ -3,6 +3,7 @@ import sun from './data/sun.json';
 import sources from './data/sources.json';
 import quizQuestions from './data/quiz.json';
 import missions from './data/missions.json';
+import experiments from './data/experiments.json';
 import { startExplorer } from './features/explorer.js';
 import './style.css';
 
@@ -25,6 +26,7 @@ startExplorer({
     planetList: byId('planets'),
     quizEntry: byId('quiz-entry'),
     missionsEntry: byId('missions-entry'),
+    experimentsEntry: byId('experiments-entry'),
   },
   bodies,
   planets,
@@ -32,4 +34,5 @@ startExplorer({
   sourcesById,
   quizQuestions,
   missions,
+  experiments,
 });

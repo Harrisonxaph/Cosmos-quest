@@ -20,6 +20,8 @@ export function reduce(state, action, order = BODY_ORDER) {
       return { ...state, view: 'quiz', selectedId: null };
     case 'openMissions':
       return { ...state, view: 'missions', selectedId: null };
+    case 'openExperiments':
+      return { ...state, view: 'experiments', selectedId: null };
     case 'next':
     case 'previous': {
       const step = action.type === 'next' ? 1 : -1;
@@ -64,21 +66,23 @@ export function parseHash(hash, order = BODY_ORDER) {
   const id = String(hash ?? '').replace(/^#\/?/, '').trim().toLowerCase();
   if (id === 'quiz') return { view: 'quiz', selectedId: null };
   if (id === 'missions') return { view: 'missions', selectedId: null };
+  if (id === 'experiments') return { view: 'experiments', selectedId: null };
   return order.includes(id) ? { view: 'body', selectedId: id } : { view: 'overview', selectedId: null };
 }
 
 export function formatHash(state) {
   if (state.view === 'quiz') return '#/quiz';
   if (state.view === 'missions') return '#/missions';
+  if (state.view === 'experiments') return '#/experiments';
   return state.view === 'body' && state.selectedId ? `#/${state.selectedId}` : '#/';
 }
 
 /**
- * During the quiz and missions, explorer shortcuts are switched off so a number or arrow key can't
+ * During the quiz, missions and experiments, explorer shortcuts are switched off so a number or arrow key can't
  * jump away mid-task. Escape still returns to exploring (progress is kept).
  */
 export function actionAllowedInView(action, view) {
-  if (view !== 'quiz' && view !== 'missions') return true;
+  if (!['quiz', 'missions', 'experiments'].includes(view)) return true;
   return action.type === 'overview';
 }
 
