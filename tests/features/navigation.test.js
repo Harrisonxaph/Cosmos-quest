@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import planets from '../../src/data/planets.json' with { type: 'json' };
 import sun from '../../src/data/sun.json' with { type: 'json' };
 import {
-  BODY_ORDER, initialState, reduce, createNavigator, parseHash, formatHash, keyToAction, shouldIgnoreKey, SHORTCUTS,
+  BODY_ORDER, initialState, reduce, createNavigator, parseHash, formatHash, keyToAction, shouldIgnoreKey, actionAllowedInView, SHORTCUTS,
 } from '../../src/features/navigation.js';
 
 test('navigation order is the Sun then the planets in order from the Sun', () => {
@@ -113,4 +113,22 @@ test('every documented shortcut works', () => {
   const keysByAction = { 'The Sun': ['0'], 'Mercury to Neptune': ['1', '8'], 'Previous / next world': ['ArrowLeft', 'ArrowRight', 'b', 'n'], 'Back to the solar system': ['Escape', 'o'], 'Pause / play': [' ', 'p'], 'Zoom in / out': ['+', '-'], 'Rotate the view': ['a', 'd'], 'Simple / detailed facts': ['m'] };
   assert.deepEqual(SHORTCUTS.map(([, action]) => action).sort(), Object.keys(keysByAction).sort());
   for (const keys of Object.values(keysByAction)) for (const key of keys) assert.ok(keyToAction(key), key);
+});
+
+test('the Planet Quiz has its own view and link, and leaving it keeps the selection rules', () => {
+  const quiz = reduce(reduce(initialState(), { type: 'select', id: 'mars' }), { type: 'openQuiz' });
+  assert.equal(quiz.view, 'quiz');
+  assert.equal(quiz.selectedId, null);
+  assert.equal(formatHash(quiz), '#/quiz');
+  assert.deepEqual(parseHash('#/quiz'), { view: 'quiz', selectedId: null });
+  assert.equal(reduce(quiz, { type: 'select', id: 'earth' }).view, 'body', 'Explore this planet');
+  assert.equal(reduce(quiz, { type: 'overview' }).view, 'overview', 'Back to exploring');
+});
+
+test('explorer shortcuts pause during the quiz, except Escape', () => {
+  for (const key of ['1', '5', 'ArrowRight', 'ArrowLeft', ' ', 'm', '+', 'a']) {
+    assert.equal(actionAllowedInView(keyToAction(key), 'quiz'), false, key);
+    assert.equal(actionAllowedInView(keyToAction(key), 'body'), true, key);
+  }
+  assert.equal(actionAllowedInView(keyToAction('Escape'), 'quiz'), true);
 });

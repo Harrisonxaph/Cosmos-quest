@@ -1,0 +1,87 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Cosmos Quest planet quiz questions",
+  "description": "Multiple-choice questions. Every question is anchored to content the app already shows, via `basis`, and cites sources from src/data/sources.json.",
+  "type": "array",
+  "minItems": 10,
+  "items": { "$ref": "#/definitions/question" },
+  "definitions": {
+    "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+    "bodyId": { "enum": ["sun", "mercury", "venus", "earth", "mars", "jupiter", "saturn", "uranus", "neptune"] },
+    "answer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "text"],
+      "properties": {
+        "id": { "$ref": "#/definitions/id" },
+        "text": { "type": "string", "minLength": 1, "maxLength": 90 }
+      }
+    },
+    "basis": {
+      "description": "What in the app supports the correct answer. Tests check each kind against src/data/.",
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "text"],
+          "properties": { "kind": { "const": "fact" }, "text": { "type": "string", "minLength": 10 } }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "field", "contains"],
+          "properties": {
+            "kind": { "const": "text" },
+            "field": { "enum": ["summary", "composition"] },
+            "contains": { "type": "string", "minLength": 4 }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "field", "value"],
+          "properties": {
+            "kind": { "const": "measurement" },
+            "field": { "type": "string" },
+            "value": { "type": "number" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "field", "order"],
+          "properties": {
+            "kind": { "const": "rank" },
+            "field": { "type": "string" },
+            "order": { "enum": ["min", "max"] }
+          }
+        }
+      ]
+    },
+    "question": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "planetId", "question", "answers", "correctAnswerId", "explanation", "sourceIds", "basis"],
+      "properties": {
+        "id": { "$ref": "#/definitions/id" },
+        "planetId": { "$ref": "#/definitions/bodyId" },
+        "question": { "type": "string", "minLength": 10, "maxLength": 160 },
+        "answers": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": { "$ref": "#/definitions/answer" }
+        },
+        "correctAnswerId": { "$ref": "#/definitions/id" },
+        "explanation": { "type": "string", "minLength": 20, "maxLength": 280 },
+        "sourceIds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^nasa-[a-z]+(-[a-z]+)*$" }
+        },
+        "basis": { "$ref": "#/definitions/basis" }
+      }
+    }
+  }
+}

@@ -4,7 +4,9 @@ import { clear } from '../components/dom.js';
 import { renderBodyPanel, renderOverviewPanel } from '../components/infoPanel.js';
 import { createBodySelector } from '../components/bodySelector.js';
 import { createPlanetList } from '../components/planetList.js';
-import { createNavigator, initialState, parseHash, formatHash, keyToAction, shouldIgnoreKey, MODES } from './navigation.js';
+import { renderQuizPanel, renderQuizResume } from '../components/quizPanel.js';
+import { createNavigator, initialState, parseHash, formatHash, keyToAction, shouldIgnoreKey, actionAllowedInView, MODES } from './navigation.js';
+import { createQuizStore, progressLabel, feedbackAnnouncement, resultMessage, score } from './quiz.js';
 
 const PREFS_KEY = 'cosmos-quest-prefs';
 
@@ -50,7 +52,7 @@ export function webglAvailable() {
   }
 }
 
-export function startExplorer({ elements, bodies, planets, earth, sourcesById }) {
+export function startExplorer({ elements, bodies, planets, earth, sourcesById, quizQuestions }) {
   const bodiesById = Object.fromEntries(bodies.map(body => [body.id, body]));
   const reducedMotionQuery = window.matchMedia?.('(prefers-reduced-motion: reduce)');
   const reducedMotion = () => reducedMotionQuery?.matches ?? false;
@@ -66,6 +68,23 @@ export function startExplorer({ elements, bodies, planets, earth, sourcesById })
   const dispatch = action => nav.dispatch(action);
   let scene = null;
 
+  // Quiz progress lives only in memory for this visit: no storage, accounts or tracking.
+  const quiz = createQuizStore(quizQuestions);
+  const quizHandlers = {
+    bodiesById,
+    sourcesById,
+    onStart: () => quiz.startRound(),
+    onAnswer: answerId => quiz.dispatch({ type: 'answer', answerId }),
+    onNext: () => quiz.dispatch({ type: 'next' }),
+    onExplore: id => dispatch({ type: 'select', id }),
+    onLeave: () => dispatch({ type: 'overview' }), // keeps quiz progress; the panel shows "Back to the quiz"
+    onPlayAgain: () => quiz.startRound(),
+    onBackToExploring: () => {
+      quiz.dispatch({ type: 'reset' });
+      dispatch({ type: 'overview' });
+    },
+  };
+
   // ----- Panel, selector and Stage 1 list -----
   const selector = createBodySelector(bodies, id => dispatch({ type: 'select', id }));
   elements.selector.append(selector.element);
@@ -74,21 +93,30 @@ export function startExplorer({ elements, bodies, planets, earth, sourcesById })
     elements.stage.scrollIntoView({ behavior: reducedMotion() ? 'auto' : 'smooth', block: 'start' });
   }));
 
-  function renderPanel(state) {
-    const panel = state.view === 'body'
-      ? renderBodyPanel(bodiesById[state.selectedId], {
+  function renderPanel(state, { focusTarget = false } = {}) {
+    const quizState = quiz.getState();
+    let panel;
+    if (state.view === 'quiz') panel = renderQuizPanel(quizState, quizHandlers);
+    else if (state.view === 'body') {
+      panel = renderBodyPanel(bodiesById[state.selectedId], {
         earth,
         mode: state.mode,
         sourcesById,
         onModeChange: mode => dispatch({ type: 'setMode', mode }),
-      })
-      : renderOverviewPanel({ bodies, earth, onSelect: id => dispatch({ type: 'select', id }) });
+      });
+    } else {
+      panel = renderOverviewPanel({ bodies, earth, onSelect: id => dispatch({ type: 'select', id }), onQuiz: () => dispatch({ type: 'openQuiz' }) });
+    }
+    const resume = state.view !== 'quiz' && quizState.status !== 'idle' ? renderQuizResume(quizState, () => dispatch({ type: 'openQuiz' })) : null;
     // Re-rendering replaces the focused element, so remember where keyboard focus was and put it back.
     const active = document.activeElement;
     const focusWasInPanel = active && active !== elements.panel && elements.panel.contains(active);
     const restoreSelector = focusWasInPanel && active.dataset.mode ? `.mode-toggle__option[data-mode="${active.dataset.mode}"]` : null;
-    clear(elements.panel).append(panel);
-    if (focusWasInPanel) {
+    clear(elements.panel).append(...[resume, panel].filter(Boolean));
+    if (focusTarget) {
+      // Quiz screens: move focus to the new question, the feedback or the results so it is announced.
+      (elements.panel.querySelector('[data-focus-target]') ?? elements.panel).focus();
+    } else if (focusWasInPanel) {
       const target = (restoreSelector && elements.panel.querySelector(restoreSelector)) || elements.panel;
       target.focus({ preventScroll: true });
     }
@@ -130,17 +158,23 @@ export function startExplorer({ elements, bodies, planets, earth, sourcesById })
     pauseButton.setAttribute('aria-label', state.paused ? 'Play planet motion' : 'Pause planet motion');
     control('overview').disabled = state.view === 'overview';
     selector.setActive(state.selectedId);
+    if (state.view === 'quiz') elements.quizEntry.setAttribute('aria-current', 'page');
+    else elements.quizEntry.removeAttribute('aria-current');
+    const quizState = quiz.getState();
+    elements.quizEntry.querySelector('.quiz-entry__progress').textContent = quizState.status === 'question' || quizState.status === 'feedback' ? ` · ${progressLabel(quizState)}` : '';
   }
 
   // ----- React to navigation -----
   function apply(state, previous) {
     const selectionChanged = !previous || state.view !== previous.view || state.selectedId !== previous.selectedId;
-    if (selectionChanged || state.mode !== previous.mode) renderPanel(state);
+    if (selectionChanged || state.mode !== previous.mode) renderPanel(state, { focusTarget: Boolean(previous) && selectionChanged && state.view === 'quiz' });
     updateControls(state);
     if (selectionChanged) {
       const target = formatHash(state);
       if (location.hash !== target && !(target === '#/' && location.hash === '')) history.pushState(null, '', target);
-      elements.status.textContent = state.view === 'body' ? `Now exploring ${bodiesById[state.selectedId].name}` : 'Showing the whole solar system';
+      elements.status.textContent = state.view === 'body'
+        ? `Now exploring ${bodiesById[state.selectedId].name}`
+        : state.view === 'quiz' ? 'Planet Quiz' : 'Showing the whole solar system';
       scene?.focus(state.selectedId);
       selector.revealActive(state.selectedId, { smooth: Boolean(previous) && !reducedMotion() });
       if (previous) elements.panel.scrollTop = 0;
@@ -155,9 +189,37 @@ export function startExplorer({ elements, bodies, planets, earth, sourcesById })
   apply(nav.getState(), null);
   updateToggles();
 
+  elements.quizEntry.addEventListener('click', () => {
+    if (nav.getState().view === 'quiz') renderPanel(nav.getState(), { focusTarget: true });
+    else dispatch({ type: 'openQuiz' });
+  });
+  // Read longer feedback aloud after focus has moved, through the existing polite live region.
+  let announceTimer = 0;
+  function announce(text) {
+    clearTimeout(announceTimer);
+    elements.status.textContent = '';
+    announceTimer = setTimeout(() => { elements.status.textContent = text; }, 300);
+  }
+
+  quiz.subscribe(quizState => {
+    const state = nav.getState();
+    if (state.view === 'quiz') {
+      renderPanel(state, { focusTarget: true });
+      if (quizState.status === 'feedback') {
+        const response = quizState.responses.at(-1);
+        announce(feedbackAnnouncement(quizState.questions[quizState.index], response, quizState.index).explanation);
+      } else if (quizState.status === 'results') {
+        announce(resultMessage(score(quizState), quizState.questions.length));
+      }
+    }
+    updateControls(state);
+  });
+
   window.addEventListener('popstate', () => {
     const target = parseHash(location.hash);
-    dispatch(target.view === 'body' ? { type: 'select', id: target.selectedId } : { type: 'overview' });
+    if (target.view === 'body') dispatch({ type: 'select', id: target.selectedId });
+    else if (target.view === 'quiz') dispatch({ type: 'openQuiz' });
+    else dispatch({ type: 'overview' });
   });
 
   document.addEventListener('keydown', event => {
@@ -171,7 +233,7 @@ export function startExplorer({ elements, bodies, planets, earth, sourcesById })
       targetIsEditable: target?.isContentEditable,
     })) return;
     const action = keyToAction(event.key);
-    if (!action) return;
+    if (!action || !actionAllowedInView(action, nav.getState().view)) return;
     event.preventDefault();
     if (action.type === 'camera') scene?.cameraCommand(action.command);
     else dispatch(action);

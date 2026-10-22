@@ -246,6 +246,10 @@ Each heading below is a `sourceId`. Facts shown in the app must appear word for 
 - Fact: Neptune is the only planet in our solar system not visible to the naked eye.
 - Fact: Neptune's winds can blow at more than 2,000 km/h, about three times as fast as Jupiter's strongest winds.
 
+## Quiz questions
+
+The Planet Quiz (`src/data/quiz.json`) adds no new science. Each question's `basis` points at a fact, panel text, measurement or ranking already in the data above, and its `sourceIds` are sources the information panels already cite. Tests enforce both. Questions avoid moon counts, which change, and comparisons that could be argued either way.
+
 ## Measurements vs models
 
 The app separates two kinds of information, and labels them in the interface:
