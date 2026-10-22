@@ -80,6 +80,7 @@ async function completeGravityLab(page) {
   await page.click('[data-experiment-action="reveal"]');
   const jupiter = await resultText(page);
   assert.match(jupiter, /force of about 57\.8 N/); // 2.5 × 23.1 = 57.75
+  assert.match(jupiter, /2\.5 kg × 23\.1 m\/s² ≈ 57\.8 N/, 'rounded results use ≈');
   assert.match(jupiter, /1-bar level/);
   assert.match(jupiter, /no solid surface, so nobody could stand there/);
   assert.doesNotMatch(jupiter, /surface of Jupiter|standing on/i);
@@ -88,7 +89,7 @@ async function completeGravityLab(page) {
 
 async function completeTinySolarSystem(page) {
   assert.equal(await page.inputValue('#experiment-earth-diameter'), '1');
-  await page.check('#tiny-solar-system-prediction-over-1-km');
+  await page.check('#tiny-solar-system-prediction-under-5-km');
   await page.click('[data-experiment-action="reveal"]');
   assert.equal(await screen(page), 'result');
   assert.equal(await page.locator('.experiment-card').count(), 9);
@@ -96,7 +97,7 @@ async function completeTinySolarSystem(page) {
   assert.equal(await modelValue(page, 'neptune', 'model-distance'), '3.5 km'); // 4,515 million ÷ 12,756 = 3,539.5 m
   assert.equal(await modelValue(page, 'earth', 'model-distance'), '117 metres');
   const text = await resultText(page);
-  assert.match(text, /The calculation shows: more than 1 kilometre \(about 3\.5 km\)/);
+  assert.match(text, /The calculation shows: less than 5 kilometres \(about 3\.5 km\)/);
   assert.match(text, /equatorial diameters for the planets/);
   assert.match(text, /twice NASA's volumetric mean radius/);
   assert.match(text, /Distances are averages/);
@@ -114,6 +115,10 @@ async function completeTinySolarSystem(page) {
   assert.equal(await modelValue(page, 'jupiter', 'model-diameter'), '28 cm'); // 142,984 ÷ 12,756 × 2.5 = 28.02 cm
   assert.equal(await modelValue(page, 'neptune', 'model-distance'), '8.8 km'); // 3,539.5 × 2.5 = 8,848.8 m
   assert.equal(await modelValue(page, 'sun', 'model-distance'), 'At the centre');
+  assert.match(await resultText(page), /The calculation shows: between 5 and 10 kilometres \(about 8\.8 km\)/, 'the guess band changes with the model size');
+  await page.fill('#experiment-earth-diameter', '3');
+  await page.click('[data-experiment-action="reveal"]');
+  assert.match(await resultText(page), /The calculation shows: more than 10 kilometres \(about 10\.6 km\)/); // 3,539.5 × 3 = 10,618.5 m
 }
 
 test('Gravity lab: predict, reveal, change and reset', async () => {
@@ -360,5 +365,67 @@ test('both experiments work without 3D', async () => {
   await page.click('.mission-card[data-experiment="tiny-solar-system"] [data-experiment-action="choose"]');
   await completeTinySolarSystem(page);
   assert.deepEqual(errors, []);
+  await context.close();
+});
+
+test('typed values with two decimals and the slider always agree, including after leaving and returning', async () => {
+  const { page, context, errors } = await openPage();
+  await openExperiment(page, 'tiny-solar-system');
+  const slider = '#experiment-earth-diameter-slider';
+  const field = '#experiment-earth-diameter';
+  await page.fill(field, '2.25');
+  assert.equal(await page.inputValue(slider), '2.25', 'the slider shows exactly the typed value');
+  assert.equal(await page.getAttribute(slider, 'aria-valuetext'), '2.25 centimetres');
+  await page.click('[data-experiment-action="reveal"]');
+  assert.match(await resultText(page), /With Earth 2\.25 cm wide/);
+  assert.equal(await modelValue(page, 'earth', 'model-diameter'), '2.25 cm', 'Earth is shown at exactly the chosen size');
+  assert.equal(await modelValue(page, 'neptune', 'model-distance'), '8 km'); // 3,539.51 × 2.25 = 7,963.9 m
+
+  await page.click('[data-experiment-action="leave"]');
+  await page.click('.body-selector__button[data-body="neptune"]');
+  await page.click('#experiments-entry');
+  assert.equal(await page.inputValue(field), '2.25');
+  assert.equal(await page.inputValue(slider), '2.25', 'still exact after returning');
+  assert.equal(await screen(page), 'result');
+  await page.reload();
+  await page.waitForSelector('#info-panel article');
+
+  // Arrow keys move in 0.1 cm steps; dragging can land on any 0.01 cm value, and the field follows.
+  await page.click('#experiments-entry');
+  await page.click('.mission-card[data-experiment="tiny-solar-system"] [data-experiment-action="choose"]');
+  await page.fill(field, '2.25');
+  await page.locator(slider).focus();
+  await page.keyboard.press('ArrowRight');
+  assert.equal(await page.inputValue(field), '2.35');
+  assert.equal(await page.inputValue(slider), '2.35');
+  await page.keyboard.press('ArrowLeft');
+  await page.keyboard.press('ArrowLeft');
+  assert.equal(await page.inputValue(field), '2.15');
+  await page.locator(slider).fill('3.37');
+  assert.equal(await page.inputValue(field), '3.37');
+
+  // More precision than the slider can show is explained, not silently rounded.
+  await page.fill(field, '2.255');
+  await page.click('[data-experiment-action="reveal"]');
+  assert.match(await page.locator('#experiment-earth-diameter-error').textContent(), /Use at most 2 decimal places/);
+  assert.deepEqual(errors, []);
+  await context.close();
+});
+
+test('the gravity workings use the mass exactly as typed', async () => {
+  const { page, context } = await openPage();
+  await openExperiment(page, 'gravity-lab');
+  await page.fill('#experiment-mass', '0.1049');
+  await page.selectOption('#experiment-world', 'jupiter');
+  await page.click('[data-experiment-action="reveal"]');
+  const text = await resultText(page);
+  assert.match(text, /A 0\.1049 kg mass on Jupiter/);
+  assert.match(text, /0\.1049 kg × 23\.1 m\/s² ≈ 2\.42 N/); // 2.42319
+  assert.match(text, /0\.1049 kg × 9\.8 m\/s² ≈ 1\.03 N on Earth/); // 1.02802
+  assert.doesNotMatch(text, /0\.1 kg/);
+  await page.fill('#experiment-mass', '0.1');
+  await page.selectOption('#experiment-world', 'earth');
+  await page.click('[data-experiment-action="reveal"]');
+  assert.match(await resultText(page), /0\.1 kg × 9\.8 m\/s² = 0\.98 N/, 'exact results keep =');
   await context.close();
 });

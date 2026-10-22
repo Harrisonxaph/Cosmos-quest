@@ -49,17 +49,18 @@
       "unitName": "centimetres",
       "min": 0.5,
       "max": 5,
-      "step": 0.1,
+      "step": 0.01,
+      "decimals": 2,
       "default": 1,
       "slider": true,
-      "hint": "Type or slide to any width from 0.5 to 5 centimetres."
+      "hint": "Type any width from 0.5 to 5 centimetres, with up to 2 decimal places, or use the slider. The slider and the number always match."
     },
     "prediction": {
       "question": "Optional guess: with Earth this size, how far from the Sun would Neptune be?",
       "options": [
-        { "id": "under-100-m", "text": "Less than 100 metres" },
-        { "id": "100-m-to-1-km", "text": "Between 100 metres and 1 kilometre" },
-        { "id": "over-1-km", "text": "More than 1 kilometre" }
+        { "id": "under-5-km", "text": "Less than 5 kilometres" },
+        { "id": "5-to-10-km", "text": "Between 5 and 10 kilometres" },
+        { "id": "over-10-km", "text": "More than 10 kilometres" }
       ]
     },
     "revealLabel": "Calculate my model",

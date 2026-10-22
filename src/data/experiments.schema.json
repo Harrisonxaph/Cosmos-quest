@@ -23,6 +23,7 @@
         "min": { "type": "number", "exclusiveMinimum": 0 },
         "max": { "type": "number", "exclusiveMinimum": 0 },
         "step": { "type": "number", "exclusiveMinimum": 0 },
+        "decimals": { "type": "integer", "minimum": 0, "maximum": 4, "description": "Most decimal places accepted, so a slider with the matching step can show any accepted value exactly." },
         "default": { "type": "number", "exclusiveMinimum": 0 },
         "slider": { "type": "boolean" },
         "hint": { "$ref": "#/definitions/text" }

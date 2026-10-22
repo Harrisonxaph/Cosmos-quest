@@ -52,6 +52,7 @@ test('the gravity lab offers every planet and never the Sun', () => {
 test('input ranges match the brief, and defaults sit inside them', () => {
   assert.deepEqual([tiny.input.min, tiny.input.max, tiny.input.unit], [0.5, 5, 'cm']);
   assert.equal(tiny.input.slider, true, 'the slider comes with a numeric input');
+  assert.equal(tiny.input.step, 10 ** -tiny.input.decimals, 'the slider step matches the precision the field accepts');
   assert.equal(gravity.input.unit, 'kg');
   for (const { input } of experiments) {
     assert.ok(input.min > 0 && input.min < input.max);
@@ -61,7 +62,7 @@ test('input ranges match the brief, and defaults sit inside them', () => {
 
 test('prediction options match the categories the calculations produce', () => {
   assert.deepEqual(gravity.prediction.options.map(o => o.id).sort(), [...new Set([0.5, 1, 2].map(comparisonCategory))].sort());
-  assert.deepEqual(tiny.prediction.options.map(o => o.id).sort(), [...new Set([50, 500, 5000].map(distanceCategory))].sort());
+  assert.deepEqual(tiny.prediction.options.map(o => o.id).sort(), [...new Set([1000, 7000, 20000].map(distanceCategory))].sort());
 });
 
 test('cited sources exist and are the ones the information panels use for these measurements', () => {
@@ -102,7 +103,7 @@ test('the tiny solar system states which diameters are used and that distances a
 });
 
 test('no new numerical claims: texts only mention the input limits and prediction bands', () => {
-  const allowed = new Set(['0.1', '1,000', '10', '0.5', '5', '100', '1']);
+  const allowed = new Set(['0.1', '1,000', '10', '0.5', '5', '2']);
   for (const experiment of experiments) {
     for (const number of allText(experiment).join(' ').match(/\d[\d,]*(\.\d+)?/g) ?? []) {
       assert.ok(allowed.has(number), `${experiment.id}: unexpected number ${number}`);

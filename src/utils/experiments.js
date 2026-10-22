@@ -39,8 +39,16 @@ export function gravityResult(massKg, body, earth) {
   };
 }
 
-export const formatKg = kg => `${formatNumber(kg, 2)} kg`;
-export const formatNewtons = n => `${formatNumber(n, 1)} N`;
+/** The mass exactly as entered (no rounding), so the workings can be repeated by hand. */
+export const formatKg = kg => `${formatNumber(kg, 10)} kg`;
+/** Decimal places shown for a force: two below 10 N (so 0.98 N stays 0.98 N), otherwise one. */
+const newtonDecimals = n => (n < 10 ? 2 : 1);
+export const formatNewtons = n => `${formatNumber(n, newtonDecimals(n))} N`;
+/** "=" when the displayed force is exact, "≈" when it has been rounded for display. */
+export function resultSign(n) {
+  const factor = 10 ** newtonDecimals(n);
+  return Math.abs(Math.round(n * factor) / factor - n) < 1e-9 ? '=' : '≈';
+}
 export const formatGravity = g => `${formatFixed(g, 1)} m/s²`;
 
 /** "about 38% of the pull on Earth" / "about the same as the pull on Earth" / "about 2.4 times the pull on Earth". */
@@ -67,20 +75,23 @@ export function gravityText(result, body) {
       ? `This is the pull every other planet is compared with. Try another planet to see the difference: the mass stays ${kg} everywhere.`
       : `On Earth, the same ${kg} mass is pulled with about ${formatNewtons(result.earthForceN)}. On ${body.name} the pull is ${pullComparison(result)}. The mass is still ${kg}.`,
     measured: `Gravity ${body.hasSolidSurface ? `at the surface of ${body.name}` : `at the 1-bar level on ${body.name}`}: ${formatGravity(result.gravityMs2)}`,
-    calculation: `${kg} × ${formatGravity(result.gravityMs2)} = ${formatNewtons(result.forceN)}`,
-    earthCalculation: `${kg} × ${formatGravity(result.earthGravityMs2)} = ${formatNewtons(result.earthForceN)} on Earth`,
+    calculation: `${kg} × ${formatGravity(result.gravityMs2)} ${resultSign(result.forceN)} ${formatNewtons(result.forceN)}`,
+    earthCalculation: `${kg} × ${formatGravity(result.earthGravityMs2)} ${resultSign(result.earthForceN)} ${formatNewtons(result.earthForceN)} on Earth`,
     placeNote: gravityPlaceNote(body),
   };
 }
 
 // ----- Build a tiny solar system -----
 
-/** Prediction band for Neptune's model distance. */
+/** Prediction band for Neptune's model distance (about 1.8 to 17.7 km across the allowed Earth sizes). */
 export function distanceCategory(metres) {
-  if (metres < 100) return 'under-100-m';
-  if (metres <= 1000) return '100-m-to-1-km';
-  return 'over-1-km';
+  if (metres < 5000) return 'under-5-km';
+  if (metres <= 10000) return '5-to-10-km';
+  return 'over-10-km';
 }
+
+/** The model Earth's width exactly as entered (inputs allow up to 2 decimal places). */
+export const formatEarthCm = cm => `${formatNumber(cm, 2)} cm`;
 
 /** Model width: millimetres below 1 cm, centimetres below 1 m, then metres. */
 export function formatModelSize(cm) {
@@ -119,7 +130,7 @@ export function tinySolarSystem(bodies, earth, earthCm) {
 
 export function tinySummary(model) {
   return [
-    `With Earth ${formatModelSize(model.earthCm)} wide, the Sun would be a ball about ${formatModelSize(model.sunDiameterCm)} wide.`,
+    `With Earth ${formatEarthCm(model.earthCm)} wide, the Sun would be a ball about ${formatModelSize(model.sunDiameterCm)} wide.`,
     `Neptune, the farthest planet, would be about ${formatModelDistance(model.neptuneDistanceM)} from that Sun on average.`,
   ];
 }
@@ -149,5 +160,9 @@ export function parseMeasurement(text, input) {
   if (value <= 0) return { ok: false, code: 'not-positive', message: `The ${what} must be more than 0 ${input.unit}. Choose a number ${range}.` };
   if (value < input.min) return { ok: false, code: 'too-small', message: `${formatNumber(value, 3)} ${input.unit} is too small. Choose a number ${range}.` };
   if (value > input.max) return { ok: false, code: 'too-big', message: `${formatNumber(value, 3)} ${input.unit} is too big. Choose a number ${range}.` };
+  const decimals = (normalised.split('.')[1] ?? '').length;
+  if (input.decimals !== undefined && decimals > input.decimals) {
+    return { ok: false, code: 'too-precise', message: `Use at most ${input.decimals} decimal places, for example ${formatNumber(Number(((input.min + input.max) / 2).toFixed(input.decimals)), input.decimals)}.` };
+  }
   return { ok: true, value };
 }

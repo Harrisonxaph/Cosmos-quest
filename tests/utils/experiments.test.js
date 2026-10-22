@@ -6,7 +6,7 @@ import sun from '../../src/data/sun.json' with { type: 'json' };
 import experiments from '../../src/data/experiments.json' with { type: 'json' };
 import {
   gravityForceN, gravityResult, comparisonCategory, pullComparison, gravityPlaceNote, gravityText,
-  formatNewtons, formatKg, tinySolarSystem, tinySummary, formatModelSize, formatModelDistance, distanceCategory,
+  formatNewtons, formatKg, resultSign, tinySolarSystem, tinySummary, formatModelSize, formatModelDistance, distanceCategory, formatEarthCm,
   parseMeasurement,
 } from '../../src/utils/experiments.js';
 
@@ -44,8 +44,24 @@ test('precision is kept internally and only display text is rounded', () => {
   assert.equal(result.forceN, 12.345 * 3.7, 'unrounded');
   close(result.forceN, 45.6765, 1e-9);
   assert.equal(formatNewtons(result.forceN), '45.7 N');
-  assert.equal(formatKg(12.345), '12.35 kg');
+  assert.equal(formatKg(12.345), '12.345 kg', 'the mass is shown exactly as entered');
   assert.equal(formatNewtons(1000 * 23.1), '23,100 N');
+});
+
+test('the workings can be repeated by hand: entered mass kept, ≈ when the result is rounded', () => {
+  // 0.1049 × 23.1 = 2.42319, shown as 2.4 N, so the sign must be ≈ and the mass must stay 0.1049.
+  const tiny = gravityText(gravityResult(0.1049, byId.jupiter, earth), byId.jupiter);
+  assert.equal(tiny.calculation, '0.1049 kg × 23.1 m/s² ≈ 2.42 N');
+  assert.equal(tiny.earthCalculation, '0.1049 kg × 9.8 m/s² ≈ 1.03 N on Earth'); // 1.02802
+  assert.equal(tiny.heading, 'A 0.1049 kg mass on Jupiter');
+  // Exact results keep "=": 10 × 3.7 = 37 and 2.5 × 23.1 = 57.75 (rounded, so ≈).
+  assert.equal(gravityText(gravityResult(10, byId.mars, earth), byId.mars).calculation, '10 kg × 3.7 m/s² = 37 N');
+  assert.equal(gravityText(gravityResult(10, byId.mars, earth), byId.mars).earthCalculation, '10 kg × 9.8 m/s² = 98 N on Earth');
+  assert.equal(gravityText(gravityResult(2.5, byId.jupiter, earth), byId.jupiter).calculation, '2.5 kg × 23.1 m/s² ≈ 57.8 N');
+  assert.equal(resultSign(0.98), '=');
+  assert.equal(gravityText(gravityResult(0.1, earth, earth), earth).calculation, '0.1 kg × 9.8 m/s² = 0.98 N');
+  assert.equal(resultSign(2.42319), '≈');
+  assert.equal(resultSign(10 * 3.7), '=', 'floating-point noise is not treated as rounding');
 });
 
 test('comparison bands and wording', () => {
@@ -111,10 +127,23 @@ test('model sizes and distances are rounded only for display', () => {
     'With Earth 1 cm wide, the Sun would be a ball about 1.1 m wide.',
     'Neptune, the farthest planet, would be about 3.5 km from that Sun on average.',
   ]);
-  assert.equal(distanceCategory(99.9), 'under-100-m');
-  assert.equal(distanceCategory(100), '100-m-to-1-km');
-  assert.equal(distanceCategory(1000), '100-m-to-1-km');
-  assert.equal(distanceCategory(1000.1), 'over-1-km');
+  assert.equal(formatEarthCm(2.25), '2.25 cm', 'the chosen Earth width is never rounded');
+});
+
+test('Neptune’s prediction band changes with the model size', () => {
+  assert.equal(distanceCategory(4999.9), 'under-5-km');
+  assert.equal(distanceCategory(5000), '5-to-10-km');
+  assert.equal(distanceCategory(10000), '5-to-10-km');
+  assert.equal(distanceCategory(10000.1), 'over-10-km');
+  // Neptune is 3,539.51 m away per cm of model Earth (4,515 million km ÷ 12,756 km ÷ 100).
+  const band = cm => tinySolarSystem(bodies, earth, cm).category;
+  assert.equal(band(0.5), 'under-5-km'); // 1.77 km
+  assert.equal(band(1.41), 'under-5-km'); // 4.99 km
+  assert.equal(band(1.42), '5-to-10-km'); // 5.03 km
+  assert.equal(band(2.82), '5-to-10-km'); // 9.98 km
+  assert.equal(band(2.83), 'over-10-km'); // 10.02 km
+  assert.equal(band(5), 'over-10-km'); // 17.70 km
+  assert.deepEqual(new Set([0.5, 2, 5].map(band)).size, 3, 'all three answers are reachable');
 });
 
 test('valid inputs are accepted with full precision', () => {
@@ -125,6 +154,7 @@ test('valid inputs are accepted with full precision', () => {
   assert.deepEqual(parseMeasurement('.5', earthInput), { ok: true, value: 0.5 });
   assert.deepEqual(parseMeasurement('5', earthInput), { ok: true, value: 5 });
   assert.deepEqual(parseMeasurement('2.25', earthInput), { ok: true, value: 2.25 });
+  assert.deepEqual(parseMeasurement('0.1049', massInput), { ok: true, value: 0.1049 }, 'masses keep every decimal typed');
 });
 
 test('invalid, empty, zero, negative and out-of-range inputs get clear messages', () => {
@@ -144,6 +174,7 @@ test('invalid, empty, zero, negative and out-of-range inputs get clear messages'
     ['0.4', earthInput, 'too-small', /0.4 cm is too small/],
     ['1001', massInput, 'too-big', /1,001 kg is too big/],
     ['5.1', earthInput, 'too-big', /5.1 cm is too big\. Choose a number from 0.5 to 5 centimetres/],
+    ['2.255', earthInput, 'too-precise', /Use at most 2 decimal places, for example 2.75/],
   ];
   for (const [text, input, code, message] of cases) {
     const result = parseMeasurement(text, input);

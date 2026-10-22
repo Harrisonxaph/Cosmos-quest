@@ -4,7 +4,7 @@
 import { el } from './dom.js';
 import { formatNumber, formatDistanceE6Km } from '../utils/format.js';
 import {
-  gravityResult, gravityText, tinySolarSystem, tinySummary, formatModelSize, formatModelDistance,
+  gravityResult, gravityText, tinySolarSystem, tinySummary, formatModelSize, formatModelDistance, formatEarthCm,
 } from '../utils/experiments.js';
 
 function badge(text, kind) {
@@ -68,7 +68,7 @@ function gravityResultSection(experiment, activity, { body, result }, sourcesByI
 }
 
 function tinyResultSection(experiment, activity, { model }, sourcesById) {
-  const caption = `Model sizes and average distances with Earth ${formatModelSize(model.earthCm)} wide`;
+  const caption = `Model sizes and average distances with Earth ${formatEarthCm(model.earthCm)} wide`;
   return [
     el('h3', { id: 'experiment-result-title', tabindex: '-1', 'data-focus-target': '' }, el('span', { className: 'visually-hidden' }, 'Result: '), 'Your tiny solar system'),
     ...tinySummary(model).map(sentence => el('p', { className: 'experiment-headline' }, sentence)),
@@ -78,7 +78,7 @@ function tinyResultSection(experiment, activity, { model }, sourcesById) {
       el('h5', {}, row.name),
       el('dl', {},
         el('dt', {}, 'Real diameter ', badge('measured', 'measured')), el('dd', {}, `${formatNumber(row.diameterKm, 0)} km`),
-        el('dt', {}, 'Model diameter ', badge('calculated', 'calculated')), el('dd', { 'data-value': 'model-diameter' }, formatModelSize(row.modelDiameterCm)),
+        el('dt', {}, 'Model diameter ', badge('calculated', 'calculated')), el('dd', { 'data-value': 'model-diameter' }, row.id === 'earth' ? formatEarthCm(model.earthCm) : formatModelSize(row.modelDiameterCm)),
         el('dt', {}, 'Real average distance from the Sun ', badge('measured', 'measured')), el('dd', {}, row.distanceE6Km === null ? 'At the centre' : formatDistanceE6Km(row.distanceE6Km)),
         el('dt', {}, 'Model distance from the Sun ', badge('calculated', 'calculated')), el('dd', { 'data-value': 'model-distance' }, row.modelDistanceM === null ? 'At the centre' : formatModelDistance(row.modelDistanceM)))))),
     el('p', {}, badge('Measured · NASA', 'measured'), ' ', experiment.diameterNote),
@@ -132,6 +132,16 @@ function measurementField(experiment, activity, handlers) {
       slider.setAttribute('aria-valuetext', sliderText(slider.value));
     }
     handlers.onInput(experiment.id, textInput.value);
+  });
+  // The slider has the same precision as the number field (0.01 cm), so both always show the same value.
+  // Arrow keys still move it in easy 0.1 cm steps.
+  slider?.addEventListener('keydown', event => {
+    const direction = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1 }[event.key];
+    if (!direction) return;
+    event.preventDefault();
+    const next = Math.min(input.max, Math.max(input.min, Math.round((Number(slider.value) + direction * 0.1) * 100) / 100));
+    slider.value = String(next);
+    slider.dispatchEvent(new Event('input', { bubbles: true }));
   });
   slider?.addEventListener('input', () => {
     // Moving the slider only updates the number; nothing is announced until the child asks for the result.
