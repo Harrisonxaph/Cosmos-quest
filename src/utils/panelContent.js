@@ -11,6 +11,7 @@ import {
   kindLabel,
   ordinal,
 } from './format.js';
+import { earthComparisons } from './compare.js';
 
 const GRAVITY_NOTES = {
   surface: 'At the surface',
@@ -102,4 +103,38 @@ export function modelNote(body) {
     return 'In the 3D view the Sun is drawn much smaller than it really is, so the planets can fit beside it.';
   }
   return `In the 3D view, ${body.name} is drawn much bigger compared with its distance from the Sun, and its orbit is squeezed closer to the Sun. Its colours are an artist's impression.`;
+}
+
+// The card's third fact: the first of the body's facts that doesn't mention moons (their counts change) and
+// doesn't repeat the card's own size or order lines.
+const REPEATS_CARD = /\bmoons?\b|\bwider?\b|planet from the Sun\.$/i;
+export function cardFeature(body) {
+  return body.facts.find(fact => !REPEATS_CARD.test(fact.text)) ?? body.facts[0];
+}
+
+/**
+ * The compact facts card shown over the 3D view: name, kind, place in the solar system and three short facts.
+ * Everything is derived from the same data and wording as the information panel, so the two never disagree.
+ * Moon counts are left out because they change as new moons are confirmed.
+ */
+export function sceneCardContent(body, earth) {
+  const comparisons = Object.fromEntries(earthComparisons(body, earth).map(item => [item.id, item]));
+  const m = body.measurements;
+  const size = body.id === earth.id
+    ? { id: 'size', kind: 'measured', text: `Earth is ${formatNumber(m.diameterKm, 0)} km wide. Every size here is compared with Earth.` }
+    : { id: 'size', kind: 'calculated', text: comparisons.width.simple };
+  const time = body.kind === 'star'
+    ? { id: 'spin', kind: 'measured', text: comparisons.day.simple }
+    : { id: 'year', kind: 'measured', text: comparisons.year?.simple ?? `One trip around the Sun takes ${formatDays(m.orbitalPeriodDays)}.` };
+  const feature = cardFeature(body);
+  const notice = noSurfaceNotice(body);
+  return {
+    id: body.id,
+    name: body.name,
+    classification: kindLabel(body.kind),
+    place: body.kind === 'star' ? 'The centre of our solar system' : `${ordinal(body.orderFromSun)[0].toUpperCase()}${ordinal(body.orderFromSun).slice(1)} planet from the Sun`,
+    // Only the first sentence of the panel's warning, e.g. "Saturn has no solid surface."
+    noSurface: notice ? notice.split('. ')[0].replace(/\.?$/, '.') : null,
+    facts: [size, time, { id: 'feature', kind: 'fact', text: feature.text, sourceId: feature.sourceId }],
+  };
 }

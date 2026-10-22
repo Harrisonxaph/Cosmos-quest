@@ -13,6 +13,10 @@ Record the date, device, iPadOS version and the preview URL you tested.
 - [ ] Tap a planet button, then tap a planet in the picture. The camera flies there and the facts change.
 - [ ] Drag to rotate and pinch to zoom. The page itself does not scroll or zoom while you do this.
 - [ ] Pause stops the planets moving, and pressing it again starts them. "Surface detail" and "Labels" show a ✓ when on.
+- [ ] In the whole solar system, tap several planet names, including the crowded ones near the Sun. Each tap flies to the planet whose name you tapped. Names never sit on top of each other.
+- [ ] Start a drag or a pinch on a name: the view turns or zooms, nothing is selected and the page doesn't scroll.
+- [ ] The facts card shows the planet's kind, its place from the Sun and three facts, and the planet stays visible beside it. **Hide card** keeps the planet chosen, **More facts** jumps to the full facts, and **Solar system** goes back. On an iPhone it is a strip that opens with **Quick facts**.
+- [ ] Turn Labels off: the names disappear and tapping where a name was selects nothing (unless you tap the planet itself), but the card still appears for a chosen planet.
 
 ## Activities
 - [ ] **Quiz:** answer a question, tap **Back to exploring**, visit a planet, then use **Back to the quiz**. You return to the same place on the page, and a round can be finished.
@@ -28,6 +32,7 @@ Record the date, device, iPadOS version and the preview URL you tested.
 
 ## Accessibility (VoiceOver)
 - [ ] With VoiceOver on, open each activity. The heading is read once, not twice.
+- [ ] With VoiceOver, swipe to a planet name in the 3D view ("Fly to Saturn") and double-tap. Saturn is chosen and its card is read. Swipe through the card: kind, place, no-solid-surface note and three facts.
 - [ ] Answer a quiz question and finish a mission step. The result and explanation are read.
 - [ ] In the tiny solar system, drag the slider. Nothing is announced until you tap **Calculate my model**.
 - [ ] Settings → Accessibility → Motion → **Reduce Motion** on: the planets start paused and the camera moves without animation.

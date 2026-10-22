@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import planets from '../../src/data/planets.json' with { type: 'json' };
 import sun from '../../src/data/sun.json' with { type: 'json' };
 import sources from '../../src/data/sources.json' with { type: 'json' };
-import { measurementRows, noSurfaceNotice, bodyHeadline, bodySourceIds, modelNote } from '../../src/utils/panelContent.js';
+import { measurementRows, noSurfaceNotice, bodyHeadline, bodySourceIds, modelNote, sceneCardContent, cardFeature } from '../../src/utils/panelContent.js';
+import { earthComparisons } from '../../src/utils/compare.js';
 
 const bodies = [sun, ...planets];
 const byId = Object.fromEntries(bodies.map(body => [body.id, body]));
@@ -78,4 +79,58 @@ test('headlines, sources and model notes', () => {
     for (const id of ids) assert.ok(known.has(id), id);
     assert.match(modelNote(body), /3D view/);
   }
+});
+
+// Hand-written expectations for the facts card (not read from the data being tested).
+const CARD_KEY = {
+  sun: { classification: 'Star', place: 'The centre of our solar system', noSurface: true, time: '25.4 Earth days' },
+  mercury: { classification: 'Rocky planet', place: 'First planet from the Sun', noSurface: false, time: '88 Earth days' },
+  earth: { classification: 'Rocky planet', place: 'Third planet from the Sun', noSurface: false, time: '365 Earth days' },
+  mars: { classification: 'Rocky planet', place: 'Fourth planet from the Sun', noSurface: false, time: '687 Earth days' },
+  saturn: { classification: 'Gas giant', place: 'Sixth planet from the Sun', noSurface: true, time: '29 Earth years' },
+  neptune: { classification: 'Ice giant', place: 'Eighth planet from the Sun', noSurface: true, time: '164 Earth years' },
+};
+
+test('the facts card names each world, its kind and its place, with three short facts', () => {
+  for (const [id, expected] of Object.entries(CARD_KEY)) {
+    const card = sceneCardContent(byId[id], byId.earth);
+    assert.equal(card.name, byId[id].name);
+    assert.equal(card.classification, expected.classification, id);
+    assert.equal(card.place, expected.place, id);
+    assert.equal(card.facts.length, 3, id);
+    assert.deepEqual(card.facts.map(f => f.id), ['size', id === 'sun' ? 'spin' : 'year', 'feature']);
+    assert.ok(card.facts[1].text.includes(expected.time), `${id}: ${card.facts[1].text}`);
+    assert.equal(Boolean(card.noSurface), expected.noSurface, id);
+  }
+});
+
+test('giant planets and the Sun say they have no solid surface; nothing gives them ground', () => {
+  for (const body of bodies.filter(b => !b.hasSolidSurface)) {
+    const card = sceneCardContent(body, byId.earth);
+    assert.match(card.noSurface, /no solid surface\.$/, body.id);
+    const text = [card.noSurface, ...card.facts.map(f => f.text)].join(' ');
+    assert.doesNotMatch(text, /stand(ing)? on|its (solid )?ground|on the surface/i, body.id);
+  }
+});
+
+test('the card reuses the panel\'s sourced wording instead of new copies, and leaves out moon counts', () => {
+  for (const body of bodies) {
+    const card = sceneCardContent(body, byId.earth);
+    const comparisons = Object.fromEntries(earthComparisons(body, byId.earth).map(c => [c.id, c.simple]));
+    if (body.id !== 'earth') assert.equal(card.facts[0].text, comparisons.width, body.id);
+    const time = card.facts[1].text;
+    if (body.id !== 'earth') assert.equal(time, body.kind === 'star' ? comparisons.day : comparisons.year, body.id);
+    const feature = card.facts[2];
+    assert.ok(body.facts.some(f => f.text === feature.text && f.sourceId === feature.sourceId), `${body.id}: the feature is one of its sourced facts`);
+    assert.ok(sources.some(s => s.id === feature.sourceId), feature.sourceId);
+    for (const fact of card.facts) assert.doesNotMatch(fact.text, /\bmoons?\b/i, `${body.id}: no moon counts`);
+    assert.deepEqual(card.facts.map(f => f.kind), [body.id === 'earth' ? 'measured' : 'calculated', 'measured', 'fact'], body.id);
+  }
+});
+
+test('the card\'s feature skips facts that repeat its size or order lines', () => {
+  assert.equal(cardFeature(byId.mars).text.includes('Olympus Mons'), true);
+  assert.doesNotMatch(cardFeature(byId.sun).text, /wider/);
+  assert.doesNotMatch(cardFeature(byId.neptune).text, /eighth/);
+  assert.equal(cardFeature(byId.saturn), byId.saturn.facts[0], 'the Stage 1 fact is used when it fits');
 });
