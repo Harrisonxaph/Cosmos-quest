@@ -1,0 +1,94 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Cosmos Quest Discovery Missions",
+  "description": "Guided missions. Each step is either a 'find' step (explore a world, then press \"I've found it\") or a 'question' step (choose the right answer; retries allowed). Every step names a basis in content the app already shows.",
+  "type": "array",
+  "minItems": 1,
+  "items": { "$ref": "#/definitions/mission" },
+  "definitions": {
+    "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+    "worldId": { "enum": ["sun", "mercury", "venus", "earth", "mars", "jupiter", "saturn", "uranus", "neptune"] },
+    "target": {
+      "description": "Somewhere the child can go: a world's panel, or the solar-system overview.",
+      "enum": ["overview", "sun", "mercury", "venus", "earth", "mars", "jupiter", "saturn", "uranus", "neptune"]
+    },
+    "sourceIds": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^nasa-[a-z]+(-[a-z]+)*$" }
+    },
+    "text": { "type": "string", "minLength": 10, "maxLength": 320 },
+    "basis": {
+      "oneOf": [
+        { "type": "object", "additionalProperties": false, "required": ["kind", "worldId", "text"], "properties": { "kind": { "const": "fact" }, "worldId": { "$ref": "#/definitions/worldId" }, "text": { "type": "string" } } },
+        { "type": "object", "additionalProperties": false, "required": ["kind", "worldId", "field", "contains"], "properties": { "kind": { "const": "text" }, "worldId": { "$ref": "#/definitions/worldId" }, "field": { "enum": ["summary", "composition"] }, "contains": { "type": "string", "minLength": 4 } } },
+        { "type": "object", "additionalProperties": false, "required": ["kind", "worldId"], "properties": { "kind": { "const": "worldKind" }, "worldId": { "$ref": "#/definitions/worldId" } } },
+        { "type": "object", "additionalProperties": false, "required": ["kind", "value"], "properties": { "kind": { "const": "kindMatch" }, "value": { "enum": ["rocky-planet", "gas-giant", "ice-giant"] } } },
+        { "type": "object", "additionalProperties": false, "required": ["kind", "worldIds"], "properties": { "kind": { "const": "noSolidSurface" }, "worldIds": { "type": "array", "minItems": 1, "items": { "$ref": "#/definitions/worldId" } } } },
+        { "type": "object", "additionalProperties": false, "required": ["kind", "position"], "properties": { "kind": { "const": "order" }, "position": { "type": "integer", "minimum": 1, "maximum": 8 } } },
+        { "type": "object", "additionalProperties": false, "required": ["kind", "quantity"], "properties": { "kind": { "const": "trueScale" }, "quantity": { "enum": ["sunWidthM", "earthDistanceM", "neptuneDistanceKm"] } } },
+        { "type": "object", "additionalProperties": false, "required": ["kind", "contains"], "properties": { "kind": { "const": "model" }, "contains": { "type": "string", "minLength": 10 } } }
+      ]
+    },
+    "answer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "text"],
+      "properties": { "id": { "$ref": "#/definitions/id" }, "text": { "type": "string", "minLength": 1, "maxLength": 90 } }
+    },
+    "findStep": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "title", "task", "target", "lookFor", "reveal", "sourceIds", "basis"],
+      "properties": {
+        "id": { "$ref": "#/definitions/id" },
+        "type": { "const": "find" },
+        "title": { "type": "string", "minLength": 5, "maxLength": 60 },
+        "task": { "$ref": "#/definitions/text" },
+        "target": { "$ref": "#/definitions/target" },
+        "lookFor": { "type": "string", "minLength": 5, "maxLength": 90 },
+        "reveal": { "$ref": "#/definitions/text" },
+        "sourceIds": { "$ref": "#/definitions/sourceIds" },
+        "basis": { "$ref": "#/definitions/basis" }
+      }
+    },
+    "questionStep": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "title", "task", "question", "answers", "correctAnswerId", "hint", "explanation", "sourceIds", "basis"],
+      "properties": {
+        "id": { "$ref": "#/definitions/id" },
+        "type": { "const": "question" },
+        "title": { "type": "string", "minLength": 5, "maxLength": 60 },
+        "task": { "$ref": "#/definitions/text" },
+        "explore": { "$ref": "#/definitions/target" },
+        "question": { "type": "string", "minLength": 10, "maxLength": 160 },
+        "answers": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "$ref": "#/definitions/answer" } },
+        "correctAnswerId": { "$ref": "#/definitions/id" },
+        "hint": { "$ref": "#/definitions/text" },
+        "explanation": { "$ref": "#/definitions/text" },
+        "sourceIds": { "$ref": "#/definitions/sourceIds" },
+        "basis": { "$ref": "#/definitions/basis" }
+      }
+    },
+    "mission": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "summary", "intro", "recap", "steps"],
+      "properties": {
+        "id": { "$ref": "#/definitions/id" },
+        "title": { "type": "string", "minLength": 5, "maxLength": 60 },
+        "summary": { "type": "string", "minLength": 10, "maxLength": 120 },
+        "intro": { "$ref": "#/definitions/text" },
+        "recap": { "$ref": "#/definitions/text" },
+        "steps": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 5,
+          "items": { "oneOf": [{ "$ref": "#/definitions/findStep" }, { "$ref": "#/definitions/questionStep" }] }
+        }
+      }
+    }
+  }
+}

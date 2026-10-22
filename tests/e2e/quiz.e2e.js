@@ -115,7 +115,7 @@ test('a complete round: progress, feedback, sources, results, play again and bac
   await page.click('[data-quiz-action="back"]');
   assert.equal(await page.locator('#info-panel article').getAttribute('data-body'), 'overview');
   assert.equal(await page.locator('.quiz-resume').count(), 0, 'finished quiz is cleared');
-  assert.equal((await page.locator('.quiz-entry__progress').textContent()).trim(), '');
+  assert.equal((await page.locator('#quiz-entry .quiz-entry__progress').textContent()).trim(), '');
   assert.deepEqual(errors, []);
   await context.close();
 });
@@ -248,8 +248,9 @@ test('screen readers hear the verdict, the correct answer and the explanation', 
   await page.click('[data-quiz-action="start"]');
 
   const first = await currentQuestionData(page);
-  const wrongText = first.answers.map(a => a.text).find(text => text !== ANSWER_KEY[first.id].answer);
   await answer(page, false);
+  const wrongText = (await page.locator('.quiz-result.is-chosen .quiz-result__text').textContent()).trim(); // answers may be shown in any order
+  assert.notEqual(wrongText, ANSWER_KEY[first.id].answer);
   const heading = await page.locator('.quiz-feedback h3').ariaSnapshot();
   assert.ok(heading.includes(`You chose ${wrongText}.`), heading);
   assert.ok(heading.includes(`The correct answer is ${ANSWER_KEY[first.id].answer}.`), heading);

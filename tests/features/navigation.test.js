@@ -132,3 +132,13 @@ test('explorer shortcuts pause during the quiz, except Escape', () => {
   }
   assert.equal(actionAllowedInView(keyToAction('Escape'), 'quiz'), true);
 });
+
+test('Discovery Missions have their own view and link, and pause explorer shortcuts like the quiz', () => {
+  const state = reduce(reduce(initialState(), { type: 'select', id: 'venus' }), { type: 'openMissions' });
+  assert.equal(state.view, 'missions');
+  assert.equal(state.selectedId, null);
+  assert.equal(formatHash(state), '#/missions');
+  assert.deepEqual(parseHash('#/missions'), { view: 'missions', selectedId: null });
+  assert.equal(actionAllowedInView(keyToAction('3'), 'missions'), false);
+  assert.equal(actionAllowedInView(keyToAction('Escape'), 'missions'), true);
+});

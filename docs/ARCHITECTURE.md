@@ -10,10 +10,10 @@ Stage 2 adopted **Three.js 0.180.0** (MIT licence), pinned exactly in `package.j
 
 | Folder | Owns | Rules |
 | --- | --- | --- |
-| `src/data/` | Scientific content: `planets.json`, `sun.json`, `sources.json`, `quiz.json` and their schemas | Every value cites a source listed in `sources.json` and `docs/SCIENCE.md`. No presentation settings. |
+| `src/data/` | Scientific content: `planets.json`, `sun.json`, `sources.json`, `quiz.json`, `missions.json` and their schemas | Every value cites a source listed in `sources.json` and `docs/SCIENCE.md`. No presentation settings. |
 | `src/utils/` | Pure helpers: formatting, Earth comparisons (`compare.js`), illustrative scale (`scale.js`), panel content (`panelContent.js`) | No DOM, no Three.js, so everything can be tested in Node. |
-| `src/features/` | User capabilities: `navigation.js` (pure state machine, URL hash and keyboard map), `quiz.js` (pure quiz state, round picking and scoring) and `explorer.js` (wires state, panels, quiz, controls and the scene) | Navigation rules live in `navigation.js`, not in event handlers. |
-| `src/components/` | Reusable UI: information panel, quiz panel, world selector, Stage 1 planet list, DOM helper | Text is set with `textContent` only. Components do not import Three.js. |
+| `src/features/` | User capabilities: `navigation.js` (pure state machine, URL hash and keyboard map), `quiz.js` (pure quiz state, round picking and scoring), `missions.js` (pure mission progress and completion rules) and `explorer.js` (wires state, panels, quiz, controls and the scene) | Navigation rules live in `navigation.js`, not in event handlers. |
+| `src/components/` | Reusable UI: information panel, quiz panel, mission panel and mission bar, world selector, Stage 1 planet list, DOM helper | Text is set with `textContent` only. Components do not import Three.js. |
 | `src/scenes/` | 3D: `solarSystemScene.js` (scene, camera flights, picking, labels, cleanup), `proceduralTextures.js`, `appearance.js` | Only this folder imports Three.js. `appearance.js` holds illustrative looks, never science. |
 | `src/hooks/` | Reserved for a future hook-based UI framework | None is used yet. |
 
@@ -23,7 +23,7 @@ Stage 2 adopted **Three.js 0.180.0** (MIT licence), pinned exactly in `package.j
 2. `explorer.js` creates the navigation store and renders the panel, selector and planet list straight away, so facts appear before any 3D code downloads.
 3. If WebGL is available (and the URL doesn't say `?view=2d`), `explorer.js` dynamically imports `scenes/solarSystemScene.js`. Vite puts Three.js in that separate chunk, so the first page load needs well under 100 kB of app code and the facts appear before the 3D scene arrives.
 4. Every user action (button, keyboard shortcut, tap in the scene, Stage 1 "Explore" button, browser Back) dispatches an action to the navigation store. One listener updates the panel, controls, URL hash and scene, so they never disagree.
-5. The Planet Quiz is a third panel view (`#/quiz`) beside the overview and world panels, so it needs no 3D. See "Planet Quiz" below.
+5. The Planet Quiz is a third panel view (`#/quiz`) beside the overview and world panels, so it needs no 3D. See "Planet Quiz" below. Discovery Missions are a fourth view (`#/missions`); see "Discovery Missions".
 6. If WebGL is missing, the scene fails to load or the graphics context is lost, the scene area shows a message and the 3D-only controls hide. The panels, selector and planet list keep working.
 
 ## Planet Quiz
@@ -33,6 +33,14 @@ Stage 2 adopted **Three.js 0.180.0** (MIT licence), pinned exactly in `package.j
 - **State and scoring** (`src/features/quiz.js`): a pure reducer with `idle → question → feedback → … → results`. A round picks five different questions, preferring a different world for each and avoiding questions already seen this visit while fresh ones remain. Answers are shuffled, but correctness compares answer ids, so shuffling cannot change it. A second answer or skipping ahead is ignored. Feedback headings and result messages are always encouraging.
 - **Panel** (`src/components/quizPanel.js`): renders the state only. Correct and chosen answers are labelled in words and with ✓ symbols, plus border style, not colour alone. Each screen marks one heading with `data-focus-target`; after starting, answering, moving on or finishing, `explorer.js` moves focus there. After an answer, the focused heading's accessible name includes the verdict and the correct answer ("Good try! You chose Oxygen. The correct answer is Nitrogen."), and the explanation is then read through the page's polite live region. The results message is announced the same way.
 - **Exploring mid-quiz:** every unanswered question has a visible "Back to exploring" button (as well as Escape) that keeps the child's place. "Explore this planet" selects that world in the normal explorer. The quiz store keeps its state in memory, and every other panel shows a "Back to the quiz" bar until the round is finished or reset. The header button also shows the current question. While the quiz is showing, explorer keyboard shortcuts are switched off (`actionAllowedInView`) except Escape.
+
+
+## Discovery Missions
+
+- **Definitions** (`src/data/missions.json`, validated by `missions.schema.json`): each mission has a stable id, title, summary, introduction, recap and 3–5 steps with stable ids. A `find` step names a target (a world or the overview), what to look for, what is revealed and its sources. A `question` step has three answers with stable ids, the correct answer id, a hint, an explanation and sources, and may offer a world to explore. Every step has a `basis` that tests check against the data: a fact, panel text, a world's kind, solid-surface flags, order from the Sun, a true-scale value from the overview's own calculation, or the scale notes in `src/utils/scale.js`.
+- **Independent answer key** (`tests/data/mission-answer-key.js`): hand-written expectations for every step that never read `missions.json`. `tests/data/mission-checks.js` compares each step with the key and the data; mutation tests mark each wrong answer correct and swap revealed facts, and expect failures.
+- **State** (`src/features/missions.js`): a pure reducer with per-mission progress (`intro → active → complete`, with a `task`/`feedback` phase per step). Opening a world dispatches `visit`, which only marks the current find step as visited; `found` completes it only after that visit. Correct answers complete a question step; wrong answers are remembered and can't be chosen twice. `next` moves on, and `restart` replays from step 1. Progress is in memory only, and the mission store is separate from the quiz store.
+- **Panel and bar** (`src/components/missionPanel.js`): list, intro, task, feedback and recap screens. Steps are labelled “Step n of N”, with “✓ Done” and “You are here” in words. Each task shows its completion criteria. While a mission is unfinished, other panels show a “Back to the mission” bar, which also offers “I’ve found it” on the world the current step is waiting for. Each screen marks one heading with `data-focus-target`; the focused heading's accessible name includes the step result, and the explanation, hint or recap is then read through the polite live region. Explorer shortcuts pause in the missions view except Escape.
 
 ## Scientific integrity in code
 
@@ -53,8 +61,11 @@ Every control, including the Simple/Detailed buttons and expandable sections, is
 
 Tests live only under `tests/` and mirror `src/`:
 
+- `tests/data/missions.test.js`: mission schema and required fields, the three agreed missions with stable ids, valid step references, citations limited to sources the panels already use, coverage by the independent mission answer key, every answer and revealed fact checked against the key and the data, mutation tests, no solid ground for the giants, and no new numbers.
 - `tests/data/`: schema, Stage 1 facts preserved, citations, SCIENCE.md tables matching the data, wording rules, superlatives agreeing with the numbers, and quiz questions (schema, unique ids and texts, valid answers, supported and cited answers, no moon counts).
 - `tests/utils/`, `tests/features/`, `tests/scenes/`: comparisons, formatting, scale, panel content, navigation, quiz rounds and scoring (uniqueness, shuffling, restart and play again) and appearance.
+- `tests/features/missions.test.js`: completion rules (opening a world never completes a step, “I’ve found it” needs a visit during that step, wrong answers don't complete and can't repeat), every mission completing, restart and replay, leaving and switching, announcement wording, and mission and quiz stores staying independent.
+- `tests/e2e/missions.e2e.js`: completes every mission by mouse (checking that opening a world alone does nothing), leaves and resumes alongside a paused quiz, completes a mission by keyboard with focus and live-region checks, checks 44 × 44 pixel targets on an iPhone and an iPad, and completes a mission without 3D.
 - `tests/e2e/`: browser tests with Playwright and Chromium against the built app (navigation, panels, picking, controls, keyboard, Back button, focus kept on mode change, no unexpected page scrolling, 2D fallback, reduced motion, phone tap-target sizes). `tests/e2e/quiz.e2e.js` plays complete rounds by mouse and keyboard, explores mid-quiz and resumes, checks 44 × 44 pixel targets on a phone, and plays without 3D.
 
 The single CI job runs install → lint → unit tests → build → browser tests on every pull request and push to `main`. A dependent job deploys `dist/` to GitHub Pages from `main` only. Vite uses a relative asset base for the Pages repository path.

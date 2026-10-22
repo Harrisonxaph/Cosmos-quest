@@ -260,3 +260,7 @@ The app separates two kinds of information, and labels them in the interface:
 ## Editorial rules
 
 Use NASA or ESA primary sources. Cite the specific page for each new fact, add it to `src/data/sources.json` and add a heading here. Give units and distinguish solar days from rotation periods. Date volatile claims such as moon counts. Never describe Jupiter, Saturn, Uranus, Neptune or the Sun as having a solid surface or ground to stand on; give gravity and temperature at the 1-bar level (or photosphere for the Sun) and say so. Label compressed distances, exaggerated sizes and sped-up motion as illustrative. Pluto is a dwarf planet, not one of the eight planets.
+
+## Discovery Missions
+
+Discovery Missions (`src/data/missions.json`) add no new science. Each step's `basis` points at a fact, panel text, a world's kind or surface flag, the order from the Sun, a true-scale comparison the overview already calculates (the Sun about 1.1 metres wide, Neptune about 3.5 km away), or the app's own note that the 3D view is not to scale. Step sources are ones the information panels already cite, and tests check that mission text introduces no other numbers apart from clearly wrong quiz-style distractors.

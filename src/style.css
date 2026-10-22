@@ -31,6 +31,7 @@ h1, h2, h3 { line-height: 1.2; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 
 .site-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem 1rem; padding: 1rem 1rem 0.5rem; max-width: 90rem; margin: 0 auto; }
+.site-header__actions { display: flex; flex-wrap: wrap; gap: 0.6rem; }
 .quiz-entry { display: inline-flex; align-items: center; gap: 0.4rem; min-height: 48px; min-width: 44px; padding: 0.5rem 1.1rem; border: 2px solid var(--accent); border-radius: 999px; background: var(--surface); color: var(--accent); font-weight: 700; font-size: 1.05rem; cursor: pointer; }
 .quiz-entry:hover { background: var(--surface-2); }
 .quiz-entry[aria-current='page'] { background: var(--accent); color: #1a1300; }
@@ -167,6 +168,25 @@ summary { cursor: pointer; min-height: 44px; padding: 0.6rem 0; box-sizing: bord
 .quiz-summary__outcome { display: block; color: var(--muted); }
 .quiz-resume { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.6rem; margin: 0 0 1rem; padding: 0.8rem 1rem; border: 2px solid var(--accent); border-radius: 0.75rem; background: rgb(255 207 92 / 8%); }
 .quiz-resume p { margin: 0; }
+
+/* ----- Discovery Missions ----- */
+.mission-list { display: grid; gap: 0.8rem; margin: 0; padding: 0; list-style: none; }
+.mission-card { padding: 0.9rem 1rem; border: 1px solid var(--border); border-radius: 0.75rem; background: var(--surface-2); }
+.mission-card h3 { margin: 0 0 0.3rem; }
+.mission-card p { margin: 0.3rem 0; }
+.mission-card__status { font-weight: 600; color: var(--accent); }
+.mission-steps { margin: 0 0 1rem; padding-left: 1.6rem; }
+.mission-step { margin-bottom: 0.35rem; color: var(--muted); }
+.mission-step.is-current { color: var(--text); font-weight: 700; }
+.mission-step.is-done { color: var(--text); }
+.mission-step__label { display: inline-block; margin-left: 0.5rem; padding: 0 0.5rem; border: 1px solid currentColor; border-radius: 999px; font-size: 0.8rem; font-weight: 700; }
+.mission-step-title { display: block; }
+.mission-criteria { padding: 0.6rem 0.8rem; border-left: 4px solid var(--accent); background: rgb(255 207 92 / 8%); border-radius: 0.4rem; }
+.mission-visited { font-weight: 600; }
+.mission-answer { font-size: 1.05rem; }
+.mission-bar .quiz-actions { margin-top: 0.3rem; }
+.mission-bar p { margin: 0; }
+.mission-bar__task { margin-top: 0.3rem !important; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
