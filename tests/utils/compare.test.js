@@ -41,6 +41,19 @@ test('width comparisons match NASA’s own descriptions', () => {
   assert.equal(find(sun, 'width').simple, 'The Sun is about 109 times as wide as Earth.');
 });
 
+test('volume ratios match the volume ratios on NASA’s planet fact sheets', () => {
+  // "Ratio (planet/Earth)" for Volume, from each NSSDCA planet fact sheet.
+  const nasa = { mercury: 0.0562, venus: 0.857, mars: 0.151, jupiter: 1321.33, saturn: 763.59, uranus: 63.08, neptune: 57.74 };
+  for (const [id, expected] of Object.entries(nasa)) {
+    const actual = ratios(byId[id], earth).volume;
+    assert.ok(Math.abs(actual / expected - 1) < 0.005, `${id}: ${actual} vs NASA ${expected}`);
+  }
+  assert.equal(find(byId.jupiter, 'volume').simple, 'It has about 1,320 times Earth\'s volume.');
+  assert.match(find(byId.jupiter, 'volume').detailed, /volumetric mean radius of 69,911 km/);
+  const flattened = (byId.jupiter.measurements.diameterKm / earth.measurements.diameterKm) ** 3;
+  assert.ok(flattened > 1400, 'cubing equatorial diameters would overstate Jupiter');
+});
+
 test('the Sun’s calculated volume agrees with NASA’s “1.3 million Earths”', () => {
   assert.equal(find(sun, 'volume').simple, 'It has about 1.3 million times Earth\'s volume.');
 });
@@ -60,7 +73,7 @@ test('weight comparisons never suggest standing on a world without solid ground'
   assert.match(find(byId.mars, 'weight').simple, /about 38% of your Earth weight/);
   assert.match(find(sun, 'weight').simple, /photosphere/);
   assert.match(find(sun, 'weight').detailed, /^The Sun has no solid surface/);
-  assert.equal(find(sun, 'volume').detailed, 'The Sun has about 1.3 million times Earth\'s volume, calculated from its diameter.');
+  assert.match(find(sun, 'volume').detailed, /^The Sun has about 1\.3 million times Earth's volume, calculated from its volumetric mean radius of 695,700 km/);
 });
 
 test('day and year comparisons use solar days and orbital periods', () => {

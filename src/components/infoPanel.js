@@ -21,6 +21,7 @@ export function modeToggle(mode, onChange) {
   const option = (value, label) => el('button', {
     type: 'button',
     className: 'mode-toggle__option',
+    'data-mode': value,
     'aria-pressed': String(mode === value),
     onClick: () => onChange(value),
   }, label);

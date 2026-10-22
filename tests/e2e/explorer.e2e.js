@@ -166,13 +166,77 @@ test('reduced motion starts paused and moves the camera instantly', async () => 
   await context.close();
 });
 
-test('phone layout: touch targets are at least 44 pixels', async () => {
+test('keyboard focus stays on the Simple/Detailed buttons when the mode changes', async () => {
+  const { page, context } = await openPage('#/jupiter');
+  await sceneReady(page);
+  const focused = () => page.evaluate(() => {
+    const el = document.activeElement;
+    return { mode: el?.dataset.mode ?? null, pressed: el?.getAttribute('aria-pressed') ?? null, inPanel: document.getElementById('info-panel').contains(el) };
+  });
+  await page.locator('.mode-toggle__option[data-mode="detailed"]').focus();
+  await page.keyboard.press('Enter');
+  assert.equal(await page.locator('#info-panel article').getAttribute('data-mode'), 'detailed');
+  assert.deepEqual(await focused(), { mode: 'detailed', pressed: 'true', inPanel: true });
+  await page.keyboard.press('Shift+Tab');
+  assert.equal((await focused()).mode, 'simple');
+  await page.keyboard.press('Space');
+  assert.equal(await page.locator('#info-panel article').getAttribute('data-mode'), 'simple');
+  assert.deepEqual(await focused(), { mode: 'simple', pressed: 'true', inPanel: true });
+  await page.keyboard.press('m');
+  assert.equal(await page.locator('#info-panel article').getAttribute('data-mode'), 'detailed');
+  assert.equal((await focused()).inPanel, true, 'focus is not lost to the page');
+  await context.close();
+});
+
+test('pausing, changing mode or switching world does not scroll someone reading the facts', async () => {
+  const { page, context } = await openPage('#/mars', { ...devices['iPhone 13'], defaultBrowserType: undefined });
+  await sceneReady(page);
+  await page.locator('.panel-section').first().evaluate(node => node.scrollIntoView({ block: 'start' }));
+  await page.waitForTimeout(300);
+  const before = await page.evaluate(() => window.scrollY);
+  assert.ok(before > 300, 'page is scrolled down to the facts');
+  const scrolled = async () => Math.abs((await page.evaluate(() => window.scrollY)) - before);
+  await blurFocus(page);
+  await page.keyboard.press('p');
+  await page.waitForTimeout(400);
+  assert.ok(await scrolled() < 2, 'pause moved the page');
+  await page.keyboard.press('m');
+  await page.waitForTimeout(400);
+  assert.ok(await scrolled() < 2, 'mode change moved the page');
+  await page.keyboard.press('n');
+  await page.waitForTimeout(800);
+  assert.equal(await panelBody(page), 'jupiter');
+  assert.ok(await scrolled() < 2, 'changing world moved the page');
+  const inView = await page.evaluate(() => {
+    const list = document.querySelector('.body-selector__list').getBoundingClientRect();
+    const button = document.querySelector('.body-selector__button[data-body="jupiter"]').getBoundingClientRect();
+    return button.left >= list.left - 1 && button.right <= list.right + 1;
+  });
+  assert.ok(inView, 'the selector row scrolled sideways to show Jupiter');
+  await context.close();
+});
+
+test('phone layout: every touch target is at least 44 × 44 pixels', async () => {
   const { page, context, errors } = await openPage('#/mars', { ...devices['iPhone 13'], defaultBrowserType: undefined });
   await sceneReady(page);
-  const heights = await page.locator('.body-selector__button, .control:visible').evaluateAll(nodes => nodes.map(node => node.getBoundingClientRect().height));
-  assert.ok(heights.length > 10);
-  for (const height of heights) assert.ok(height >= 44, `target height ${height}`);
-  assert.equal(await panelBody(page), 'mars');
+  const targets = '.body-selector__button, .control:visible, .mode-toggle__option, #info-panel summary, .planet-card__explore, .primary-button';
+  const measure = () => page.locator(targets).evaluateAll(nodes => nodes.map(node => {
+    const box = node.getBoundingClientRect();
+    return { name: node.className || node.tagName, width: box.width, height: box.height };
+  }));
+  const check = sizes => {
+    for (const size of sizes) assert.ok(size.height >= 44 && size.width >= 44, `${size.name}: ${size.width.toFixed(1)} × ${size.height.toFixed(1)}`);
+  };
+  const body = await measure();
+  assert.ok(body.some(size => size.name.includes('mode-toggle__option')), 'includes Simple/Detailed');
+  assert.ok(body.some(size => size.name === 'SUMMARY'), 'includes expandable sections');
+  check(body);
+  await page.click('[data-control="overview"]');
+  await page.waitForSelector('#info-panel article[data-body="overview"]');
+  const overview = await measure();
+  assert.ok(overview.some(size => size.name.includes('primary-button')), 'includes Start with the Sun');
+  assert.ok(overview.some(size => size.name === 'SUMMARY'), 'includes keyboard shortcuts');
+  check(overview);
   assert.deepEqual(errors, []);
   await context.close();
 });

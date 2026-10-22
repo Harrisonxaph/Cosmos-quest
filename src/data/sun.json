@@ -14,6 +14,7 @@
     "sourceIds": ["nasa-sun-fact-sheet"],
     "diameterKm": 1391400,
     "diameterType": "volumetric-mean",
+    "volumetricMeanRadiusKm": 695700,
     "massE24Kg": 1988400,
     "gravityMs2": 274.0,
     "gravityReference": "photosphere",

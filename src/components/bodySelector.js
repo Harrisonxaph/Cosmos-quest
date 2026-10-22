@@ -23,7 +23,20 @@ export function createBodySelector(bodies, onSelect) {
     element: list,
     setActive(id) {
       for (const [bodyId, button] of buttons) button.setAttribute('aria-pressed', String(bodyId === id));
-      buttons.get(id)?.scrollIntoView?.({ block: 'nearest', inline: 'nearest' });
+    },
+    /**
+     * Bring the selected button into view by scrolling the selector row sideways only.
+     * Never scrolls the page, so someone reading the facts below is not pulled back up.
+     */
+    revealActive(id, { smooth = true } = {}) {
+      const button = buttons.get(id);
+      if (!button) return;
+      const start = button.offsetLeft;
+      const end = start + button.offsetWidth;
+      if (start >= list.scrollLeft && end <= list.scrollLeft + list.clientWidth) return;
+      const left = Math.max(0, start - (list.clientWidth - button.offsetWidth) / 2);
+      if (typeof list.scrollTo === 'function') list.scrollTo({ left, behavior: smooth ? 'smooth' : 'auto' });
+      else list.scrollLeft = left;
     },
   };
 }

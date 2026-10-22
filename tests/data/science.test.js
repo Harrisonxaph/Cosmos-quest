@@ -60,7 +60,7 @@ test('SCIENCE.md has a section for every source, with its link', () => {
 test('the SCIENCE.md measurement table matches the data exactly', () => {
   const rows = tableRows('Measured values used in the app');
   assert.equal(rows.length, bodies.length);
-  const keys = ['diameterKm', 'massE24Kg', 'gravityMs2', 'meanDistanceFromSunE6Km', 'rotationPeriodHours', 'dayLengthHours', 'orbitalPeriodDays', 'obliquityDeg', 'temperatureC'];
+  const keys = ['diameterKm', 'volumetricMeanRadiusKm', 'massE24Kg', 'gravityMs2', 'meanDistanceFromSunE6Km', 'rotationPeriodHours', 'dayLengthHours', 'orbitalPeriodDays', 'obliquityDeg', 'temperatureC'];
   for (const body of bodies) {
     const row = rows.find(cells => cells[0] === body.name);
     assert.ok(row, `no table row for ${body.name}`);

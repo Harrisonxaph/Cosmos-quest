@@ -54,7 +54,8 @@ export function ratios(body, earth) {
   const e = earth.measurements;
   return {
     width: m.diameterKm / e.diameterKm,
-    volume: (m.diameterKm / e.diameterKm) ** 3,
+    // Volumetric mean radius = radius of a sphere with the same volume, so flattened giants aren't overstated.
+    volume: (m.volumetricMeanRadiusKm / e.volumetricMeanRadiusKm) ** 3,
     mass: m.massE24Kg / e.massE24Kg,
     gravity: m.gravityMs2 / e.gravityMs2,
     distance: m.meanDistanceFromSunE6Km === null ? null : m.meanDistanceFromSunE6Km / e.meanDistanceFromSunE6Km,
@@ -130,7 +131,7 @@ export function earthComparisons(body, earth) {
     label: 'Volume',
     ratio: r.volume,
     simple: `It has ${volumeText}.`,
-    detailed: `${subject(body)} has ${volumeText}, calculated from its diameter.`,
+    detailed: `${subject(body)} has ${volumeText}, calculated from its volumetric mean radius of ${formatNumber(m.volumetricMeanRadiusKm, 1)} km (the radius of a ball with the same volume).`,
   });
 
   const massText = r.mass >= 1 ? `about ${formatTimes(r.mass)} times as massive as Earth` : `about ${percent(r.mass)} of Earth's mass`;

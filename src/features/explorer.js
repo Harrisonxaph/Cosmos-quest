@@ -83,7 +83,15 @@ export function startExplorer({ elements, bodies, planets, earth, sourcesById })
         onModeChange: mode => dispatch({ type: 'setMode', mode }),
       })
       : renderOverviewPanel({ bodies, earth, onSelect: id => dispatch({ type: 'select', id }) });
+    // Re-rendering replaces the focused element, so remember where keyboard focus was and put it back.
+    const active = document.activeElement;
+    const focusWasInPanel = active && active !== elements.panel && elements.panel.contains(active);
+    const restoreSelector = focusWasInPanel && active.dataset.mode ? `.mode-toggle__option[data-mode="${active.dataset.mode}"]` : null;
     clear(elements.panel).append(panel);
+    if (focusWasInPanel) {
+      const target = (restoreSelector && elements.panel.querySelector(restoreSelector)) || elements.panel;
+      target.focus({ preventScroll: true });
+    }
   }
 
   // ----- Controls bar -----
@@ -134,6 +142,7 @@ export function startExplorer({ elements, bodies, planets, earth, sourcesById })
       if (location.hash !== target && !(target === '#/' && location.hash === '')) history.pushState(null, '', target);
       elements.status.textContent = state.view === 'body' ? `Now exploring ${bodiesById[state.selectedId].name}` : 'Showing the whole solar system';
       scene?.focus(state.selectedId);
+      selector.revealActive(state.selectedId, { smooth: Boolean(previous) && !reducedMotion() });
       if (previous) elements.panel.scrollTop = 0;
     }
     if (!previous || state.paused !== previous.paused) scene?.setPaused(state.paused);

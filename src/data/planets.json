@@ -12,9 +12,10 @@
       "sourceIds": ["nasa-mercury", "nasa-mercury-facts"]
     },
     "measurements": {
-      "sourceIds": ["nasa-fact-sheet"],
+      "sourceIds": ["nasa-fact-sheet", "nasa-mercury-fact-sheet"],
       "diameterKm": 4879,
       "diameterType": "equatorial",
+      "volumetricMeanRadiusKm": 2439.7,
       "massE24Kg": 0.330,
       "gravityMs2": 3.7,
       "gravityReference": "surface",
@@ -62,9 +63,10 @@
       "sourceIds": ["nasa-venus", "nasa-venus-facts"]
     },
     "measurements": {
-      "sourceIds": ["nasa-fact-sheet"],
+      "sourceIds": ["nasa-fact-sheet", "nasa-venus-fact-sheet"],
       "diameterKm": 12104,
       "diameterType": "equatorial",
+      "volumetricMeanRadiusKm": 6051.8,
       "massE24Kg": 4.87,
       "gravityMs2": 8.9,
       "gravityReference": "surface",
@@ -112,9 +114,10 @@
       "sourceIds": ["nasa-earth", "nasa-earth-facts"]
     },
     "measurements": {
-      "sourceIds": ["nasa-fact-sheet"],
+      "sourceIds": ["nasa-fact-sheet", "nasa-earth-fact-sheet"],
       "diameterKm": 12756,
       "diameterType": "equatorial",
+      "volumetricMeanRadiusKm": 6371.0,
       "massE24Kg": 5.97,
       "gravityMs2": 9.8,
       "gravityReference": "surface",
@@ -162,9 +165,10 @@
       "sourceIds": ["nasa-mars-facts"]
     },
     "measurements": {
-      "sourceIds": ["nasa-fact-sheet"],
+      "sourceIds": ["nasa-fact-sheet", "nasa-mars-fact-sheet"],
       "diameterKm": 6792,
       "diameterType": "equatorial",
+      "volumetricMeanRadiusKm": 3389.5,
       "massE24Kg": 0.642,
       "gravityMs2": 3.7,
       "gravityReference": "surface",
@@ -212,9 +216,10 @@
       "sourceIds": ["nasa-jupiter", "nasa-jupiter-facts"]
     },
     "measurements": {
-      "sourceIds": ["nasa-fact-sheet", "nasa-fact-sheet-notes"],
+      "sourceIds": ["nasa-fact-sheet", "nasa-jupiter-fact-sheet", "nasa-fact-sheet-notes"],
       "diameterKm": 142984,
       "diameterType": "equatorial",
+      "volumetricMeanRadiusKm": 69911,
       "massE24Kg": 1898,
       "gravityMs2": 23.1,
       "gravityReference": "1-bar",
@@ -262,9 +267,10 @@
       "sourceIds": ["nasa-saturn", "nasa-saturn-facts"]
     },
     "measurements": {
-      "sourceIds": ["nasa-fact-sheet", "nasa-fact-sheet-notes"],
+      "sourceIds": ["nasa-fact-sheet", "nasa-saturn-fact-sheet", "nasa-fact-sheet-notes"],
       "diameterKm": 120536,
       "diameterType": "equatorial",
+      "volumetricMeanRadiusKm": 58232,
       "massE24Kg": 568,
       "gravityMs2": 9.0,
       "gravityReference": "1-bar",
@@ -312,9 +318,10 @@
       "sourceIds": ["nasa-uranus-facts", "nasa-fact-sheet"]
     },
     "measurements": {
-      "sourceIds": ["nasa-fact-sheet", "nasa-fact-sheet-notes"],
+      "sourceIds": ["nasa-fact-sheet", "nasa-uranus-fact-sheet", "nasa-fact-sheet-notes"],
       "diameterKm": 51118,
       "diameterType": "equatorial",
+      "volumetricMeanRadiusKm": 25362,
       "massE24Kg": 86.8,
       "gravityMs2": 8.7,
       "gravityReference": "1-bar",
@@ -362,9 +369,10 @@
       "sourceIds": ["nasa-neptune", "nasa-neptune-facts"]
     },
     "measurements": {
-      "sourceIds": ["nasa-fact-sheet", "nasa-fact-sheet-notes"],
+      "sourceIds": ["nasa-fact-sheet", "nasa-neptune-fact-sheet", "nasa-fact-sheet-notes"],
       "diameterKm": 49528,
       "diameterType": "equatorial",
+      "volumetricMeanRadiusKm": 24622,
       "massE24Kg": 102,
       "gravityMs2": 11.0,
       "gravityReference": "1-bar",

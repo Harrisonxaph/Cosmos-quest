@@ -29,6 +29,7 @@ Stage 2 adopted **Three.js 0.180.0** (MIT licence), pinned exactly in `package.j
 
 - **Measurements vs models:** panels label NASA measurements ("Measured · NASA"), values worked out from them ("Calculated") and the 3D view ("Model"). All scale changes are produced by `utils/scale.js` and listed in `SCALE_CHANGES`, which the panels display.
 - **No solid surface:** bodies with `hasSolidSurface: false` show a warning, and their gravity and temperature are labelled with the 1-bar level (or photosphere for the Sun). A test fails if any text describes them as having a surface or ground to stand on.
+- **Volumes:** Earth comparisons of volume use each planet's volumetric mean radius from its NASA fact sheet, because the giant planets are flattened and cubing their equatorial diameters overstates their volume.
 - **Spin direction:** Venus and Uranus spin backwards in the scene because their fact-sheet axis tilt (above 90°) is applied directly. Spin speeds are always positive so the backwards spin is not cancelled out.
 
 ## Mobile performance
@@ -37,7 +38,7 @@ Touch or small-screen devices get fewer sphere segments, smaller textures (512 �
 
 ## Accessibility
 
-Every control is a real button with a 44-pixel minimum target, a visible focus outline and an accessible name. Keyboard shortcuts are listed in the overview panel and ignored while typing or when a focused button should handle Space or Enter. Selection changes are announced through a polite live region. `prefers-reduced-motion` starts the explorer paused and makes camera moves instant. A skip link jumps to the facts.
+Every control, including the Simple/Detailed buttons and expandable sections, is a real button or summary with a 44 × 44 pixel minimum target, a visible focus outline and an accessible name. Keyboard shortcuts are listed in the overview panel and ignored while typing or when a focused button should handle Space or Enter. Selection changes are announced through a polite live region. When the panel re-renders, keyboard focus returns to the same Simple/Detailed button (or to the panel), and the world selector only scrolls sideways within its own row, so the page never jumps while someone is reading. `prefers-reduced-motion` starts the explorer paused and makes camera moves instant. A skip link jumps to the facts.
 
 ## Tests and CI
 
@@ -45,6 +46,6 @@ Tests live only under `tests/` and mirror `src/`:
 
 - `tests/data/`: schema, Stage 1 facts preserved, citations, SCIENCE.md tables matching the data, wording rules, superlatives agreeing with the numbers.
 - `tests/utils/`, `tests/features/`, `tests/scenes/`: comparisons, formatting, scale, panel content, navigation and appearance.
-- `tests/e2e/`: browser tests with Playwright and Chromium against the built app (navigation, panels, picking, controls, keyboard, Back button, 2D fallback, reduced motion, phone tap-target sizes).
+- `tests/e2e/`: browser tests with Playwright and Chromium against the built app (navigation, panels, picking, controls, keyboard, Back button, focus kept on mode change, no unexpected page scrolling, 2D fallback, reduced motion, phone tap-target sizes).
 
 The single CI job runs install → lint → unit tests → build → browser tests on every pull request and push to `main`. A dependent job deploys `dist/` to GitHub Pages from `main` only. Vite uses a relative asset base for the Pages repository path.

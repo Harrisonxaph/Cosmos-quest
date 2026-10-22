@@ -6,23 +6,24 @@ All sources were retrieved on 2026-10-22.
 
 ## Measured values used in the app
 
-These come from the NASA NSSDCA fact sheets ([planets](https://nssdc.gsfc.nasa.gov/planetary/factsheet/), last updated 18 March 2025; [Sun](https://nssdc.gsfc.nasa.gov/planetary/factsheet/sunfact.html), last updated 9 May 2024). Tests check every value in this table against `src/data/`.
+These come from the NASA NSSDCA fact sheets ([planets](https://nssdc.gsfc.nasa.gov/planetary/factsheet/), last updated 18 March 2025; [Sun](https://nssdc.gsfc.nasa.gov/planetary/factsheet/sunfact.html), last updated 9 May 2024). Volumetric mean radii come from each planet's own fact sheet (listed below). Tests check every value in this table against `src/data/`.
 
-| Body | Diameter (km) | Mass (10^24 kg) | Gravity (m/s²) | Distance from Sun (10^6 km) | Rotation period (h) | Length of day (h) | Orbital period (days) | Obliquity (°) | Temperature (°C) |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Sun | 1391400 | 1988400 | 274 | — | 609.12 | — | — | — | 5499 |
-| Mercury | 4879 | 0.33 | 3.7 | 57.9 | 1407.6 | 4222.6 | 88 | 0.034 | 167 |
-| Venus | 12104 | 4.87 | 8.9 | 108.2 | -5832.5 | 2802 | 224.7 | 177.4 | 464 |
-| Earth | 12756 | 5.97 | 9.8 | 149.6 | 23.9 | 24 | 365.2 | 23.4 | 15 |
-| Mars | 6792 | 0.642 | 3.7 | 228 | 24.6 | 24.7 | 687 | 25.2 | -65 |
-| Jupiter | 142984 | 1898 | 23.1 | 778.5 | 9.9 | 9.9 | 4331 | 3.1 | -110 |
-| Saturn | 120536 | 568 | 9 | 1432 | 10.7 | 10.7 | 10747 | 26.7 | -140 |
-| Uranus | 51118 | 86.8 | 8.7 | 2867 | -17.2 | 17.2 | 30589 | 97.8 | -195 |
-| Neptune | 49528 | 102 | 11 | 4515 | 16.1 | 16.1 | 59800 | 28.3 | -200 |
+| Body | Diameter (km) | Volumetric mean radius (km) | Mass (10^24 kg) | Gravity (m/s²) | Distance from Sun (10^6 km) | Rotation period (h) | Length of day (h) | Orbital period (days) | Obliquity (°) | Temperature (°C) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Sun | 1391400 | 695700 | 1988400 | 274 | — | 609.12 | — | — | — | 5499 |
+| Mercury | 4879 | 2439.7 | 0.33 | 3.7 | 57.9 | 1407.6 | 4222.6 | 88 | 0.034 | 167 |
+| Venus | 12104 | 6051.8 | 4.87 | 8.9 | 108.2 | -5832.5 | 2802 | 224.7 | 177.4 | 464 |
+| Earth | 12756 | 6371 | 5.97 | 9.8 | 149.6 | 23.9 | 24 | 365.2 | 23.4 | 15 |
+| Mars | 6792 | 3389.5 | 0.642 | 3.7 | 228 | 24.6 | 24.7 | 687 | 25.2 | -65 |
+| Jupiter | 142984 | 69911 | 1898 | 23.1 | 778.5 | 9.9 | 9.9 | 4331 | 3.1 | -110 |
+| Saturn | 120536 | 58232 | 568 | 9 | 1432 | 10.7 | 10.7 | 10747 | 26.7 | -140 |
+| Uranus | 51118 | 25362 | 86.8 | 8.7 | 2867 | -17.2 | 17.2 | 30589 | 97.8 | -195 |
+| Neptune | 49528 | 24622 | 102 | 11 | 4515 | 16.1 | 16.1 | 59800 | 28.3 | -200 |
 
 How to read these values:
 
 - **Diameter:** equatorial for planets. The Sun's is twice its volumetric mean radius of 695,700 km.
+- **Volumetric mean radius:** the radius of a perfect ball with the same volume as the planet. The giant planets are flattened by their fast spin, so cubing their equatorial diameters would overstate their volumes (Jupiter would come out at about 1,408 Earths instead of NASA's 1,321). Volume comparisons use this radius.
 - **Gravity:** at the surface for the rocky planets. Jupiter, Saturn, Uranus and Neptune have no solid surface, so the fact sheet gives gravity at the **1-bar level** in the atmosphere, where the pressure is about the same as Earth's air at sea level. The Sun's value is at the photosphere, its visible layer of glowing gas.
 - **Rotation period vs length of day:** rotation is one spin relative to the distant stars. Length of day is sunrise to sunrise. Negative rotation values (Venus, Uranus) mean the planet spins backwards (retrograde) compared with Earth. The Sun's rotation is measured at 16° latitude, because different latitudes spin at different speeds.
 - **Orbital period:** one year on that planet, in Earth days.
@@ -66,6 +67,54 @@ Each heading below is a `sourceId`. Facts shown in the app must appear word for 
 - Source: [NASA NSSDCA — Sun Fact Sheet](https://nssdc.gsfc.nasa.gov/planetary/factsheet/sunfact.html)
 - Page last updated: 2024-05-09
 - Used for: Sun temperature context; Sun composition; Sun measurements
+
+## nasa-mercury-fact-sheet
+
+- Source: [NASA NSSDCA — Mercury Fact Sheet](https://nssdc.gsfc.nasa.gov/planetary/factsheet/mercuryfact.html)
+- Page last updated: 2024-01-11
+- Used for: Mercury volumetric mean radius (2439.7 km)
+
+## nasa-venus-fact-sheet
+
+- Source: [NASA NSSDCA — Venus Fact Sheet](https://nssdc.gsfc.nasa.gov/planetary/factsheet/venusfact.html)
+- Page last updated: 2024-01-11
+- Used for: Venus volumetric mean radius (6051.8 km)
+
+## nasa-earth-fact-sheet
+
+- Source: [NASA NSSDCA — Earth Fact Sheet](https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html)
+- Page last updated: 2024-11-15
+- Used for: Earth volumetric mean radius (6371 km)
+
+## nasa-mars-fact-sheet
+
+- Source: [NASA NSSDCA — Mars Fact Sheet](https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html)
+- Page last updated: 2025-05-19
+- Used for: Mars volumetric mean radius (3389.5 km)
+
+## nasa-jupiter-fact-sheet
+
+- Source: [NASA NSSDCA — Jupiter Fact Sheet](https://nssdc.gsfc.nasa.gov/planetary/factsheet/jupiterfact.html)
+- Page last updated: 2024-10-02
+- Used for: Jupiter volumetric mean radius (69911 km)
+
+## nasa-saturn-fact-sheet
+
+- Source: [NASA NSSDCA — Saturn Fact Sheet](https://nssdc.gsfc.nasa.gov/planetary/factsheet/saturnfact.html)
+- Page last updated: 2025-03-18
+- Used for: Saturn volumetric mean radius (58232 km)
+
+## nasa-uranus-fact-sheet
+
+- Source: [NASA NSSDCA — Uranus Fact Sheet](https://nssdc.gsfc.nasa.gov/planetary/factsheet/uranusfact.html)
+- Page last updated: 2024-10-02
+- Used for: Uranus volumetric mean radius (25362 km)
+
+## nasa-neptune-fact-sheet
+
+- Source: [NASA NSSDCA — Neptune Fact Sheet](https://nssdc.gsfc.nasa.gov/planetary/factsheet/neptunefact.html)
+- Page last updated: 2024-10-03
+- Used for: Neptune volumetric mean radius (24622 km)
 
 ## nasa-moon-counts
 
