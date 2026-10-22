@@ -26,7 +26,7 @@ jobs:
           set -o pipefail
           npm run test:e2e 2>&1 | tee e2e.log || {
             # Show which tests failed as an annotation on the pull request.
-            echo "::error title=Browser tests failed::$(grep -E 'not ok|error:|expected:|actual:|location:' e2e.log | head -40 | sed ':a;N;$!ba;s/\n/%0A/g')"
+            echo "::error title=Browser tests failed::$(grep -E '✖|not ok|error:|expected:|actual:|location:' e2e.log | head -40 | sed ':a;N;$!ba;s/\n/%0A/g')"
             exit 1
           }
       - name: Install WebKit for the critical journeys
@@ -36,7 +36,7 @@ jobs:
         run: |
           set -o pipefail
           npm run test:e2e:webkit 2>&1 | tee webkit.log || {
-            echo "::error title=WebKit journeys failed::$(grep -E 'not ok|error:|expected:|actual:|location:' webkit.log | head -40 | sed ':a;N;$!ba;s/\n/%0A/g')"
+            echo "::error title=WebKit journeys failed::$(grep -E '✖|not ok|error:|expected:|actual:|location:' webkit.log | head -40 | sed ':a;N;$!ba;s/\n/%0A/g')"
             exit 1
           }
       - uses: actions/upload-pages-artifact@v3

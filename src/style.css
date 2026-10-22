@@ -53,6 +53,8 @@ h1, h2, h3 { line-height: 1.2; }
 .stage { display: flex; flex-direction: column; gap: 0.6rem; min-width: 0; }
 .info-panel { min-width: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 1rem; padding: 1rem 1.1rem; }
 .info-panel:focus { outline: none; }
+/* With very large text, a long word may be wider than a phone column: break it rather than scroll sideways. */
+.info-panel, .site-header, .stage, .planet-list-section { overflow-wrap: anywhere; }
 
 @media (min-width: 900px) {
   .explorer { grid-template-columns: minmax(0, 1fr) minmax(320px, 26rem); align-items: start; }
@@ -233,9 +235,9 @@ summary { cursor: pointer; min-height: 44px; padding: 0.6rem 0; box-sizing: bord
 .experiment-model-note { color: var(--muted); }
 .experiment-headline { font-size: 1.1rem; font-weight: 700; }
 .experiment-prediction { padding: 0.6rem 0.8rem; border-left: 4px solid var(--accent); background: var(--surface-2); }
-.experiment-workings { display: grid; grid-template-columns: auto 1fr; gap: 0.4rem 0.8rem; align-items: baseline; }
-.experiment-workings dd { margin: 0; grid-column: 2; }
-.experiment-workings dt { grid-column: 1; }
+.experiment-workings { margin: 0; }
+.experiment-workings dt { margin-top: 0.5rem; }
+.experiment-workings dd { margin: 0.2rem 0 0; min-width: 0; overflow-wrap: anywhere; }
 .experiment-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(14rem, 100%), 1fr)); gap: 0.6rem; margin: 0.6rem 0 1rem; padding: 0; list-style: none; }
 .experiment-card { padding: 0.6rem 0.8rem; border: 1px solid var(--border); border-radius: 0.6rem; background: var(--surface-2); }
 .experiment-card h5 { margin: 0 0 0.3rem; font-size: 1.05rem; }
