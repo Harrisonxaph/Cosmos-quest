@@ -4,7 +4,7 @@ import missions from '../../src/data/missions.json' with { type: 'json' };
 import quizQuestions from '../../src/data/quiz.json' with { type: 'json' };
 import {
   initialMissionState, reduceMissions, createMissionStore, missionStatus, currentStep, resumableMission,
-  completionCriteria, stepAnnouncement, stepLabel,
+  completionCriteria, stepAnnouncement, stepLabel, screenKey,
 } from '../../src/features/missions.js';
 import { createQuizStore, currentQuestion } from '../../src/features/quiz.js';
 import { MISSION_ANSWER_KEY } from '../data/mission-answer-key.js';
@@ -22,6 +22,7 @@ function completeMission(state, mission, { wrongFirst = false } = {}) {
       s = run(s, { type: 'visit', target: step.target }, { type: 'found', missionId: mission.id });
     } else {
       const right = keyAnswerId(mission, step);
+      if (step.visitRequired) s = run(s, { type: 'visit', target: step.explore });
       if (wrongFirst) s = run(s, { type: 'answer', missionId: mission.id, answerId: step.answers.find(a => a.id !== right).id });
       s = run(s, { type: 'answer', missionId: mission.id, answerId: right });
     }
@@ -69,6 +70,7 @@ test('question steps complete only with the right answer, and wrong answers can 
   for (const step of giants.steps.slice(0, 2)) s = run(s, { type: 'visit', target: step.target }, { type: 'found', missionId: giants.id }, { type: 'next', missionId: giants.id });
   const step = currentStep(s, giants);
   assert.equal(step.id, 'saturn-kind');
+  s = run(s, { type: 'visit', target: 'saturn' });
   const right = keyAnswerId(giants, step);
   const wrong = step.answers.find(a => a.id !== right).id;
   s = run(s, { type: 'answer', missionId: giants.id, answerId: wrong });
@@ -159,4 +161,42 @@ test('the store notifies listeners and ignores unknown missions', () => {
   store.dispatch({ type: 'start', missionId: rocky.id });
   store.dispatch({ type: 'found', missionId: rocky.id }); // ignored: not visited
   assert.deepEqual(seen, ['start']);
+});
+
+test('Saturn and Uranus must be explored before their questions accept an answer', () => {
+  let s = run(initialMissionState(), { type: 'start', missionId: giants.id });
+  for (const step of giants.steps.slice(0, 2)) s = run(s, { type: 'visit', target: step.target }, { type: 'found', missionId: giants.id }, { type: 'next', missionId: giants.id });
+  for (const [stepId, world, other] of [['saturn-kind', 'saturn', 'jupiter'], ['uranus-kind', 'uranus', 'neptune']]) {
+    const step = currentStep(s, giants);
+    assert.equal(step.id, stepId);
+    assert.equal(step.visitRequired, true);
+    const right = keyAnswerId(giants, step);
+    assert.equal(run(s, { type: 'answer', missionId: giants.id, answerId: right }), s, `${stepId}: answering before exploring is ignored`);
+    s = run(s, { type: 'visit', target: other });
+    assert.equal(s.progress[giants.id].steps[stepId].visited, false, `${stepId}: another world does not count`);
+    s = run(s, { type: 'visit', target: world });
+    assert.equal(s.progress[giants.id].steps[stepId].visited, true);
+    assert.equal(s.progress[giants.id].steps[stepId].done, false, `${stepId}: exploring alone does not complete the step`);
+    s = run(s, { type: 'answer', missionId: giants.id, answerId: right }, { type: 'next', missionId: giants.id });
+  }
+  assert.equal(currentStep(s, giants).id, 'no-ground');
+  assert.match(completionCriteria(giants.steps[2], 'Saturn'), /explore Saturn, come back here, then choose the right answer/);
+});
+
+test('the screen key changes with every step and phase, but not with a visit or a wrong answer', () => {
+  let s = initialMissionState();
+  assert.equal(screenKey(s), 'list');
+  s = run(s, { type: 'start', missionId: rocky.id });
+  const task = screenKey(s);
+  s = run(s, { type: 'visit', target: 'mercury' });
+  assert.equal(screenKey(s), task);
+  s = run(s, { type: 'found', missionId: rocky.id });
+  const feedback = screenKey(s);
+  assert.notEqual(feedback, task);
+  s = run(s, { type: 'next', missionId: rocky.id });
+  assert.notEqual(screenKey(s), feedback);
+  assert.notEqual(screenKey(s), task);
+  const finished = completeMission(initialMissionState(), rocky);
+  const lastQuestion = run(completeMission(initialMissionState(), rocky), { type: 'restart', missionId: rocky.id });
+  assert.notEqual(screenKey(finished), screenKey(lastQuestion));
 });
