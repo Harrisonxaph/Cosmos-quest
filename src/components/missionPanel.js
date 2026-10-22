@@ -115,17 +115,29 @@ function taskScreen(mission, progress, { bodiesById, handlers }) {
         el('button', { type: 'button', className: 'primary-button', 'data-mission-action': 'explore', onClick: () => handlers.onExplore(step.target) }, exploreLabel(step.target, bodiesById))));
     }
   } else {
-    content.push(
-      el('p', { className: 'mission-criteria' }, completionCriteria(step)),
-      triedWrong ? feedbackBlock(step, stepProgress, progress, mission, []) : null,
-      el('h3', { id: 'mission-question' }, step.question),
-      el('ul', { className: 'quiz-answers', 'aria-labelledby': 'mission-question' },
-        step.answers.map(answer => el('li', {},
-          stepProgress.tried.includes(answer.id)
-            ? el('div', { className: 'quiz-result is-chosen', 'data-answer': answer.id }, el('span', { className: 'quiz-result__text' }, answer.text), el('span', { className: 'quiz-result__label' }, 'You tried this'))
-            : el('button', { type: 'button', className: 'quiz-answer', 'data-answer': answer.id, onClick: () => handlers.onAnswer(mission.id, answer.id) }, answer.text)))),
-      step.explore ? el('div', { className: 'quiz-actions' },
-        el('button', { type: 'button', className: 'secondary-button', 'data-mission-action': 'explore', onClick: () => handlers.onExplore(step.explore) }, exploreLabel(step.explore, bodiesById))) : null);
+    const place = step.explore ? placeName(step.explore, bodiesById) : null;
+    const needsVisit = step.visitRequired && !stepProgress.visited;
+    content.push(el('p', { className: 'mission-criteria' }, completionCriteria(step, place)));
+    if (needsVisit) {
+      // The answers appear after the world has been explored during this step.
+      content.push(
+        el('h3', { id: 'mission-question' }, step.question),
+        el('p', { className: 'mission-locked' }, `Explore ${place} first. The answers appear when you come back.`),
+        el('div', { className: 'quiz-actions' },
+          el('button', { type: 'button', className: 'primary-button', 'data-mission-action': 'explore', onClick: () => handlers.onExplore(step.explore) }, exploreLabel(step.explore, bodiesById))));
+    } else {
+      content.push(
+        step.visitRequired ? el('p', { className: 'mission-visited' }, `✓ You’ve visited ${place}.`) : null,
+        triedWrong ? feedbackBlock(step, stepProgress, progress, mission, []) : null,
+        el('h3', { id: 'mission-question', tabindex: '-1' }, step.question),
+        el('ul', { className: 'quiz-answers', 'aria-labelledby': 'mission-question' },
+          step.answers.map(answer => el('li', {},
+            stepProgress.tried.includes(answer.id)
+              ? el('div', { className: 'quiz-result is-chosen', 'data-answer': answer.id }, el('span', { className: 'quiz-result__text' }, answer.text), el('span', { className: 'quiz-result__label' }, 'You tried this'))
+              : el('button', { type: 'button', className: 'quiz-answer', 'data-answer': answer.id, onClick: () => handlers.onAnswer(mission.id, answer.id) }, answer.text)))),
+        step.explore ? el('div', { className: 'quiz-actions' },
+          el('button', { type: 'button', className: 'secondary-button', 'data-mission-action': 'explore', onClick: () => handlers.onExplore(step.explore) }, step.visitRequired ? `${exploreLabel(step.explore, bodiesById)} again` : exploreLabel(step.explore, bodiesById))) : null);
+    }
   }
   content.push(leaveActions(handlers));
   return content;
@@ -186,9 +198,11 @@ export function renderMissionBar(state, mission, { place, bodiesById, onFound, o
   const step = mission.steps[progress.stepIndex];
   const canFind = progress.phase === 'task' && step.type === 'find' && step.target === place && progress.steps[step.id].visited;
   const where = `${stepLabel(progress.stepIndex, mission.steps.length)}: ${step.title}`;
+  const explored = progress.phase === 'task' && step.type === 'question' && step.visitRequired && step.explore === place && progress.steps[step.id].visited;
   return el('div', { className: 'quiz-resume mission-bar', role: 'region', 'aria-label': 'Discovery Mission in progress', 'data-mission': mission.id },
     el('p', {}, el('strong', {}, mission.title), ` · ${where}`),
     canFind ? el('p', { className: 'mission-bar__task' }, `Look for ${step.lookFor} ${place === 'overview' ? 'in the solar system view' : `on ${placeName(place, bodiesById)}’s page`}, then press “I’ve found it”.`) : null,
+    explored ? el('p', { className: 'mission-bar__task' }, `You’ve explored ${placeName(place, bodiesById)}. Go back to the mission to answer the question.`) : null,
     el('div', { className: 'quiz-actions' },
       canFind ? el('button', { type: 'button', className: 'primary-button', 'data-mission-action': 'found-here', onClick: () => onFound(mission.id) }, 'I’ve found it') : null,
       el('button', { type: 'button', className: canFind ? 'secondary-button' : 'primary-button', 'data-mission-action': 'resume', onClick: onResume }, 'Back to the mission')));

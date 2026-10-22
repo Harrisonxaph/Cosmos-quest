@@ -90,6 +90,16 @@ async function completeStep(page, mission, step, index, { foundOnWorld = true } 
       await page.click('[data-mission-action="found"]');
     }
   } else {
+    if (step.visitRequired) {
+      assert.equal(await page.locator('.quiz-answer').count(), 0, 'answers wait until the world has been explored');
+      assert.match(await page.locator('.mission-locked').textContent(), /Explore .+ first/);
+      await page.click('[data-mission-action="explore"]');
+      assert.equal(await panelBody(page), step.explore);
+      assert.match(await page.locator('.mission-bar').textContent(), /Go back to the mission to answer/);
+      await page.click('.mission-bar [data-mission-action="resume"]');
+      assert.equal(await screen(page), 'task', 'exploring did not complete the step');
+      assert.match(await page.locator('.mission-visited').textContent(), /You’ve visited/);
+    }
     const key = MISSION_ANSWER_KEY[mission.id][step.id].answer;
     const answers = await page.locator('.quiz-answer').evaluateAll(nodes => nodes.map(node => ({ id: node.dataset.answer, text: node.textContent.trim() })));
     assert.equal(answers.length, 3);
@@ -206,6 +216,17 @@ test('keyboard only: focus and announcements follow each step', async () => {
       await page.locator('.mission-bar [data-mission-action="found-here"]').focus();
       await page.keyboard.press('Enter');
     } else {
+      if (step.visitRequired) {
+        assert.equal(await page.locator('.quiz-answer').count(), 0);
+        await tabTo(el => el.action === 'explore');
+        await page.keyboard.press('Enter');
+        assert.equal(await panelBody(page), step.explore);
+        await page.locator('.mission-bar [data-mission-action="resume"]').focus();
+        await page.keyboard.press('Enter');
+        const question = await activeElement(page);
+        assert.equal(question.tag, 'H3', 'after exploring, focus starts at the question, just before the answers');
+        assert.equal(question.text, step.question);
+      }
       // Explorer shortcuts don't pull the child out of a question.
       await page.keyboard.press('5');
       assert.equal(await hash(page), '#/missions');
@@ -285,5 +306,117 @@ test('a whole mission works without 3D', async () => {
   await completeMission(page, space);
   await page.waitForFunction(recap => document.getElementById('explorer-status').textContent === recap, space.recap);
   assert.deepEqual(errors, []);
+  await context.close();
+});
+
+/** Reading position: what is focused, how far the panel has scrolled, and how far the page has scrolled. */
+const readingPosition = page => page.evaluate(() => ({
+  action: document.activeElement.dataset.missionAction ?? null,
+  tag: document.activeElement.tagName,
+  panelTop: Math.round(document.getElementById('info-panel').scrollTop),
+  pageY: Math.round(window.scrollY),
+}));
+
+for (const [label, options] of [['desktop', { viewport: { width: 1280, height: 560 } }], ['phone', { ...devices['iPhone 13'], defaultBrowserType: undefined }]]) {
+  test(`${label}: returning to the same step restores focus and reading position; a new step starts at the top`, async () => {
+    const { page, context, errors } = await openPage('', options);
+    const rocky = byId('rocky-neighbours');
+    await openMission(page, rocky.id);
+    await completeStep(page, rocky, rocky.steps[0], 0);
+    assert.match(await stepHeading(page), /Step 2 of 5/);
+
+    // Scroll down to read the task, then use the keyboard to explore Venus.
+    const explore = page.locator('[data-mission-action="explore"]');
+    await explore.scrollIntoViewIfNeeded();
+    if (label === 'desktop') await page.evaluate(() => { const panel = document.getElementById('info-panel'); panel.scrollTop = panel.scrollHeight; });
+    else await page.evaluate(() => window.scrollBy(0, 120));
+    await explore.focus({ preventScroll: true });
+    const before = await readingPosition(page);
+    if (label === 'desktop') assert.ok(before.panelTop > 0, 'the mission panel is scrolled on desktop');
+    else assert.ok(before.pageY > 0, 'the page is scrolled on a phone');
+    await page.keyboard.press('Enter');
+    assert.equal(await panelBody(page), 'venus');
+
+    // Come back from Venus, scrolling up to the bar first like a child would.
+    await page.evaluate(() => { window.scrollTo(0, 0); document.getElementById('info-panel').scrollTop = 0; });
+    await page.click('.mission-bar [data-mission-action="resume"]');
+    assert.equal(await screen(page), 'task');
+    const after = await readingPosition(page);
+    assert.equal(after.action, 'explore', 'focus returns to the button the child used');
+    assert.ok(Math.abs(after.panelTop - before.panelTop) <= 2, `panel scroll restored (${before.panelTop} → ${after.panelTop})`);
+    assert.ok(Math.abs(after.pageY - before.pageY) <= 2, `page scroll restored (${before.pageY} → ${after.pageY})`);
+
+    // Advancing resets focus and position to the top of the new screen.
+    await page.click('[data-mission-action="found"]');
+    let fresh = await readingPosition(page);
+    assert.equal(fresh.tag, 'H3', 'feedback heading focused');
+    assert.equal(fresh.panelTop, 0);
+    await page.click('[data-mission-action="next"]');
+    fresh = await readingPosition(page);
+    assert.equal(fresh.tag, 'H2', 'the next step’s heading is focused');
+    assert.equal(fresh.panelTop, 0);
+    assert.match(await stepHeading(page), /Step 3 of 5/);
+    const headingTop = await page.locator('#missions-title').evaluate(node => node.getBoundingClientRect().top);
+    assert.ok(headingTop >= 0 && headingTop < (await page.evaluate(() => window.innerHeight)), 'the new step’s heading is on screen');
+
+    // Leaving from one step and returning to a different screen does not restore the old position.
+    await page.click('[data-mission-action="explore"]');
+    await page.click('.mission-bar [data-mission-action="found-here"]');
+    fresh = await readingPosition(page);
+    assert.equal(fresh.tag, 'H3');
+    assert.equal(fresh.panelTop, 0);
+    assert.deepEqual(errors, []);
+    await context.close();
+  });
+}
+
+test('delayed feedback is not read out after moving on or leaving', async () => {
+  const { page, context } = await openPage();
+  const rocky = byId('rocky-neighbours');
+  await openMission(page, rocky.id);
+  await page.click('[data-mission-action="explore"]');
+  // Press "I've found it" and then "Next step" straight away, well within the announcement delay.
+  await page.evaluate(() => {
+    document.querySelector('.mission-bar [data-mission-action="found-here"]').click();
+    document.querySelector('[data-mission-action="next"]').click();
+  });
+  await page.waitForTimeout(700);
+  assert.match(await stepHeading(page), /Step 2 of 5/);
+  assert.notEqual(await page.evaluate(() => document.getElementById('explorer-status').textContent), rocky.steps[0].reveal, 'step 1 feedback was cancelled');
+
+  await page.click('[data-mission-action="explore"]');
+  await page.evaluate(() => {
+    document.querySelector('.mission-bar [data-mission-action="found-here"]').click();
+    document.querySelector('[data-mission-action="leave"]').click();
+  });
+  await page.waitForTimeout(700);
+  assert.equal(await panelBody(page), 'overview');
+  assert.equal(await page.evaluate(() => document.getElementById('explorer-status').textContent), 'Showing the whole solar system', 'leaving cancelled the feedback');
+
+  // When the child stays on the screen, the feedback is still read.
+  await page.click('.mission-bar [data-mission-action="resume"]');
+  await page.click('[data-mission-action="next"]');
+  await page.click('[data-mission-action="explore"]');
+  await page.click('.mission-bar [data-mission-action="found-here"]');
+  await page.waitForFunction(text => document.getElementById('explorer-status').textContent === text, rocky.steps[2].reveal);
+  await context.close();
+});
+
+test('delayed quiz feedback is not read out after leaving the quiz', async () => {
+  const { page, context } = await openPage();
+  await page.click('#quiz-entry');
+  await page.click('[data-quiz-action="start"]');
+  await page.evaluate(() => {
+    document.querySelector('.quiz-answer').click();
+    document.querySelector('[data-quiz-action="next"]').click();
+  });
+  await page.waitForTimeout(700);
+  assert.equal(await page.evaluate(() => document.getElementById('explorer-status').textContent), '', 'question 1 feedback was cancelled on moving to question 2');
+  await page.evaluate(() => {
+    document.querySelector('.quiz-answer').click();
+    document.querySelector('[data-quiz-action="explore"]').click();
+  });
+  await page.waitForTimeout(700);
+  assert.match(await page.evaluate(() => document.getElementById('explorer-status').textContent), /^Now exploring /);
   await context.close();
 });

@@ -104,6 +104,7 @@
         "title": "What kind of giant is Saturn?",
         "task": "Saturn is made mostly of hydrogen and helium, just like Jupiter. You can explore Saturn first if you like.",
         "explore": "saturn",
+        "visitRequired": true,
         "question": "What kind of planet is Saturn?",
         "answers": [
           { "id": "gas-giant", "text": "A gas giant" },
@@ -122,6 +123,7 @@
         "title": "Find Neptune's twin",
         "task": "One of these planets is an ice giant, just like Neptune. You can explore Uranus first if you like.",
         "explore": "uranus",
+        "visitRequired": true,
         "question": "Which of these planets is an ice giant, like Neptune?",
         "answers": [
           { "id": "jupiter", "text": "Jupiter" },
