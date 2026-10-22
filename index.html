@@ -27,7 +27,8 @@
     <section class="stage" id="stage" aria-label="Planet explorer">
       <div class="scene" id="scene" data-scene-state="loading">
         <canvas id="scene-canvas" role="img" aria-label="3D model of the Sun and planets. Sizes and distances are not to scale."></canvas>
-        <div class="scene-labels" id="scene-labels"></div>
+        <div class="scene-labels" id="scene-labels" role="group" aria-label="Planet names in the 3D picture"></div>
+        <div class="scene-card-slot" id="scene-card"></div>
         <p class="scene-status" id="scene-status" role="status">Loading the 3D solar system…</p>
         <p class="scale-badge">Not to scale · illustrative model</p>
       </div>
@@ -50,6 +51,7 @@
         <summary>How to explore</summary>
         <ul>
           <li>Choose a world with the round buttons, or tap it in the picture.</li>
+          <li data-needs-3d>With Labels on, tap a planet's name to fly there. A card shows quick facts: More facts opens the full facts, and Hide card tucks it away.</li>
           <li>Use Back and Next to visit the worlds in order, and Solar system to see them all.</li>
           <li data-needs-3d>Drag the picture to turn it. Pinch, scroll or use + and − to zoom, and ⟲ ⟳ to rotate.</li>
           <li data-needs-3d>Press Pause to stop the planets moving, and press it again to start.</li>

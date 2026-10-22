@@ -7,6 +7,7 @@ import { createPlanetList } from '../components/planetList.js';
 import { renderQuizPanel, renderQuizResume } from '../components/quizPanel.js';
 import { renderMissionsPanel, renderMissionBar } from '../components/missionPanel.js';
 import { renderExperimentsPanel, experimentAnnouncement } from '../components/experimentPanel.js';
+import { renderSceneCard } from '../components/sceneCard.js';
 import { createNavigator, initialState, parseHash, formatHash, keyToAction, shouldIgnoreKey, actionAllowedInView, MODES } from './navigation.js';
 import { createQuizStore, progressLabel, feedbackAnnouncement, resultMessage, score } from './quiz.js';
 import { createMissionStore, resumableMission, screenKey, stepAnnouncement, stepLabel } from './missions.js';
@@ -221,6 +222,73 @@ export function startExplorer({ elements, bodies, planets, earth, sourcesById, q
     }
   }
 
+  // ----- Facts card over the 3D view -----
+  // Shown while a world is selected. "Hide card" only hides it: the selection stays, and choosing a world
+  // (another or the same one) shows it again. Its size is passed to the scene so the world isn't hidden behind it.
+  const card = { hidden: false, expanded: false };
+  function renderCard(state, { focus = null } = {}) {
+    if (state.view !== 'body') {
+      clear(elements.card);
+      elements.card.hidden = true;
+      updateCardInset();
+      return;
+    }
+    const body = bodiesById[state.selectedId];
+    clear(elements.card).append(renderSceneCard(body, {
+      earth,
+      hidden: card.hidden,
+      expanded: card.expanded,
+      onMore: () => showMoreFacts(body.id),
+      onHide: () => {
+        card.hidden = true;
+        renderCard(nav.getState(), { focus: '[data-card-action="show"]' });
+      },
+      onShow: () => {
+        card.hidden = false;
+        renderCard(nav.getState(), { focus: '.scene-card__title' });
+      },
+      onToggle: () => {
+        card.expanded = !card.expanded;
+        renderCard(nav.getState(), { focus: '[data-card-action="toggle"]' });
+      },
+      onOverview: () => {
+        dispatch({ type: 'overview' });
+        // The card has gone, so keep keyboard focus nearby: on the overview's heading, without scrolling away.
+        const heading = elements.panel.querySelector('#panel-title-overview');
+        if (heading) {
+          heading.tabIndex = -1;
+          heading.focus({ preventScroll: true });
+        }
+      },
+    }));
+    elements.card.hidden = false;
+    if (focus) elements.card.querySelector(focus)?.focus({ preventScroll: true });
+    updateCardInset();
+  }
+  function updateCardInset() {
+    const node = elements.card.querySelector('.scene-card:not(.scene-card--hidden)');
+    if (!scene) return;
+    if (!node || elements.sceneContainer.dataset.sceneState === 'fallback') {
+      scene.setFrameInset({ right: 0, bottom: 0 });
+      return;
+    }
+    // A strip along the bottom on small screens, a column on the right otherwise (see style.css).
+    const container = elements.sceneContainer.getBoundingClientRect();
+    const box = node.getBoundingClientRect();
+    const strip = box.width > container.width * 0.6;
+    scene.setFrameInset(strip
+      ? { right: 0, bottom: Math.max(0, container.bottom - box.top) }
+      : { right: Math.max(0, container.right - box.left), bottom: 0 });
+  }
+  new ResizeObserver(() => updateCardInset()).observe(elements.card);
+  function showMoreFacts(id) {
+    const heading = elements.panel.querySelector(`#panel-title-${id}`);
+    if (!heading) return;
+    heading.tabIndex = -1;
+    heading.focus({ preventScroll: true });
+    heading.scrollIntoView({ behavior: reducedMotion() ? 'auto' : 'smooth', block: 'start' });
+  }
+
   // ----- Controls bar -----
   const control = name => elements.controls.querySelector(`[data-control="${name}"]`);
   const pauseButton = control('pause');
@@ -313,6 +381,8 @@ export function startExplorer({ elements, bodies, planets, earth, sourcesById, q
         ? `Now exploring ${bodiesById[state.selectedId].name}`
         : activityName ? (reading ? `Back to ${activityName}` : (previous ? '' : activityName)) : 'Showing the whole solar system';
       scene?.focus(state.selectedId);
+      card.hidden = false;
+      renderCard(state);
       selector.revealActive(state.selectedId, { smooth: Boolean(previous) && !reducedMotion() });
       if (previous) elements.panel.scrollTop = 0;
       if (reading) restoreReading(state.view, reading);
@@ -472,7 +542,11 @@ export function startExplorer({ elements, bodies, planets, earth, sourcesById, q
         quality,
         reducedMotion: reducedMotion(),
         paused: state.paused,
-        onPick: id => dispatch({ type: 'select', id }),
+        onPick: (id, { fromLabel = false } = {}) => {
+          dispatch({ type: 'select', id });
+          // A label chosen with the keyboard disappears as the camera flies, so focus moves to the new card.
+          if (fromLabel) elements.card.querySelector('.scene-card__title')?.focus({ preventScroll: true });
+        },
         onContextLost: () => {
           scene?.dispose();
           scene = null;
@@ -482,6 +556,7 @@ export function startExplorer({ elements, bodies, planets, earth, sourcesById, q
       scene.setLabelsVisible(prefs.labels);
       scene.setPaused(state.paused);
       scene.focus(state.selectedId, { instant: true });
+      updateCardInset();
       elements.sceneStatus.hidden = true;
       if (prefs.textures) scene.setTexturesEnabled(true);
     } catch (error) {

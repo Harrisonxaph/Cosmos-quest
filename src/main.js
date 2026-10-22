@@ -18,6 +18,7 @@ startExplorer({
     sceneContainer: byId('scene'),
     canvas: byId('scene-canvas'),
     labels: byId('scene-labels'),
+    card: byId('scene-card'),
     sceneStatus: byId('scene-status'),
     selector: byId('body-selector'),
     controls: byId('controls'),

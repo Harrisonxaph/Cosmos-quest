@@ -50,7 +50,7 @@ const overflow = page => page.evaluate(() => document.documentElement.scrollWidt
 
 async function smallTargets(page) {
   return page.evaluate(() => [...document.querySelectorAll('button, input:not([type="radio"]), select, summary, .planet-card__source')]
-    .filter(node => node.getClientRects().length && !node.closest('[hidden]') && !node.classList.contains('scene-label') && !node.classList.contains('skip-link'))
+    .filter(node => node.getClientRects().length && !node.closest('[hidden]') && node.style.visibility !== 'hidden' && !node.classList.contains('skip-link'))
     .map(node => ({ name: node.id || node.dataset.quizAction || node.dataset.missionAction || node.dataset.experimentAction || node.textContent.trim().slice(0, 30), box: node.getBoundingClientRect() }))
     .filter(({ box }) => box.width < 44 || box.height < 44)
     .map(({ name, box }) => `${name} ${Math.round(box.width)}×${Math.round(box.height)}`));
@@ -66,6 +66,44 @@ test(`[${engineName}] explore: choose worlds, use the help and the activity bar`
   await page.tap('.explore-help summary');
   assert.match(await page.locator('.explore-help').innerText(), /round buttons/);
   assert.equal(await page.getAttribute('#explore-entry', 'aria-current'), 'page');
+  assert.deepEqual(await smallTargets(page), []);
+  assert.equal(await overflow(page), 0);
+  assert.deepEqual(errors, []);
+  await context.close();
+});
+
+test(`[${engineName}] planet names and the facts card: tap a name, hide and show the card, More facts`, async () => {
+  const { page, context, errors } = await openPage();
+  const has3d = await page.locator('#scene[data-scene-state="ready"]').count() === 1;
+  let chosen = 'jupiter';
+  if (has3d) {
+    await page.keyboard.press('p'); // pause, so the names stay still
+    await page.waitForTimeout(300);
+    await page.evaluate(() => document.getElementById('scene').scrollIntoView({ block: 'start' }));
+    const name = await page.evaluate(() => {
+      const node = [...document.querySelectorAll('.scene-label')].find(n => !n.hidden && n.style.visibility !== 'hidden');
+      const box = node.querySelector('.scene-label__text').getBoundingClientRect();
+      return { id: node.dataset.body, x: box.left + box.width / 2, y: box.top + box.height / 2 };
+    });
+    chosen = name.id;
+    await page.touchscreen.tap(name.x, name.y);
+  } else {
+    await page.tap(`.body-selector__button[data-body="${chosen}"]`);
+  }
+  await page.waitForFunction(id => location.hash === `#/${id}`, chosen);
+  assert.equal(await panelBody(page), chosen);
+  assert.equal(await page.locator('.scene-card').getAttribute('data-body'), chosen);
+  assert.equal(await page.locator('.scene-card__facts li').count(), 3);
+  assert.doesNotMatch(await page.locator('.scene-card').innerText(), /\bmoons?\b/i);
+  await page.tap('[data-card-action="hide"]');
+  assert.equal(await page.locator('.scene-card__facts').count(), 0);
+  assert.equal(await panelBody(page), chosen, 'hiding the card keeps the planet');
+  await page.tap('[data-card-action="show"]');
+  await page.tap('[data-card-action="more"]');
+  assert.equal(await page.evaluate(() => document.activeElement.id), `panel-title-${chosen}`);
+  await page.tap('[data-card-action="overview"]');
+  assert.equal(await panelBody(page), 'overview');
+  assert.equal(await page.locator('#scene-card').isHidden(), true);
   assert.deepEqual(await smallTargets(page), []);
   assert.equal(await overflow(page), 0);
   assert.deepEqual(errors, []);

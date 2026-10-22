@@ -5,6 +5,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { sceneRadius, orbitRadius, orbitAngularSpeed, spinAngularSpeed, axisTiltDegrees } from '../utils/scale.js';
 import { appearanceFor } from './appearance.js';
 import { createSurfaceTexture, createRingTexture, createGlowTexture, mulberry32 } from './proceduralTextures.js';
+import { placeLabels, pickAt, isTap } from '../utils/labelLayout.js';
 
 const OVERVIEW_POSITION = new THREE.Vector3(0, 58, 96);
 const OVERVIEW_LIMITS = { min: 12, max: 220 };
@@ -125,13 +126,20 @@ export function createSolarSystemScene({ canvas, labelLayer, bodies, earth, qual
 
     scene.add(group);
 
+    // Floating name. Taps and drags pass through it to the canvas, which decides what a tap means (see pickAt),
+    // so overlapping names can't catch each other's taps and a drag that starts on a name still turns the view.
+    // While shown it is a real button, so keyboard and screen-reader users can choose the world with it too.
     const label = document.createElement('button');
     label.type = 'button';
     label.className = 'scene-label';
-    label.textContent = body.name;
-    label.tabIndex = -1;
-    label.setAttribute('aria-hidden', 'true');
-    label.addEventListener('click', () => onPick?.(body.id));
+    label.dataset.body = body.id;
+    label.setAttribute('aria-label', `Fly to ${body.name}`);
+    const labelText = document.createElement('span');
+    labelText.className = 'scene-label__text';
+    labelText.dataset.body = body.id;
+    labelText.textContent = body.name;
+    label.append(labelText);
+    label.addEventListener('click', () => onPick?.(body.id, { fromLabel: true }));
     labelLayer.append(label);
 
     entries.set(body.id, {
@@ -141,6 +149,7 @@ export function createSolarSystemScene({ canvas, labelLayer, bodies, earth, qual
       mesh,
       material,
       label,
+      labelText,
       radius,
       orbit,
       angle: index * 2.399, // spread planets around their orbits (illustrative, not real positions)
@@ -259,22 +268,51 @@ export function createSolarSystemScene({ canvas, labelLayer, bodies, earth, qual
     needsRender = true;
   }
 
+  // Sizes of the visible names, kept up to date by a ResizeObserver (text size can change at any time).
+  const labelSizes = new Map();
+  const labelObserver = new ResizeObserver(records => {
+    for (const record of records) {
+      const box = record.borderBoxSize?.[0];
+      const width = box ? box.inlineSize : record.target.offsetWidth;
+      const height = box ? box.blockSize : record.target.offsetHeight;
+      if (width && height) labelSizes.set(record.target.dataset.body, { width, height });
+    }
+    needsRender = true;
+  });
+  for (const entry of entries.values()) labelObserver.observe(entry.labelText);
+  let placements = new Map();
+
   function updateLabels() {
     const width = canvas.clientWidth;
     const height = canvas.clientHeight;
-    for (const entry of entries.values()) {
-      const show = labelsVisible && focusId === null && transition === null;
-      if (!show) {
-        entry.label.hidden = true;
-        continue;
+    const items = [];
+    if (labelsVisible && focusId === null && transition === null) {
+      for (const entry of entries.values()) {
+        const size = labelSizes.get(entry.body.id);
+        projected.copy(entry.group.position).project(camera);
+        if (!size || projected.z >= 1) continue;
+        const x = ((projected.x + 1) / 2) * width;
+        const y = ((1 - projected.y) / 2) * height;
+        scratch.copy(entry.group.position);
+        scratch.y += entry.radius * 1.3;
+        scratch.project(camera);
+        items.push({ id: entry.body.id, x, y, radius: Math.abs(((1 - scratch.y) / 2) * height - y), ...size });
       }
-      projected.copy(entry.group.position);
-      projected.y += entry.radius * 1.3;
-      projected.project(camera);
-      const visible = projected.z < 1 && Math.abs(projected.x) < 1.1 && Math.abs(projected.y) < 1.1;
-      entry.label.hidden = !visible;
-      if (visible) {
-        entry.label.style.transform = `translate(-50%, -100%) translate(${((projected.x + 1) / 2) * width}px, ${((1 - projected.y) / 2) * height}px)`;
+      // A label with keyboard focus is placed first, so it can't vanish from under the keyboard.
+      const focused = labelLayer.contains(document.activeElement) ? document.activeElement.dataset.body : null;
+      items.sort((a, b) => (b.id === focused) - (a.id === focused));
+    }
+    placements = placeLabels(items, { width, height });
+    for (const entry of entries.values()) {
+      const placement = placements.get(entry.body.id);
+      // A label without a place is hidden, so it can't be seen, tapped or focused. Until its size is known it
+      // stays laid out but invisible, so it can be measured.
+      entry.label.hidden = !placement && labelSizes.has(entry.body.id);
+      entry.label.style.visibility = placement ? '' : 'hidden';
+      if (placement) {
+        entry.label.dataset.side = placement.side;
+        // Whole pixels keep the text crisp and the tap area exactly its CSS size.
+        entry.label.style.transform = `translate(${Math.round(placement.target.left)}px, ${Math.round(placement.target.top)}px)`;
       }
     }
   }
@@ -316,20 +354,28 @@ export function createSolarSystemScene({ canvas, labelLayer, bodies, earth, qual
     if (canvas.parentElement.dataset.sceneState !== 'ready') canvas.parentElement.dataset.sceneState = 'ready';
   }
 
+  // Space covered by the facts card (CSS pixels from the right and bottom edges). The picture is shifted so the
+  // focused world sits in the middle of the uncovered part, rather than behind the card.
+  let inset = { right: 0, bottom: 0 };
   function resize() {
     const width = canvas.clientWidth;
     const height = canvas.clientHeight;
     if (!width || !height) return;
     renderer.setSize(width, height, false);
-    camera.aspect = width / height;
+    const right = Math.min(inset.right, width * 0.6);
+    const bottom = Math.min(inset.bottom, height * 0.6);
+    camera.aspect = (width + right) / (height + bottom);
+    if (right || bottom) camera.setViewOffset(width + right, height + bottom, right, bottom, width, height);
+    else camera.clearViewOffset();
     camera.updateProjectionMatrix();
     needsRender = true;
   }
 
-  // ----- Picking: a tap or click that didn't drag selects a world -----
+  // ----- Picking: a short one-finger tap or click that didn't drag selects a world -----
   const raycaster = new THREE.Raycaster();
   const pointer = new THREE.Vector2();
-  let down = null;
+  const activePointers = new Set();
+  let gesture = null;
   function bodyAt(event) {
     const rect = canvas.getBoundingClientRect();
     pointer.set(((event.clientX - rect.left) / rect.width) * 2 - 1, -((event.clientY - rect.top) / rect.height) * 2 + 1);
@@ -337,16 +383,31 @@ export function createSolarSystemScene({ canvas, labelLayer, bodies, earth, qual
     const hit = raycaster.intersectObjects(hitTargets, false)[0];
     return hit ? hit.object.userData.bodyId : null;
   }
-  const onPointerDown = event => { down = { x: event.clientX, y: event.clientY, time: performance.now() }; };
+  function pickFor(event) {
+    const rect = canvas.getBoundingClientRect();
+    return pickAt({ x: event.clientX - rect.left, y: event.clientY - rect.top }, placements, bodyAt(event));
+  }
+  const onPointerDown = event => {
+    activePointers.add(event.pointerId);
+    if (activePointers.size === 1) gesture = { x: event.clientX, y: event.clientY, time: performance.now(), pointers: 1 };
+    else if (gesture) gesture.pointers = Math.max(gesture.pointers, activePointers.size); // a pinch is never a tap
+  };
   const onPointerUp = event => {
-    if (!down) return;
-    const moved = Math.hypot(event.clientX - down.x, event.clientY - down.y);
-    const quick = performance.now() - down.time < 600;
-    down = null;
-    if (moved < 8 && quick) {
-      const id = bodyAt(event);
-      if (id) onPick?.(id);
-    }
+    activePointers.delete(event.pointerId);
+    if (!gesture || activePointers.size > 0) return; // wait until every finger has lifted
+    const tap = isTap({
+      moved: Math.hypot(event.clientX - gesture.x, event.clientY - gesture.y),
+      durationMs: performance.now() - gesture.time,
+      pointers: gesture.pointers,
+    });
+    gesture = null;
+    if (!tap) return;
+    const id = pickFor(event);
+    if (id) onPick?.(id);
+  };
+  const onPointerCancel = event => {
+    activePointers.delete(event.pointerId);
+    gesture = null;
   };
   let hoverQueued = false;
   const onPointerMove = event => {
@@ -354,7 +415,7 @@ export function createSolarSystemScene({ canvas, labelLayer, bodies, earth, qual
     hoverQueued = true;
     requestAnimationFrame(() => {
       hoverQueued = false;
-      canvas.style.cursor = bodyAt(event) ? 'pointer' : 'grab';
+      canvas.style.cursor = pickFor(event) ? 'pointer' : 'grab';
     });
   };
   const onControlsChange = () => { needsRender = true; };
@@ -374,6 +435,7 @@ export function createSolarSystemScene({ canvas, labelLayer, bodies, earth, qual
 
   canvas.addEventListener('pointerdown', onPointerDown);
   canvas.addEventListener('pointerup', onPointerUp);
+  canvas.addEventListener('pointercancel', onPointerCancel);
   canvas.addEventListener('pointermove', onPointerMove);
   canvas.addEventListener('webglcontextlost', onContextLostEvent);
   controls.addEventListener('change', onControlsChange);
@@ -426,6 +488,11 @@ export function createSolarSystemScene({ canvas, labelLayer, bodies, earth, qual
       isReducedMotion = value;
       controls.enableDamping = !value;
     },
+    setFrameInset({ right = 0, bottom = 0 } = {}) {
+      if (right === inset.right && bottom === inset.bottom) return;
+      inset = { right, bottom };
+      resize();
+    },
     setLabelsVisible(value) {
       labelsVisible = value;
       needsRender = true;
@@ -434,8 +501,10 @@ export function createSolarSystemScene({ canvas, labelLayer, bodies, earth, qual
       disposed = true;
       cancelAnimationFrame(frame);
       resizeObserver.disconnect();
+      labelObserver.disconnect();
       canvas.removeEventListener('pointerdown', onPointerDown);
       canvas.removeEventListener('pointerup', onPointerUp);
+      canvas.removeEventListener('pointercancel', onPointerCancel);
       canvas.removeEventListener('pointermove', onPointerMove);
       canvas.removeEventListener('webglcontextlost', onContextLostEvent);
       controls.removeEventListener('change', onControlsChange);

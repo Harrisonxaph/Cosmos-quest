@@ -66,8 +66,48 @@ h1, h2, h3 { line-height: 1.2; }
 @media (min-width: 900px) { .scene { height: clamp(420px, calc(100vh - 15rem), 760px); } }
 .scene canvas { display: block; width: 100%; height: 100%; cursor: grab; touch-action: none; }
 .scene-labels { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
-.scene-label { position: absolute; left: 0; top: 0; pointer-events: auto; padding: 0.15rem 0.55rem; border: 1px solid #5f73ad; border-radius: 999px; background: rgb(11 17 36 / 80%); color: var(--text); font-size: 0.8rem; white-space: nowrap; cursor: pointer; }
+/* Each floating name sits in a tap area of at least 44 × 44 px. Taps and drags pass through to the canvas,
+   which works out which world was meant, so names never catch each other's taps or block turning the view. */
+.scene-label { position: absolute; left: 0; top: 0; display: flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; padding: 0; border: 0; background: none; color: var(--text); pointer-events: none; }
+.scene-label__text { padding: 0.15rem 0.55rem; border: 1px solid #5f73ad; border-radius: 999px; background: rgb(11 17 36 / 80%); font-size: 0.8rem; white-space: nowrap; }
+.scene-label:focus-visible { outline: none; }
+.scene-label:focus-visible .scene-label__text { outline: 3px solid var(--focus); outline-offset: 2px; }
 .scene-label[hidden] { display: none; }
+
+/* ----- Facts card over the 3D view: a column on the right, or a strip along the bottom on small screens ----- */
+.scene-card-slot { position: absolute; top: 0.6rem; right: 0.6rem; bottom: 0.6rem; width: min(19rem, 44%); display: flex; flex-direction: column; align-items: flex-end; pointer-events: none; }
+.scene-card-slot[hidden] { display: none; }
+.scene-card { width: 100%; max-height: 100%; overflow-y: auto; overscroll-behavior: contain; pointer-events: auto; padding: 0.7rem 0.85rem; border: 1px solid var(--border); border-radius: 0.9rem; background: rgb(11 17 36 / 92%); }
+.scene-card--hidden { width: auto; padding: 0; border: 0; background: none; overflow: visible; }
+.scene-card__header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 0.6rem; }
+.scene-card__title { margin: 0; font-size: 1.25rem; }
+.scene-card__title:focus { outline: none; }
+.scene-card__title:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.scene-card__kind { margin: 0.1rem 0 0; color: var(--muted); font-size: 0.9rem; }
+.scene-card__no-surface { margin: 0.5rem 0 0; padding: 0.3rem 0.6rem; border-left: 4px solid var(--accent); background: var(--surface-2); font-weight: 700; }
+.scene-card__facts { margin: 0.5rem 0 0; padding-left: 1.1rem; font-size: 0.95rem; }
+.scene-card__facts li + li { margin-top: 0.3rem; }
+.scene-card__tag { display: inline-block; padding: 0 0.4rem; border: 1px solid currentColor; border-radius: 999px; font-size: 0.75rem; white-space: nowrap; }
+.scene-card__tag--measured, .scene-card__tag--fact { color: var(--measured); }
+.scene-card__tag--calculated { color: var(--calculated); }
+.scene-card__model { margin: 0.5rem 0 0; color: var(--model); font-size: 0.85rem; }
+.scene-card__actions { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.6rem; }
+.scene-card__button { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; max-width: 100%; padding: 0.3rem 0.8rem; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); cursor: pointer; }
+.scene-card__button:hover { background: var(--surface-2); }
+.scene-card__button--more { border-color: var(--accent); color: var(--accent); font-weight: 700; }
+.scene-card__button--show { background: rgb(11 17 36 / 92%); }
+.scene-card__button--toggle { display: none; }
+/* While the card column is shown, the "Not to scale" badge moves to the bottom-left and wraps before the card. */
+.scene:has(.scene-card:not(.scene-card--hidden)) .scale-badge { top: auto; bottom: 0.6rem; max-width: calc(100% - min(19rem, 44%) - 1.8rem); }
+@media (max-width: 640px), (max-height: 520px) {
+  .scene-card-slot { top: auto; left: 0.5rem; right: 0.5rem; bottom: 0.5rem; width: auto; }
+  .scene:has(.scene-card:not(.scene-card--hidden)) .scale-badge { top: 0.6rem; bottom: auto; max-width: calc(100% - 1.2rem); }
+  .scene-card { max-height: 32vh; padding: 0.5rem 0.7rem; }
+  .scene-card__button--toggle { display: inline-flex; }
+  .scene-card[data-expanded='false'] .scene-card__body,
+  .scene-card[data-expanded='false'] .scene-card__button--more,
+  .scene-card[data-expanded='false'] .scene-card__button--overview { display: none; }
+}
 .scene-status { position: absolute; inset: auto 1rem 50% 1rem; transform: translateY(50%); margin: 0; padding: 1rem; text-align: center; background: rgb(11 17 36 / 85%); border-radius: 0.75rem; }
 .scene-status[hidden] { display: none; }
 .scene[data-scene-state='loading'] .scene-status::before { content: ''; display: block; width: 2rem; height: 2rem; margin: 0 auto 0.5rem; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
@@ -75,6 +115,10 @@ h1, h2, h3 { line-height: 1.2; }
 .scene[data-scene-state='fallback'] { height: auto; min-height: 8rem; display: grid; place-items: center; padding: 1rem; }
 .scene[data-scene-state='fallback'] canvas, .scene[data-scene-state='fallback'] .scale-badge { display: none; }
 .scene[data-scene-state='fallback'] .scene-status { position: static; transform: none; }
+/* Without 3D the card sits in the page flow under the message, with the same facts and buttons. */
+.scene[data-scene-state='fallback'] { gap: 0.75rem; }
+.scene[data-scene-state='fallback'] .scene-card-slot { position: static; width: 100%; order: 1; }
+.scene[data-scene-state='fallback'] .scene-card { max-height: none; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* ----- World selector ----- */
