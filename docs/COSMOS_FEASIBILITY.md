@@ -2,6 +2,8 @@
 
 Status: **assessment only**. Nothing here is implemented or agreed. AGENTS.md says not to add new activities until they are agreed, so this document is the basis for that decision.
 
+Update: the galaxy collection (data, sources and images, without the map) has been prepared following this document. See [COSMOS_DATA.md](COSMOS_DATA.md). It was checked against the live pages, which replaces the search-summary evidence below for the facts it uses.
+
 Prepared 2026-10-22.
 
 ## Summary

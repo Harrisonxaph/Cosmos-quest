@@ -10,7 +10,7 @@ Stage 2 adopted **Three.js 0.180.0** (MIT licence), pinned exactly in `package.j
 
 | Folder | Owns | Rules |
 | --- | --- | --- |
-| `src/data/` | Scientific content: `planets.json`, `sun.json`, `sources.json`, `quiz.json`, `missions.json`, `experiments.json` and their schemas | Every value cites a source listed in `sources.json` and `docs/SCIENCE.md`. No presentation settings. |
+| `src/data/` | Scientific content: `planets.json`, `sun.json`, `sources.json`, `quiz.json`, `missions.json`, `experiments.json`, `galaxies.json` (the Cosmos collection, not yet shown in the app) and their schemas | Every value cites a source listed in `sources.json` and `docs/SCIENCE.md`. No presentation settings. |
 | `src/utils/` | Pure helpers: formatting, Earth comparisons (`compare.js`), illustrative scale (`scale.js`), panel and facts-card content (`panelContent.js`), label placement and tap picking (`labelLayout.js`) | No DOM, no Three.js, so everything can be tested in Node. |
 | `src/features/` | User capabilities: `navigation.js` (pure state machine, URL hash and keyboard map), `quiz.js` (pure quiz state, round picking and scoring), `missions.js` (pure mission progress and completion rules), `experiments.js` (pure experiment settings and results) and `explorer.js` (wires state, panels, quiz, controls and the scene) | Navigation rules live in `navigation.js`, not in event handlers. |
 | `src/components/` | Reusable UI: information panel, quiz panel, mission panel and mission bar, experiment panel, facts card (`sceneCard.js`), world selector, Stage 1 planet list, DOM helper | Text is set with `textContent` only. Components do not import Three.js. |
@@ -88,6 +88,7 @@ Every control, including the Simple/Detailed buttons and expandable sections, is
 
 Tests live only under `tests/` and mirror `src/`:
 
+- `tests/data/galaxies.test.js`: the Cosmos galaxy collection, checked against the hand-written `galaxy-key.js`. It covers the schema, the approved galaxies, unique ids, names, aliases and catalogue numbers, and source ids with their SCIENCE.md sections. It also checks facts word for word with their supporting quotes, light-year distances with "about" displays, other NASA estimates kept, NED megaparsecs in a sensible range, nearest-first order and the SCIENCE.md distance table. The rest covers J2000 positions, the Milky Way's inside view and illustration, no redshift distances, composite-image notes, WebP sizes and aspect ratios, and an ASSET_CREDITS.md row for every bundled file. See docs/COSMOS_DATA.md.
 - `tests/data/missions.test.js`: mission schema and required fields, the three agreed missions with stable ids, valid step references, citations limited to sources the panels already use, coverage by the independent mission answer key, every answer and revealed fact checked against the key and the data, mutation tests, no solid ground for the giants, and no new numbers.
 - `tests/data/`: schema, Stage 1 facts preserved, citations, SCIENCE.md tables matching the data, wording rules, superlatives agreeing with the numbers, and quiz questions (schema, unique ids and texts, valid answers, supported and cited answers, no moon counts).
 - `tests/utils/`, `tests/features/`, `tests/scenes/`: comparisons, formatting, scale, panel content, navigation, quiz rounds and scoring (uniqueness, shuffling, restart and play again) and appearance.

@@ -9,7 +9,7 @@
   "definitions": {
     "sourceId": {
       "type": "string",
-      "pattern": "^nasa-[a-z]+(-[a-z]+)*$"
+      "pattern": "^nasa-[a-z0-9]+(-[a-z0-9]+)*$"
     },
     "sourceIds": {
       "type": "array",

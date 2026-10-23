@@ -1,0 +1,1356 @@
+[
+  {
+    "id": "milky-way",
+    "name": "Milky Way",
+    "aliases": [
+      "our Galaxy"
+    ],
+    "catalogue": {
+      "messier": null,
+      "ngc": null,
+      "ned": null
+    },
+    "viewpoint": "inside",
+    "classification": {
+      "value": "barred-spiral",
+      "nasaWording": "thought to be a barred spiral galaxy",
+      "sourceIds": [
+        "nasa-hubble-galaxies"
+      ]
+    },
+    "summary": {
+      "simple": "Our home galaxy. The Sun, Earth and most of the stars you can see at night are inside it. Because we live inside it, nobody has ever photographed the whole Milky Way from outside.",
+      "sourceIds": [
+        "nasa-milky-way",
+        "nasa-messier-31"
+      ]
+    },
+    "facts": [
+      {
+        "text": "The Milky Way is about 100,000 light-years across.",
+        "sourceId": "nasa-milky-way"
+      },
+      {
+        "text": "Our solar system is about 26,000 light-years from the centre of the Milky Way.",
+        "sourceId": "nasa-milky-way"
+      },
+      {
+        "text": "Our Sun, with Earth, takes about 250 million years to travel once around the centre of the Milky Way.",
+        "sourceId": "nasa-milky-way"
+      }
+    ],
+    "size": {
+      "diameterLy": 100000,
+      "sourceIds": [
+        "nasa-milky-way"
+      ]
+    },
+    "distance": null,
+    "sky": null,
+    "image": {
+      "kind": "artist-concept",
+      "telescope": null,
+      "wavelengths": [],
+      "composite": false,
+      "colourNote": null,
+      "colourNoteSourceId": null,
+      "alt": "Artist's illustration of the Milky Way seen from above: a glowing yellow bar across the centre, with blue spiral arms of stars winding out from its ends.",
+      "credit": "NASA/JPL-Caltech",
+      "licence": "nasa-public-domain",
+      "thumbnail": {
+        "file": "assets/galaxies/milky-way-thumb.webp",
+        "width": 300,
+        "height": 300
+      },
+      "detail": {
+        "file": "assets/galaxies/milky-way.webp",
+        "width": 1200,
+        "height": 1200
+      },
+      "original": {
+        "url": "https://images-assets.nasa.gov/image/PIA10748/PIA10748~orig.jpg",
+        "sourcePage": "https://images.nasa.gov/details/PIA10748",
+        "width": 5600,
+        "height": 5600,
+        "nasaId": "PIA10748"
+      },
+      "retrieved": "2026-10-22",
+      "status": "ready",
+      "illustrationNote": "Artist's concept, not a photograph. We live inside the Milky Way, so no camera has ever been outside it to take a picture of the whole galaxy. This drawing shows what scientists think it looks like from above."
+    }
+  },
+  {
+    "id": "large-magellanic-cloud",
+    "name": "Large Magellanic Cloud",
+    "aliases": [
+      "LMC"
+    ],
+    "catalogue": {
+      "messier": null,
+      "ngc": null,
+      "ned": "Large Magellanic Cloud"
+    },
+    "viewpoint": "outside",
+    "classification": {
+      "value": "irregular",
+      "nasaWording": "irregular dwarf galaxy",
+      "sourceIds": [
+        "nasa-nearest-galaxies"
+      ]
+    },
+    "summary": {
+      "simple": "A small, irregular galaxy that travels around our Milky Way. From the Southern Hemisphere it looks like a faint, glowing patch in the night sky.",
+      "sourceIds": [
+        "nasa-nearest-galaxies",
+        "nasa-swift-magellanic-clouds"
+      ]
+    },
+    "facts": [
+      {
+        "text": "The Large and Small Magellanic Clouds orbit each other as well as our Milky Way.",
+        "sourceId": "nasa-swift-magellanic-clouds"
+      },
+      {
+        "text": "The Large Magellanic Cloud is about one-tenth the size of the Milky Way, with only 1 percent of its mass.",
+        "sourceId": "nasa-swift-magellanic-clouds"
+      },
+      {
+        "text": "The Magellanic Clouds are named after Ferdinand Magellan, who led an expedition to sail around the world in 1519.",
+        "sourceId": "nasa-swift-magellanic-clouds"
+      }
+    ],
+    "size": {
+      "diameterLy": 14000,
+      "sourceIds": [
+        "nasa-swift-magellanic-clouds"
+      ]
+    },
+    "distance": {
+      "valueLy": 163000,
+      "unit": "light-years",
+      "display": "about 163,000 light-years",
+      "sourceIds": [
+        "nasa-swift-magellanic-clouds"
+      ],
+      "asOf": "2026-10-22",
+      "selection": "Two NASA pages differ: the SVS page (2013) gives 163,000 light-years and the Imagine the Universe page (updated 2020) gives 179,000. We use 163,000 because it is closer to the median of the published estimates in NED (cross-check below).",
+      "otherEstimates": [
+        {
+          "valueLy": 179000,
+          "display": "about 179,000 light-years",
+          "sourceIds": [
+            "nasa-nearest-galaxies"
+          ]
+        }
+      ],
+      "context": {
+        "text": "Astronomers mainly use pulsating stars called Cepheid and RR Lyrae variables to measure the distance to the Magellanic Clouds.",
+        "sourceIds": [
+          "nasa-nearest-galaxies"
+        ]
+      },
+      "crossCheck": {
+        "service": "NED",
+        "name": "LMC",
+        "retrieved": "2026-10-23",
+        "estimates": 824,
+        "unit": "Mpc",
+        "median": 0.05,
+        "min": 0.033,
+        "max": 0.071,
+        "note": "NED quick-look summary of published distances: original values, not homogenised. Used only to check the NASA value; not shown in the app."
+      }
+    },
+    "sky": {
+      "constellation": null,
+      "sourceIds": [
+        "nasa-swift-magellanic-clouds"
+      ],
+      "position": {
+        "service": "NED",
+        "name": "Large Magellanic Cloud",
+        "raDeg": 80.89416667,
+        "decDeg": -69.75611111,
+        "frame": "equatorial",
+        "epoch": "J2000",
+        "retrieved": "2026-10-23",
+        "note": "Cross-check only. Not needed by the illustrative distance-band map; recorded for a later \"Where is it in our sky?\" view."
+      }
+    },
+    "image": {
+      "kind": "composite",
+      "telescope": "Swift Ultraviolet/Optical Telescope (UVOT)",
+      "wavelengths": [
+        "ultraviolet"
+      ],
+      "composite": true,
+      "colourNote": "The LMC and SMC images range from 1,600 to 3,300 angstroms, UV wavelengths largely blocked by Earth's atmosphere.",
+      "colourNoteSourceId": "nasa-swift-magellanic-clouds",
+      "alt": "Ultraviolet mosaic of the Large Magellanic Cloud: countless blue and white points of light filling a wide patchwork shape with jagged edges.",
+      "credit": "NASA/Swift/S. Immler (Goddard) and M. Siegel (Penn State)",
+      "licence": "nasa-public-domain",
+      "thumbnail": {
+        "file": "assets/galaxies/large-magellanic-cloud-thumb.webp",
+        "width": 400,
+        "height": 250
+      },
+      "detail": {
+        "file": "assets/galaxies/large-magellanic-cloud.webp",
+        "width": 1600,
+        "height": 1000
+      },
+      "original": {
+        "url": "https://svs.gsfc.nasa.gov/vis/a010000/a011200/a011293/LMC_edit.jpg",
+        "sourcePage": "https://svs.gsfc.nasa.gov/11293",
+        "width": 16000,
+        "height": 10000
+      },
+      "retrieved": "2026-10-22",
+      "status": "ready"
+    }
+  },
+  {
+    "id": "small-magellanic-cloud",
+    "name": "Small Magellanic Cloud",
+    "aliases": [
+      "SMC"
+    ],
+    "catalogue": {
+      "messier": null,
+      "ngc": null,
+      "ned": "Small Magellanic Cloud"
+    },
+    "viewpoint": "outside",
+    "classification": {
+      "value": "irregular",
+      "nasaWording": "irregular dwarf galaxy",
+      "sourceIds": [
+        "nasa-nearest-galaxies"
+      ]
+    },
+    "summary": {
+      "simple": "A small, irregular galaxy that is a neighbour of the Large Magellanic Cloud. It can be seen from the Southern Hemisphere as a faint, glowing patch.",
+      "sourceIds": [
+        "nasa-nearest-galaxies",
+        "nasa-swift-magellanic-clouds"
+      ]
+    },
+    "facts": [
+      {
+        "text": "The Small Magellanic Cloud is only half the size of the Large Magellanic Cloud.",
+        "sourceId": "nasa-swift-magellanic-clouds"
+      },
+      {
+        "text": "It may once have been a barred disk, pulled out of shape by the gravity of the Milky Way and the Large Magellanic Cloud.",
+        "sourceId": "nasa-nearest-galaxies"
+      }
+    ],
+    "size": null,
+    "distance": {
+      "valueLy": 200000,
+      "unit": "light-years",
+      "display": "about 200,000 light-years",
+      "sourceIds": [
+        "nasa-swift-magellanic-clouds"
+      ],
+      "asOf": "2026-10-22",
+      "selection": "Two NASA pages differ: the SVS page (2013) gives 200,000 light-years and the Imagine the Universe page (updated 2020) gives 210,000. We use 200,000 because it is closer to the median of the published estimates in NED (cross-check below).",
+      "otherEstimates": [
+        {
+          "valueLy": 210000,
+          "display": "about 210,000 light-years",
+          "sourceIds": [
+            "nasa-nearest-galaxies"
+          ]
+        }
+      ],
+      "context": {
+        "text": "Astronomers mainly use pulsating stars called Cepheid and RR Lyrae variables to measure the distance to the Magellanic Clouds.",
+        "sourceIds": [
+          "nasa-nearest-galaxies"
+        ]
+      },
+      "crossCheck": {
+        "service": "NED",
+        "name": "SMC",
+        "retrieved": "2026-10-23",
+        "estimates": 294,
+        "unit": "Mpc",
+        "median": 0.061,
+        "min": 0.039,
+        "max": 0.098,
+        "note": "NED quick-look summary of published distances: original values, not homogenised. Used only to check the NASA value; not shown in the app."
+      }
+    },
+    "sky": {
+      "constellation": null,
+      "sourceIds": [
+        "nasa-swift-magellanic-clouds"
+      ],
+      "position": {
+        "service": "NED",
+        "name": "Small Magellanic Cloud",
+        "raDeg": 13.18666667,
+        "decDeg": -72.82861111,
+        "frame": "equatorial",
+        "epoch": "J2000",
+        "retrieved": "2026-10-23",
+        "note": "Cross-check only. Not needed by the illustrative distance-band map; recorded for a later \"Where is it in our sky?\" view."
+      }
+    },
+    "image": {
+      "kind": "composite",
+      "telescope": "Swift Ultraviolet/Optical Telescope (UVOT)",
+      "wavelengths": [
+        "ultraviolet"
+      ],
+      "composite": true,
+      "colourNote": "The LMC and SMC images range from 1,600 to 3,300 angstroms, UV wavelengths largely blocked by Earth's atmosphere.",
+      "colourNoteSourceId": "nasa-swift-magellanic-clouds",
+      "alt": "Ultraviolet mosaic of the Small Magellanic Cloud: a tilted patchwork shape filled with blue and white points of light.",
+      "credit": "NASA/Swift/S. Immler (Goddard) and M. Siegel (Penn State)",
+      "licence": "nasa-public-domain",
+      "thumbnail": {
+        "file": "assets/galaxies/small-magellanic-cloud-thumb.webp",
+        "width": 367,
+        "height": 300
+      },
+      "detail": {
+        "file": "assets/galaxies/small-magellanic-cloud.webp",
+        "width": 1467,
+        "height": 1200
+      },
+      "original": {
+        "url": "https://svs.gsfc.nasa.gov/vis/a010000/a011200/a011293/SMC_edit.jpg",
+        "sourcePage": "https://svs.gsfc.nasa.gov/11293",
+        "width": 8800,
+        "height": 7200
+      },
+      "retrieved": "2026-10-22",
+      "status": "ready"
+    }
+  },
+  {
+    "id": "andromeda",
+    "name": "Andromeda Galaxy",
+    "aliases": [
+      "Messier 31",
+      "M31"
+    ],
+    "catalogue": {
+      "messier": "M31",
+      "ngc": null,
+      "ned": "Messier 031"
+    },
+    "viewpoint": "outside",
+    "classification": {
+      "value": "spiral",
+      "nasaWording": "Spiral Galaxy",
+      "sourceIds": [
+        "nasa-messier-31"
+      ]
+    },
+    "summary": {
+      "simple": "The nearest big galaxy to our own. On a dark night you can see it without a telescope, as a faint smudge of light.",
+      "sourceIds": [
+        "nasa-messier-31"
+      ]
+    },
+    "facts": [
+      {
+        "text": "In our sky, the Andromeda Galaxy looks six times as wide as the full Moon.",
+        "sourceId": "nasa-messier-31"
+      },
+      {
+        "text": "Hubble's 2025 picture of Andromeda shows the glow of 200 million stars, and that is still only part of the galaxy.",
+        "sourceId": "nasa-messier-31"
+      },
+      {
+        "text": "The first known written report of the Andromeda Galaxy is in a book from the year 964 by the Persian astronomer al-Sufi.",
+        "sourceId": "nasa-messier-31"
+      }
+    ],
+    "size": null,
+    "distance": {
+      "valueLy": 2500000,
+      "unit": "light-years",
+      "display": "about 2.5 million light-years",
+      "sourceIds": [
+        "nasa-messier-31"
+      ],
+      "asOf": "2026-10-22",
+      "selection": "The NASA page gives one value, 2.5 million light-years. NED's published estimates agree closely (cross-check below).",
+      "otherEstimates": [],
+      "crossCheck": {
+        "service": "NED",
+        "name": "M31",
+        "retrieved": "2026-10-23",
+        "estimates": 407,
+        "unit": "Mpc",
+        "median": 0.779,
+        "min": 0.44,
+        "max": 2.8,
+        "note": "NED quick-look summary of published distances: original values, not homogenised. Used only to check the NASA value; not shown in the app."
+      }
+    },
+    "sky": {
+      "constellation": "Andromeda",
+      "sourceIds": [
+        "nasa-messier-31"
+      ],
+      "position": {
+        "service": "NED",
+        "name": "Messier 031",
+        "raDeg": 10.68479292,
+        "decDeg": 41.269065,
+        "frame": "equatorial",
+        "epoch": "J2000",
+        "retrieved": "2026-10-23",
+        "note": "Cross-check only. Not needed by the illustrative distance-band map; recorded for a later \"Where is it in our sky?\" view."
+      }
+    },
+    "image": {
+      "kind": "composite",
+      "telescope": "Hubble Space Telescope",
+      "wavelengths": [],
+      "composite": true,
+      "colourNote": "It took over 10 years to make this vast and colorful portrait of the galaxy, requiring over 600 Hubble overlapping snapshots that were challenging to stitch together.",
+      "colourNoteSourceId": "nasa-messier-31",
+      "alt": "A very long, thin strip showing part of the Andromeda Galaxy: a bright yellowish centre on the left, then a disk of countless stars crossed by dark dust lanes and blue patches of young stars.",
+      "credit": "NASA, ESA, Benjamin F. Williams (UWashington), Zhuo Chen (UWashington), L. Clifton Johnson (Northwestern); Image Processing: Joseph DePasquale (STScI)",
+      "licence": "nasa-public-domain",
+      "thumbnail": {
+        "file": "assets/galaxies/andromeda-thumb.webp",
+        "width": 0,
+        "height": 0
+      },
+      "detail": {
+        "file": "assets/galaxies/andromeda.webp",
+        "width": 0,
+        "height": 0
+      },
+      "original": {
+        "url": "https://assets.science.nasa.gov/content/dam/science/missions/hubble/galaxies/andromeda/Hubble_M31Mosaic_2025_10552x2468_STScI-01JGY92V0Z2HJTVH605N4WH9XQ.jpg",
+        "sourcePage": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-31/",
+        "width": 10552,
+        "height": 2468
+      },
+      "retrieved": "2026-10-22",
+      "status": "pending"
+    }
+  },
+  {
+    "id": "triangulum",
+    "name": "Triangulum Galaxy",
+    "aliases": [
+      "Messier 33",
+      "M33"
+    ],
+    "catalogue": {
+      "messier": "M33",
+      "ngc": null,
+      "ned": "Messier 033"
+    },
+    "viewpoint": "outside",
+    "classification": {
+      "value": "spiral",
+      "nasaWording": "Spiral Galaxy",
+      "sourceIds": [
+        "nasa-messier-33"
+      ]
+    },
+    "summary": {
+      "simple": "A spiral galaxy about half the size of our Milky Way. It is the third-largest galaxy in our Local Group, after Andromeda and the Milky Way.",
+      "sourceIds": [
+        "nasa-messier-33"
+      ]
+    },
+    "facts": [
+      {
+        "text": "On average, new stars are forming in the Triangulum Galaxy ten times faster than in the Andromeda Galaxy.",
+        "sourceId": "nasa-messier-33"
+      },
+      {
+        "text": "In the 1920s, Edwin Hubble studied stars that change in brightness in this galaxy, and proved it is a separate galaxy outside our own.",
+        "sourceId": "nasa-messier-33"
+      },
+      {
+        "text": "Under very clear, dark skies, keen-eyed people can just see it without a telescope.",
+        "sourceId": "nasa-messier-33"
+      }
+    ],
+    "size": null,
+    "distance": {
+      "valueLy": 3000000,
+      "unit": "light-years",
+      "display": "about 3 million light-years",
+      "sourceIds": [
+        "nasa-messier-33"
+      ],
+      "asOf": "2026-10-22",
+      "selection": "The NASA page gives \"about 3 million light-years\". NED's published estimates have a median of about 2.8 million light-years (cross-check below), within the rounding of the NASA value.",
+      "otherEstimates": [],
+      "crossCheck": {
+        "service": "NED",
+        "name": "M33",
+        "retrieved": "2026-10-23",
+        "estimates": 137,
+        "unit": "Mpc",
+        "median": 0.859,
+        "min": 0.6,
+        "max": 3.05,
+        "note": "NED quick-look summary of published distances: original values, not homogenised. Used only to check the NASA value; not shown in the app."
+      }
+    },
+    "sky": {
+      "constellation": "Triangulum",
+      "sourceIds": [
+        "nasa-messier-33"
+      ],
+      "position": {
+        "service": "NED",
+        "name": "Messier 033",
+        "raDeg": 23.46204167,
+        "decDeg": 30.66022222,
+        "frame": "equatorial",
+        "epoch": "J2000",
+        "retrieved": "2026-10-23",
+        "note": "Cross-check only. Not needed by the illustrative distance-band map; recorded for a later \"Where is it in our sky?\" view."
+      }
+    },
+    "image": {
+      "kind": "composite",
+      "telescope": "Hubble Space Telescope",
+      "wavelengths": [],
+      "composite": true,
+      "colourNote": "This gigantic image of the Triangulum Galaxy — also known as Messier 33 — is a composite of about 54 different pointings with Hubble's Advanced Camera for Surveys.",
+      "colourNoteSourceId": "nasa-messier-33",
+      "alt": "The middle of the Triangulum Galaxy: a golden centre surrounded by millions of stars, with dark dust and pink and blue patches where stars are forming.",
+      "credit": "NASA, ESA, and M. Durbin, J. Dalcanton and B. F. Williams (University of Washington)",
+      "licence": "cc-by-4.0",
+      "thumbnail": {
+        "file": "assets/galaxies/triangulum-thumb.webp",
+        "width": 400,
+        "height": 225
+      },
+      "detail": {
+        "file": "assets/galaxies/triangulum.webp",
+        "width": 1600,
+        "height": 900
+      },
+      "original": {
+        "url": "https://science.nasa.gov/wp-content/uploads/2023/04/heic1901a-jpg.webp",
+        "sourcePage": "https://esahubble.org/images/heic1901a/",
+        "width": 3000,
+        "height": 1688
+      },
+      "retrieved": "2026-10-22",
+      "status": "ready"
+    }
+  },
+  {
+    "id": "messier-81",
+    "name": "Messier 81",
+    "aliases": [
+      "M81"
+    ],
+    "catalogue": {
+      "messier": "M81",
+      "ngc": null,
+      "ned": "SN 1993J HOST"
+    },
+    "viewpoint": "outside",
+    "classification": {
+      "value": "spiral",
+      "nasaWording": "Spiral Galaxy",
+      "sourceIds": [
+        "nasa-messier-81"
+      ]
+    },
+    "summary": {
+      "simple": "A bright spiral galaxy whose arms wind all the way into its centre. It is a neighbour of the Cigar Galaxy.",
+      "sourceIds": [
+        "nasa-messier-81"
+      ]
+    },
+    "facts": [
+      {
+        "text": "M81 is one of the brightest galaxies in the night sky.",
+        "sourceId": "nasa-messier-81"
+      },
+      {
+        "text": "Through binoculars, M81 and its neighbour M82 can be seen together in the same view.",
+        "sourceId": "nasa-messier-81"
+      },
+      {
+        "text": "A black hole with the mass of 70 million Suns sits at the centre of M81.",
+        "sourceId": "nasa-messier-81"
+      }
+    ],
+    "size": null,
+    "distance": {
+      "valueLy": 11600000,
+      "unit": "light-years",
+      "display": "about 11.6 million light-years",
+      "sourceIds": [
+        "nasa-messier-81"
+      ],
+      "asOf": "2026-10-22",
+      "selection": "The NASA page gives one value, 11.6 million light-years. NED's published estimates agree closely (cross-check below).",
+      "otherEstimates": [],
+      "crossCheck": {
+        "service": "NED",
+        "name": "M81",
+        "retrieved": "2026-10-23",
+        "estimates": 99,
+        "unit": "Mpc",
+        "median": 3.63,
+        "min": 1.4,
+        "max": 5.0,
+        "note": "NED quick-look summary of published distances: original values, not homogenised. Used only to check the NASA value; not shown in the app."
+      }
+    },
+    "sky": {
+      "constellation": "Ursa Major",
+      "sourceIds": [
+        "nasa-messier-81"
+      ],
+      "position": {
+        "service": "NED",
+        "name": "SN 1993J HOST",
+        "raDeg": 148.888221,
+        "decDeg": 69.06529461,
+        "frame": "equatorial",
+        "epoch": "J2000",
+        "retrieved": "2026-10-23",
+        "note": "Cross-check only. Not needed by the illustrative distance-band map; recorded for a later \"Where is it in our sky?\" view."
+      }
+    },
+    "image": {
+      "kind": "composite",
+      "telescope": "Hubble Space Telescope",
+      "wavelengths": [
+        "visible",
+        "infrared"
+      ],
+      "composite": true,
+      "colourNote": "This stunning Hubble image was assembled using observations in visible and infrared light.",
+      "colourNoteSourceId": "nasa-messier-81",
+      "alt": "Spiral galaxy M81 seen at a slant: a smooth, golden centre with blue spiral arms and thin, dark dust lanes winding into it.",
+      "credit": "NASA, ESA and the Hubble Heritage Team (STScI/AURA)",
+      "licence": "nasa-public-domain",
+      "thumbnail": {
+        "file": "assets/galaxies/messier-81-thumb.webp",
+        "width": 400,
+        "height": 267
+      },
+      "detail": {
+        "file": "assets/galaxies/messier-81.webp",
+        "width": 1600,
+        "height": 1070
+      },
+      "original": {
+        "url": "https://science.nasa.gov/wp-content/uploads/2023/04/m81-print-jpg.webp",
+        "sourcePage": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-81/",
+        "width": 2752,
+        "height": 1840
+      },
+      "retrieved": "2026-10-22",
+      "status": "ready"
+    }
+  },
+  {
+    "id": "cigar",
+    "name": "Cigar Galaxy",
+    "aliases": [
+      "Messier 82",
+      "M82"
+    ],
+    "catalogue": {
+      "messier": "M82",
+      "ngc": null,
+      "ned": "Messier 082"
+    },
+    "viewpoint": "outside",
+    "classification": {
+      "value": "spiral",
+      "nasaWording": "Spiral Galaxy",
+      "sourceIds": [
+        "nasa-messier-82"
+      ],
+      "note": {
+        "text": "NASA lists its type as a spiral galaxy, and calls its very fast star formation a starburst.",
+        "sourceIds": [
+          "nasa-messier-82"
+        ]
+      }
+    },
+    "summary": {
+      "simple": "A galaxy where new stars are being born extremely fast, stirred up by the pull of its neighbour, M81.",
+      "sourceIds": [
+        "nasa-messier-82"
+      ]
+    },
+    "facts": [
+      {
+        "text": "Around its centre, young stars are being born 10 times faster than in our whole Milky Way.",
+        "sourceId": "nasa-messier-82"
+      },
+      {
+        "text": "This burst of star formation will probably die down in a few tens of millions of years.",
+        "sourceId": "nasa-messier-82"
+      },
+      {
+        "text": "The Cigar Galaxy shines brightly in infrared light.",
+        "sourceId": "nasa-messier-82"
+      }
+    ],
+    "size": null,
+    "distance": {
+      "valueLy": 12000000,
+      "unit": "light-years",
+      "display": "about 12 million light-years",
+      "sourceIds": [
+        "nasa-messier-82"
+      ],
+      "asOf": "2026-10-22",
+      "selection": "The NASA page gives one value, 12 million light-years. NED's published estimates agree closely (cross-check below).",
+      "otherEstimates": [],
+      "crossCheck": {
+        "service": "NED",
+        "name": "M82",
+        "retrieved": "2026-10-23",
+        "estimates": 21,
+        "unit": "Mpc",
+        "median": 3.7,
+        "min": 2.4,
+        "max": 5.5,
+        "note": "NED quick-look summary of published distances: original values, not homogenised. Used only to check the NASA value; not shown in the app."
+      }
+    },
+    "sky": {
+      "constellation": "Ursa Major",
+      "sourceIds": [
+        "nasa-messier-82"
+      ],
+      "position": {
+        "service": "NED",
+        "name": "Messier 082",
+        "raDeg": 148.9705,
+        "decDeg": 69.67948333,
+        "frame": "equatorial",
+        "epoch": "J2000",
+        "retrieved": "2026-10-23",
+        "note": "Cross-check only. Not needed by the illustrative distance-band map; recorded for a later \"Where is it in our sky?\" view."
+      }
+    },
+    "image": {
+      "kind": "composite",
+      "telescope": "Hubble Space Telescope",
+      "wavelengths": [
+        "visible",
+        "infrared",
+        "hydrogen"
+      ],
+      "composite": true,
+      "colourNote": "The red in the image represents hydrogen and infrared light, indicating starburst activity. The blue and greenish-yellow color represent visible wavelengths of light.",
+      "colourNoteSourceId": "nasa-messier-82",
+      "alt": "The Cigar Galaxy seen edge-on: a long bluish-white disk with bright red plumes of glowing gas billowing out above and below its centre.",
+      "credit": "NASA, ESA and the Hubble Heritage Team (STScI/AURA); Acknowledgment: J. Gallagher (University of Wisconsin), M. Mountain (STScI) and P. Puxley (National Science Foundation)",
+      "licence": "nasa-public-domain",
+      "thumbnail": {
+        "file": "assets/galaxies/cigar-thumb.webp",
+        "width": 385,
+        "height": 300
+      },
+      "detail": {
+        "file": "assets/galaxies/cigar.webp",
+        "width": 1539,
+        "height": 1200
+      },
+      "original": {
+        "url": "https://science.nasa.gov/wp-content/uploads/2023/04/m82-jpg.webp",
+        "sourcePage": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-82/",
+        "width": 2472,
+        "height": 1928
+      },
+      "retrieved": "2026-10-22",
+      "status": "ready"
+    }
+  },
+  {
+    "id": "pinwheel",
+    "name": "Pinwheel Galaxy",
+    "aliases": [
+      "Messier 101",
+      "M101",
+      "NGC 5457"
+    ],
+    "catalogue": {
+      "messier": "M101",
+      "ngc": "NGC 5457",
+      "ned": "Messier 101"
+    },
+    "viewpoint": "outside",
+    "classification": {
+      "value": "spiral",
+      "nasaWording": "Spiral Galaxy",
+      "sourceIds": [
+        "nasa-messier-101"
+      ]
+    },
+    "summary": {
+      "simple": "A giant spiral galaxy that faces us, so we look straight down on its arms, like looking at a pinwheel.",
+      "sourceIds": [
+        "nasa-messier-101",
+        "nasa-hubble-messier-101-image"
+      ]
+    },
+    "facts": [
+      {
+        "text": "The Pinwheel Galaxy is about 170,000 light-years across, nearly twice as wide as our Milky Way.",
+        "sourceId": "nasa-messier-101"
+      },
+      {
+        "text": "Astronomers estimate that it contains at least one trillion stars.",
+        "sourceId": "nasa-messier-101"
+      },
+      {
+        "text": "Pierre Méchain, one of Charles Messier's colleagues, discovered it in 1781.",
+        "sourceId": "nasa-messier-101"
+      }
+    ],
+    "size": {
+      "diameterLy": 170000,
+      "sourceIds": [
+        "nasa-messier-101"
+      ]
+    },
+    "distance": {
+      "valueLy": 21800000,
+      "unit": "light-years",
+      "display": "about 22 million light-years",
+      "sourceIds": [
+        "nasa-hubble-messier-101-image"
+      ],
+      "asOf": "2026-10-22",
+      "selection": "Two NASA pages differ: the Hubble image page gives 21.8 million light-years (6.7 megaparsecs) and the Messier catalogue page gives 25 million. We use 21.8 million because it is closer to the median of the published estimates in NED (cross-check below).",
+      "otherEstimates": [
+        {
+          "valueLy": 25000000,
+          "display": "about 25 million light-years",
+          "sourceIds": [
+            "nasa-messier-101"
+          ]
+        }
+      ],
+      "crossCheck": {
+        "service": "NED",
+        "name": "M101",
+        "retrieved": "2026-10-23",
+        "estimates": 116,
+        "unit": "Mpc",
+        "median": 6.73,
+        "min": 2.6,
+        "max": 8.99,
+        "note": "NED quick-look summary of published distances: original values, not homogenised. Used only to check the NASA value; not shown in the app."
+      }
+    },
+    "sky": {
+      "constellation": "Ursa Major",
+      "sourceIds": [
+        "nasa-messier-101"
+      ],
+      "position": {
+        "service": "NED",
+        "name": "Messier 101",
+        "raDeg": 210.8022671,
+        "decDeg": 54.34895,
+        "frame": "equatorial",
+        "epoch": "J2000",
+        "retrieved": "2026-10-23",
+        "note": "Cross-check only. Not needed by the illustrative distance-band map; recorded for a later \"Where is it in our sky?\" view."
+      }
+    },
+    "image": {
+      "kind": "composite",
+      "telescope": "Hubble Space Telescope",
+      "wavelengths": [
+        "visible",
+        "infrared"
+      ],
+      "composite": true,
+      "colourNote": "Made with Hubble filters F435W (B), F555W (V) and F814W (I): blue, visible and near-infrared light.",
+      "colourNoteSourceId": "nasa-hubble-messier-101-image",
+      "alt": "The Pinwheel Galaxy seen face-on: a bright yellow centre with long, lacy blue spiral arms dotted with pink star-forming clouds.",
+      "credit": "NASA, ESA, K. Kuntz (JHU), F. Bresolin (University of Hawaii), J. Trauger (Jet Propulsion Lab), J. Mould (NOAO), Y.-H. Chu (University of Illinois, Urbana), and STScI",
+      "licence": "nasa-public-domain",
+      "thumbnail": {
+        "file": "assets/galaxies/pinwheel-thumb.webp",
+        "width": 0,
+        "height": 0
+      },
+      "detail": {
+        "file": "assets/galaxies/pinwheel.webp",
+        "width": 0,
+        "height": 0
+      },
+      "original": {
+        "url": "https://assets.science.nasa.gov/content/dam/science/missions/hubble/releases/2009/02/STScI-01EVT5S0014XSYMBAATA2CC769.tif/jcr:content/renditions/6000x6000.jpg",
+        "sourcePage": "https://science.nasa.gov/asset/hubble/hubble-image-of-m101/",
+        "width": 6000,
+        "height": 6000
+      },
+      "retrieved": "2026-10-22",
+      "status": "pending"
+    }
+  },
+  {
+    "id": "sombrero",
+    "name": "Sombrero Galaxy",
+    "aliases": [
+      "Messier 104",
+      "M104"
+    ],
+    "catalogue": {
+      "messier": "M104",
+      "ngc": null,
+      "ned": "Messier 104"
+    },
+    "viewpoint": "outside",
+    "classification": {
+      "value": "spiral",
+      "nasaWording": "Spiral Galaxy",
+      "sourceIds": [
+        "nasa-messier-104"
+      ],
+      "note": {
+        "text": "NASA describes it as a spiral galaxy seen nearly edge-on.",
+        "sourceIds": [
+          "nasa-messier-104"
+        ]
+      }
+    },
+    "summary": {
+      "simple": "A spiral galaxy we see almost from the side. Its bright centre and dark ring of dust make it look like a wide-brimmed hat.",
+      "sourceIds": [
+        "nasa-messier-104"
+      ]
+    },
+    "facts": [
+      {
+        "text": "It has nearly 2,000 globular star clusters, about 10 times as many as our Milky Way.",
+        "sourceId": "nasa-messier-104"
+      },
+      {
+        "text": "Its mass is equal to about 800 billion Suns.",
+        "sourceId": "nasa-messier-104"
+      },
+      {
+        "text": "A massive black hole is thought to sit in its bright centre.",
+        "sourceId": "nasa-messier-104"
+      }
+    ],
+    "size": null,
+    "distance": {
+      "valueLy": 28000000,
+      "unit": "light-years",
+      "display": "about 28 million light-years",
+      "sourceIds": [
+        "nasa-messier-104"
+      ],
+      "asOf": "2026-10-22",
+      "selection": "The NASA page gives one value, 28 million light-years. NED's published estimates have a median of about 32 million light-years (cross-check below); this difference is listed as an open question.",
+      "otherEstimates": [],
+      "crossCheck": {
+        "service": "NED",
+        "name": "M104",
+        "retrieved": "2026-10-23",
+        "estimates": 31,
+        "unit": "Mpc",
+        "median": 9.95,
+        "min": 6.22,
+        "max": 21.7,
+        "note": "NED quick-look summary of published distances: original values, not homogenised. Used only to check the NASA value; not shown in the app."
+      }
+    },
+    "sky": {
+      "constellation": "Virgo",
+      "sourceIds": [
+        "nasa-messier-104"
+      ],
+      "position": {
+        "service": "NED",
+        "name": "Messier 104",
+        "raDeg": 189.9976312,
+        "decDeg": -11.62308847,
+        "frame": "equatorial",
+        "epoch": "J2000",
+        "retrieved": "2026-10-23",
+        "note": "Cross-check only. Not needed by the illustrative distance-band map; recorded for a later \"Where is it in our sky?\" view."
+      }
+    },
+    "image": {
+      "kind": "composite",
+      "telescope": "Hubble Space Telescope",
+      "wavelengths": [],
+      "composite": true,
+      "colourNote": "Mosaic: one of the largest ever assembled from Hubble observations.",
+      "colourNoteSourceId": "nasa-messier-104",
+      "alt": "The Sombrero Galaxy seen almost edge-on: a glowing white centre with a thick dark lane of dust running across it like the brim of a hat.",
+      "credit": "NASA and The Hubble Heritage Team (STScI/AURA)",
+      "licence": "nasa-public-domain",
+      "thumbnail": {
+        "file": "assets/galaxies/sombrero-thumb.webp",
+        "width": 400,
+        "height": 222
+      },
+      "detail": {
+        "file": "assets/galaxies/sombrero.webp",
+        "width": 1600,
+        "height": 888
+      },
+      "original": {
+        "url": "https://science.nasa.gov/wp-content/uploads/2023/04/sombrero-galaxy-hubble-jpg.webp",
+        "sourcePage": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-104/",
+        "width": 2824,
+        "height": 1568
+      },
+      "retrieved": "2026-10-22",
+      "status": "ready"
+    }
+  },
+  {
+    "id": "whirlpool",
+    "name": "Whirlpool Galaxy",
+    "aliases": [
+      "Messier 51",
+      "M51"
+    ],
+    "catalogue": {
+      "messier": "M51",
+      "ngc": null,
+      "ned": "Messier 051"
+    },
+    "viewpoint": "outside",
+    "classification": {
+      "value": "spiral",
+      "nasaWording": "Spiral Galaxy",
+      "sourceIds": [
+        "nasa-messier-51"
+      ]
+    },
+    "summary": {
+      "simple": "A classic spiral galaxy that faces us, with graceful, curving arms. A small companion galaxy sits at the tip of one arm.",
+      "sourceIds": [
+        "nasa-messier-51"
+      ]
+    },
+    "facts": [
+      {
+        "text": "A small galaxy called NGC 5195 has been gliding past the Whirlpool for hundreds of millions of years.",
+        "sourceId": "nasa-messier-51"
+      },
+      {
+        "text": "The Whirlpool's spiral arms are star-making factories: they squeeze hydrogen gas and create clusters of new stars.",
+        "sourceId": "nasa-messier-51"
+      },
+      {
+        "text": "Charles Messier discovered it in 1773.",
+        "sourceId": "nasa-messier-51"
+      }
+    ],
+    "size": null,
+    "distance": {
+      "valueLy": 31000000,
+      "unit": "light-years",
+      "display": "about 31 million light-years",
+      "sourceIds": [
+        "nasa-messier-51",
+        "nasa-hubble-galaxies"
+      ],
+      "asOf": "2026-10-22",
+      "selection": "Both NASA pages give 31 million light-years. NED's published estimates (for NGC 5194, the Whirlpool itself) have a median of about 25 million light-years and range widely (cross-check below); this difference is listed as an open question.",
+      "otherEstimates": [],
+      "crossCheck": {
+        "service": "NED",
+        "name": "NGC 5194",
+        "retrieved": "2026-10-23",
+        "estimates": 53,
+        "unit": "Mpc",
+        "median": 7.8,
+        "min": 2.45,
+        "max": 12.2,
+        "note": "NED quick-look summary of published distances: original values, not homogenised. Used only to check the NASA value; not shown in the app."
+      }
+    },
+    "sky": {
+      "constellation": "Canes Venatici",
+      "sourceIds": [
+        "nasa-messier-51"
+      ],
+      "position": {
+        "service": "NED",
+        "name": "Messier 051",
+        "raDeg": 202.4841667,
+        "decDeg": 47.23055556,
+        "frame": "equatorial",
+        "epoch": "J2000",
+        "retrieved": "2026-10-23",
+        "note": "Cross-check only. Not needed by the illustrative distance-band map; recorded for a later \"Where is it in our sky?\" view."
+      }
+    },
+    "image": {
+      "kind": "composite",
+      "telescope": "Hubble Space Telescope",
+      "wavelengths": [
+        "visible",
+        "infrared",
+        "hydrogen"
+      ],
+      "composite": true,
+      "colourNote": "In Hubble's captivating image of M51, the red represents infrared light as well as hydrogen within giant star-forming regions. The blue color can be attributed to hot, young stars while the yellow color is from older stars.",
+      "colourNoteSourceId": "nasa-messier-51",
+      "alt": "The Whirlpool Galaxy seen face-on: two curving spiral arms with pink and blue patches, and a small yellowish companion galaxy at the end of one arm.",
+      "credit": "NASA, ESA, S. Beckwith (STScI) and the Hubble Heritage Team (STScI/AURA)",
+      "licence": "nasa-public-domain",
+      "thumbnail": {
+        "file": "assets/galaxies/whirlpool-thumb.webp",
+        "width": 400,
+        "height": 278
+      },
+      "detail": {
+        "file": "assets/galaxies/whirlpool.webp",
+        "width": 1600,
+        "height": 1113
+      },
+      "original": {
+        "url": "https://science.nasa.gov/wp-content/uploads/2023/04/m51-and-companion_0-jpg.webp",
+        "sourcePage": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-51/",
+        "width": 2784,
+        "height": 1936
+      },
+      "retrieved": "2026-10-22",
+      "status": "ready"
+    }
+  },
+  {
+    "id": "messier-87",
+    "name": "Messier 87",
+    "aliases": [
+      "M87"
+    ],
+    "catalogue": {
+      "messier": "M87",
+      "ngc": null,
+      "ned": "Messier 087"
+    },
+    "viewpoint": "outside",
+    "classification": {
+      "value": "elliptical",
+      "nasaWording": "Elliptical Galaxy",
+      "sourceIds": [
+        "nasa-messier-87"
+      ]
+    },
+    "summary": {
+      "simple": "A giant elliptical galaxy, shaped like a fuzzy ball of stars. It is the biggest galaxy in the Virgo cluster of galaxies.",
+      "sourceIds": [
+        "nasa-messier-87"
+      ]
+    },
+    "facts": [
+      {
+        "text": "M87 is home to several trillion stars, a supermassive black hole and about 15,000 globular star clusters.",
+        "sourceId": "nasa-messier-87"
+      },
+      {
+        "text": "Our Milky Way has only a few hundred billion stars and about 150 globular clusters.",
+        "sourceId": "nasa-messier-87"
+      },
+      {
+        "text": "A jet of tiny particles, powered by a black hole, streams out of its centre at nearly the speed of light.",
+        "sourceId": "nasa-messier-87"
+      }
+    ],
+    "size": null,
+    "distance": {
+      "valueLy": 54000000,
+      "unit": "light-years",
+      "display": "about 54 million light-years",
+      "sourceIds": [
+        "nasa-messier-87"
+      ],
+      "asOf": "2026-10-22",
+      "selection": "The NASA page gives one value, 54 million light-years. NED's published estimates agree closely (cross-check below).",
+      "otherEstimates": [],
+      "crossCheck": {
+        "service": "NED",
+        "name": "M87",
+        "retrieved": "2026-10-23",
+        "estimates": 118,
+        "unit": "Mpc",
+        "median": 16.4,
+        "min": 9.2,
+        "max": 29.1,
+        "note": "NED quick-look summary of published distances: original values, not homogenised. Used only to check the NASA value; not shown in the app."
+      }
+    },
+    "sky": {
+      "constellation": "Virgo",
+      "sourceIds": [
+        "nasa-messier-87"
+      ],
+      "position": {
+        "service": "NED",
+        "name": "Messier 087",
+        "raDeg": 187.7059308,
+        "decDeg": 12.39112326,
+        "frame": "equatorial",
+        "epoch": "J2000",
+        "retrieved": "2026-10-23",
+        "note": "Cross-check only. Not needed by the illustrative distance-band map; recorded for a later \"Where is it in our sky?\" view."
+      }
+    },
+    "image": {
+      "kind": "photograph",
+      "telescope": "Hubble Space Telescope",
+      "wavelengths": [],
+      "composite": false,
+      "colourNote": null,
+      "colourNoteSourceId": null,
+      "alt": "Messier 87: a huge, smooth yellow glow of stars, brightest at the centre, surrounded by many small points of light from star clusters.",
+      "credit": "NASA, ESA and the Hubble Heritage Team (STScI/AURA); Acknowledgment: P. Cote (Herzberg Institute of Astrophysics) and E. Baltz (Stanford University)",
+      "licence": "nasa-public-domain",
+      "thumbnail": {
+        "file": "assets/galaxies/messier-87-thumb.webp",
+        "width": 303,
+        "height": 300
+      },
+      "detail": {
+        "file": "assets/galaxies/messier-87.webp",
+        "width": 1212,
+        "height": 1200
+      },
+      "original": {
+        "url": "https://science.nasa.gov/wp-content/uploads/2023/04/m87-full_jpg-jpg.webp",
+        "sourcePage": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-87/",
+        "width": 3854,
+        "height": 3815
+      },
+      "retrieved": "2026-10-22",
+      "status": "ready"
+    }
+  },
+  {
+    "id": "ngc-1300",
+    "name": "NGC 1300",
+    "aliases": [],
+    "catalogue": {
+      "messier": null,
+      "ngc": "NGC 1300",
+      "ned": "NGC 1300"
+    },
+    "viewpoint": "outside",
+    "classification": {
+      "value": "barred-spiral",
+      "nasaWording": "Barred Spiral Galaxy",
+      "sourceIds": [
+        "nasa-hubble-ngc-1300"
+      ]
+    },
+    "summary": {
+      "simple": "A barred spiral galaxy: its arms start at the two ends of a straight bar of stars across its middle.",
+      "sourceIds": [
+        "nasa-hubble-ngc-1300"
+      ]
+    },
+    "facts": [
+      {
+        "text": "Astronomers see NGC 1300 as a classic example of a barred spiral galaxy.",
+        "sourceId": "nasa-hubble-ngc-1300"
+      },
+      {
+        "text": "In its centre is a small spiral inside the big spiral, about 3,300 light-years long.",
+        "sourceId": "nasa-hubble-ngc-1300"
+      },
+      {
+        "text": "The galaxy is so big that Hubble had to take two side-by-side pictures to cover all of its spiral arms.",
+        "sourceId": "nasa-hubble-ngc-1300"
+      }
+    ],
+    "size": null,
+    "distance": {
+      "valueLy": 69000000,
+      "unit": "light-years",
+      "display": "about 69 million light-years",
+      "sourceIds": [
+        "nasa-hubble-ngc-1300"
+      ],
+      "asOf": "2026-10-22",
+      "selection": "The NASA page gives one value, 69 million light-years (21 megaparsecs). NED's published estimates have a median of about 47 million light-years (cross-check below). This large difference is listed as an open question for scientific review.",
+      "otherEstimates": [],
+      "crossCheck": {
+        "service": "NED",
+        "name": "NGC 1300",
+        "retrieved": "2026-10-23",
+        "estimates": 27,
+        "unit": "Mpc",
+        "median": 14.5,
+        "min": 8.67,
+        "max": 22.6,
+        "note": "NED quick-look summary of published distances: original values, not homogenised. Used only to check the NASA value; not shown in the app."
+      }
+    },
+    "sky": {
+      "constellation": "Eridanus",
+      "sourceIds": [
+        "nasa-hubble-ngc-1300"
+      ],
+      "position": {
+        "service": "NED",
+        "name": "NGC 1300",
+        "raDeg": 49.9209389,
+        "decDeg": -19.4111526,
+        "frame": "equatorial",
+        "epoch": "J2000",
+        "retrieved": "2026-10-23",
+        "note": "Cross-check only. Not needed by the illustrative distance-band map; recorded for a later \"Where is it in our sky?\" view."
+      }
+    },
+    "image": {
+      "kind": "composite",
+      "telescope": "Hubble Space Telescope",
+      "wavelengths": [
+        "visible",
+        "infrared",
+        "hydrogen"
+      ],
+      "composite": true,
+      "colourNote": "Starlight and dust are seen in blue, visible, and infrared light. Bright star clusters are highlighted in red by their associated emission from glowing hydrogen gas.",
+      "colourNoteSourceId": "nasa-hubble-ngc-1300",
+      "alt": "NGC 1300: a bright bar of stars across the middle, with two blue spiral arms curving out from its ends and dark streaks of dust.",
+      "credit": "NASA, ESA, and The Hubble Heritage Team (STScI/AURA); Acknowledgment: P. Knezek (WIYN)",
+      "licence": "nasa-public-domain",
+      "thumbnail": {
+        "file": "assets/galaxies/ngc-1300-thumb.webp",
+        "width": 400,
+        "height": 228
+      },
+      "detail": {
+        "file": "assets/galaxies/ngc-1300.webp",
+        "width": 1600,
+        "height": 913
+      },
+      "original": {
+        "url": "https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e002154/GSFC_20171208_Archive_e002154~orig.jpg",
+        "sourcePage": "https://science.nasa.gov/asset/hubble/barred-spiral-galaxy-ngc-1300/",
+        "width": 6637,
+        "height": 3787,
+        "nasaId": "GSFC_20171208_Archive_e002154"
+      },
+      "retrieved": "2026-10-22",
+      "status": "ready"
+    }
+  }
+]

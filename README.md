@@ -68,7 +68,8 @@ npm run test:e2e:webkit           # critical journeys in WebKit with iPad emulat
 - [AGENTS.md](AGENTS.md): contributor rules; agent.md is a pointer.
 - `src/data/`: planet and Sun JSON, quiz questions, mission and experiment definitions, the source list and the JSON Schemas. Every value, question and mission step cites a NASA source.
 - `src/utils/`, `src/features/`, `src/components/`, `src/scenes/`: pure helpers, navigation and wiring, reusable UI, and the Three.js scene. See [architecture](docs/ARCHITECTURE.md).
-- `public/assets/`: bundled assets only after licence review (none yet; surface patterns are drawn by code).
+- `public/assets/`: bundled assets only after licence review. Surface patterns are drawn by code; `public/assets/galaxies/` holds the galaxy images for the planned Cosmos view, each credited in docs/ASSET_CREDITS.md.
+- [Cosmos galaxy data](docs/COSMOS_DATA.md): the galaxy collection, its sources and how to update it (the map itself is not built yet).
 - `tests/`: mirrors `src/`; `tests/e2e/` holds the browser tests. No colocated tests.
 - [Science references](docs/SCIENCE.md), [asset credits](docs/ASSET_CREDITS.md), [roadmap](docs/ROADMAP.md).
 

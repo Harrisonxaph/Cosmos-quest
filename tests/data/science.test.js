@@ -4,6 +4,8 @@ import { readFileSync } from 'node:fs';
 import planets from '../../src/data/planets.json' with { type: 'json' };
 import sun from '../../src/data/sun.json' with { type: 'json' };
 import sources from '../../src/data/sources.json' with { type: 'json' };
+import galaxies from '../../src/data/galaxies.json' with { type: 'json' };
+import { galaxySourceIds } from './galaxy-checks.js';
 
 const bodies = [sun, ...planets];
 const science = readFileSync(new URL('../../docs/SCIENCE.md', import.meta.url), 'utf8');
@@ -31,7 +33,7 @@ const parse = cell => (cell === '—' ? null : Number(cell));
 test('sources are unique NASA pages with retrieval dates', () => {
   assert.equal(sourceIds.size, sources.length, 'duplicate source id');
   for (const source of sources) {
-    assert.match(source.id, /^nasa-[a-z]+(-[a-z]+)*$/);
+    assert.match(source.id, /^nasa-[a-z0-9]+(-[a-z0-9]+)*$/);
     assert.match(new URL(source.url).hostname, /(^|\.)nasa\.gov$/, source.url);
     assert.match(source.retrieved, /^\d{4}-\d{2}-\d{2}$/);
     if (source.pageUpdated) assert.ok(source.pageUpdated <= source.retrieved, source.id);
@@ -43,6 +45,12 @@ test('every cited source exists, and every source is cited', () => {
   for (const body of bodies) {
     for (const id of citedIds(body)) {
       assert.ok(sourceIds.has(id), `${body.id} cites unknown source ${id}`);
+      used.add(id);
+    }
+  }
+  for (const galaxy of galaxies) {
+    for (const id of galaxySourceIds(galaxy)) {
+      assert.ok(sourceIds.has(id), `${galaxy.id} cites unknown source ${id}`);
       used.add(id);
     }
   }
