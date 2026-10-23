@@ -14,4 +14,4 @@
 
 Ideas for later, not yet agreed: real NASA imagery as planet textures (each with a licence record), planet positions for today's date, major moons in 3D, and offline (PWA) support.
 
-Proposed, not yet agreed: **Cosmos**, a child-friendly galaxy explorer beside the solar system. See [COSMOS_FEASIBILITY.md](COSMOS_FEASIBILITY.md) for sources, licences, risks and a bounded first version.
+**Cosmos MVP (in review):** a galaxy map beside the solar system in Explore, as approved in [COSMOS_FEASIBILITY.md](COSMOS_FEASIBILITY.md) (option 2). Twelve NASA-sourced galaxies on an illustrative, not-to-scale distance-band map with pinch, drag, zoom buttons and reset, and an equivalent list. Each galaxy shows a labelled, credited picture, its type, an approximate NASA distance with its caveat, facts and sources; the Milky Way is shown from inside. No live catalogue requests, no new dependencies, and progress in other activities is unaffected. Not in this version: a sky map, 3D, the "How far is far?" explainer on redshift, galaxy quiz questions or missions.

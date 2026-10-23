@@ -29,6 +29,10 @@ startExplorer({
     exploreEntry: byId('explore-entry'),
     missionsEntry: byId('missions-entry'),
     experimentsEntry: byId('experiments-entry'),
+    exploreSwitch: byId('explore-switch'),
+    cosmos: byId('cosmos'),
+    cosmosMap: byId('cosmos-map'),
+    cosmosSelected: byId('cosmos-selected'),
   },
   bodies,
   planets,
@@ -37,4 +41,6 @@ startExplorer({
   quizQuestions,
   missions,
   experiments,
+  // The galaxy collection is downloaded only when Cosmos is first opened.
+  loadGalaxies: () => import('./data/galaxies.json').then(module => module.default),
 });
