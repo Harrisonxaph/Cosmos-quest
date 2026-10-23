@@ -103,16 +103,16 @@ test('map coordinates: left to right keeps the order of distances, markers never
       assert.equal(await page.getAttribute('#cosmos-map', 'data-zoom'), '2.25');
     }
     const boxes = await markerBoxes(page);
-    const dots = Object.fromEntries(await page.$$eval('[data-galaxy-marker]', nodes => nodes.map(n => [n.dataset.galaxyMarker, n.querySelector('.cosmos-marker__dot').getBoundingClientRect().left])));
     const centres = Object.fromEntries(boxes.map(b => [b.id, b.x]));
     for (let i = 1; i < bands.length; i++) {
       const before = Math.max(...bands[i - 1].map(id => centres[id]));
       const after = Math.min(...bands[i].map(id => centres[id]));
       assert.ok(after > before, `zoom ${zoom}: band ${i + 1} is right of band ${i}`);
     }
-    // Within the crowded "nearby groups" band, the order of distances is kept too (compared at the dots).
-    const nearby = bands[3].map(id => dots[id]);
-    if (zoom !== '1') for (let i = 1; i < nearby.length; i++) assert.ok(nearby[i] >= nearby[i - 1] - 1, `${bands[3][i]} is not left of ${bands[3][i - 1]}`);
+    // Within the crowded "nearby groups" band, marker centres keep the order of distances too. (Not the dots:
+    // each dot sits at the start of its name, so a longer name puts its dot further left.)
+    const nearby = bands[3].map(id => centres[id]);
+    if (zoom !== '1') for (let i = 1; i < nearby.length; i++) assert.ok(nearby[i] > nearby[i - 1], `${bands[3][i]} is right of ${bands[3][i - 1]}`);
     for (let i = 0; i < boxes.length; i++) {
       assert.ok(boxes[i].width >= 44 && boxes[i].height >= 44, `${boxes[i].id} is at least 44 px`);
       for (let j = i + 1; j < boxes.length; j++) {
