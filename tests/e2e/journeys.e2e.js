@@ -308,3 +308,26 @@ test(`[${engineName}] Cosmos: every galaxy can be chosen from the list with the 
   assert.deepEqual(errors, []);
   await context.close();
 });
+
+
+test(`[${engineName}] unknown galaxy links after loading return to the list and keep navigation working`, async () => {
+  const { page, context, errors } = await openPage();
+  await page.click('[data-explore="cosmos"]');
+  await page.waitForSelector('.cosmos-list__button');
+  await page.click('.cosmos-list__button[data-galaxy="large-magellanic-cloud"]');
+  const captionSources = page.locator('.cosmos-figure .panel__source');
+  assert.equal(await captionSources.locator('a').count(), 2);
+  assert.equal(await captionSources.locator('a').first().getAttribute('href'), 'https://science.nasa.gov/ems/10_ultravioletwaves/');
+  await page.locator('[data-cosmos-action="list"]').first().click();
+  await page.click('.cosmos-list__button[data-galaxy="andromeda"]');
+  await page.evaluate(() => { location.hash = '#/cosmos/not-a-galaxy'; });
+  await page.waitForSelector('article[data-cosmos-screen="list"]');
+  assert.deepEqual(errors, []);
+  assert.equal(await page.evaluate(() => location.hash), '#/cosmos');
+  await page.click('.cosmos-list__button[data-galaxy="triangulum"]');
+  await page.waitForSelector('article[data-galaxy-id="triangulum"]');
+  await page.goBack();
+  await page.waitForSelector('article[data-cosmos-screen="list"]');
+  assert.deepEqual(errors, []);
+  await context.close();
+});

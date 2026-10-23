@@ -1,5 +1,19 @@
 # Release checklist: iPad and Safari
 
+**Physical-device release check: NOT TESTED.** Automated results do not complete this check. Before marking the family release final, record the test below and complete the checklist. Leave failed or untested items open.
+
+| Test record | Result |
+| --- | --- |
+| Date and tester | Not recorded |
+| iPad model and iPadOS/Safari version | Not recorded |
+| Tested URL and commit | Not recorded |
+| Pinch, drag and page scrolling | Not tested |
+| VoiceOver navigation and announcements | Not tested |
+| Largest system text size and picture readability | Not tested |
+| Performance and switching views | Not tested |
+| Remaining issues / release decision | Pending physical-device check |
+
+
 Automated tests run in Chromium and in Playwright's WebKit with iPad emulation. That is not the same as Safari on a real iPad, so do these checks by hand on a real iPad (and ideally an iPhone) before each family release. It takes about 15 minutes.
 
 Record the date, device, iPadOS version and the preview URL you tested.

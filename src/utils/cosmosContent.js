@@ -45,6 +45,7 @@ export function galaxySourceIds(galaxy) {
     ...(galaxy.size?.sourceIds ?? []),
     ...(galaxy.sky?.sourceIds ?? []),
     ...galaxy.facts.map(fact => fact.sourceId),
+    ...(galaxy.image.childCaptionSourceIds ?? []),
     ...(galaxy.image.colourNoteSourceId ? [galaxy.image.colourNoteSourceId] : []),
   ];
   return [...new Set(ids)];
@@ -122,6 +123,7 @@ export function galaxyContent(galaxy, sourcesById) {
     image: {
       label: imageLabel(image),
       note: image.illustrationNote ?? image.childCaption ?? null,
+      noteSources: (image.childCaptionSourceIds ?? []).map(source),
       colourNote: image.composite && image.colourNote ? image.colourNote : null,
       alt: image.alt,
       thumbnail: image.thumbnail,

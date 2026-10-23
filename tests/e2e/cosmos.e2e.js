@@ -231,7 +231,7 @@ test('choosing a galaxy by pointer, keyboard and list opens its picture, facts, 
 
   // Ultraviolet pictures say so in child-friendly words; CC BY pictures link their licence.
   await page.click('[data-galaxy-marker="large-magellanic-cloud"]');
-  assert.match(await page.locator('#info-panel').innerText(), /Ultraviolet light, which our eyes cannot see/);
+  assert.match(await page.locator('#info-panel').innerText(), /Ultraviolet light.*our eyes cannot see/);
   await page.click('[data-galaxy-marker="triangulum"]');
   assert.equal(await page.locator('.cosmos-links a', { hasText: 'Licence (CC BY 4.0)' }).count(), 1);
   assert.deepEqual(errors, []);

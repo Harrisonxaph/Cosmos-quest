@@ -44,7 +44,7 @@ Each galaxy uses the image shown on the NASA page it cites, unless that image's 
 
 Where a source describes how an image was made (for example "The red in the image represents hydrogen and infrared light"), that sentence is kept in `colourNote`, and `composite` is true. Images made from ultraviolet or infrared light, or hydrogen-light filters, must have one, so the app can explain that their colours were assigned.
 
-The Magellanic Cloud UV mosaics remain the chosen images. Their `childCaption` explains that ultraviolet light is invisible to our eyes and colours help reveal hot stars. A visible-light replacement is optional: first verify its own permission and credit, that it depicts the whole galaxy rather than a star-forming region, and then update the provenance and captions. A NASA credit alone does not establish permission.
+The Magellanic Cloud UV mosaics remain the chosen images. Their `childCaption` explains that ultraviolet light is invisible to our eyes and the pictures help reveal the hottest stars. `childCaptionSourceIds` cites NASA’s Ultraviolet Waves explanation and the Swift release; both are linked beside the caption and documented with supporting quotes in SCIENCE.md. A visible-light replacement is optional: first verify its own permission and credit, that it depicts the whole galaxy rather than a star-forming region, and then update the provenance and captions. A NASA credit alone does not establish permission.
 
 ## Permission review (2026-10-23)
 

@@ -311,7 +311,8 @@ Data for the Cosmos view lives in [src/data/galaxies.json](../src/data/galaxies.
 
 The map is an illustration, not a measurement. Its rules live in `src/utils/cosmosLayout.js` (`COSMOS_SCALE_NOTES`, shown on screen) and are tested in `tests/utils/cosmosLayout.test.js` and `tests/e2e/cosmos.e2e.js`.
 
-- **Left to right is distance.** Bands: Home (the Milky Way), Closest neighbours (under 1 million ly), the Local Group (1–5 million ly), Nearby groups (5–40 million ly) and Much farther (40–100 million ly). The bands have equal widths although each covers far more distance than the last, so the map is not to scale. Within a band, positions follow the logarithm of each galaxy's displayed NASA distance, so the order of distances is always kept. Band edges are presentation choices.
+- **Bands are distance ranges, not galaxy-group boundaries.** No group membership is inferred from a band.
+- **Left to right is distance.** Bands: Home (the Milky Way), Closest neighbours (under 1 million ly), 1–5 million light-years, 5–40 million light-years and Much farther (40–100 million ly). The bands have equal widths although each covers far more distance than the last, so the map is not to scale. Within a band, positions follow the logarithm of each galaxy's displayed NASA distance, so the order of distances is always kept. Band edges are presentation choices.
 - **Up and down mean nothing.** Galaxies are spread vertically only so names don't overlap.
 - **Not a sky map.** Galaxies near each other in our sky can be far apart in space. The panel's example is worked out from the data: Messier 87 and the Sombrero Galaxy are both in Virgo, at about 54 million and about 28 million light-years.
 - **Sizes are not shown.** Every marker is the same size. Physical sizes appear only as text, where NASA gives one.
@@ -385,6 +386,9 @@ Open scientific questions (also listed in the pull request): NGC 1300 (NASA 69 m
 - LMC and SMC distances, page says: "The Large and Small Magellanic Clouds, or LMC and SMC for short, lie about 163,000 and 200,000 light-years away, respectively"
 - Fact: The Small Magellanic Cloud is only half the size of the Large Magellanic Cloud.
   - Page says: "The SMC is only half the size of the LMC and contains about two-thirds of its mass."
+- Caption: Ultraviolet light is light our eyes cannot see. These ultraviolet pictures help reveal the hottest stars.
+  - Page says: "Viewing in the ultraviolet allows astronomers to suppress the light of normal stars like the sun, which are not very bright at these higher energies, and provide a clearer picture of the hottest stars and star-formation regions."
+  - Supports the hot-star explanation; the invisible-light explanation is sourced separately below.
 
 ## nasa-messier-31
 
@@ -514,3 +518,11 @@ Open scientific questions (also listed in the pull request): NGC 1300 (NASA 69 m
 - Fact: The galaxy is so big that Hubble had to take two side-by-side pictures to cover all of its spiral arms.
   - Page says: "Due to the galaxy's large size, two adjacent pointings of the telescope were necessary to cover the extent of the spiral arms."
 
+## nasa-ultraviolet-waves
+
+- Source: [NASA Science — Ultraviolet Waves](https://science.nasa.gov/ems/10_ultravioletwaves/)
+- Retrieved: 2026-10-23
+- Used for: the Large and Small Magellanic Cloud child image captions (invisible ultraviolet light).
+- Caption: Ultraviolet light is light our eyes cannot see. These ultraviolet pictures help reveal the hottest stars.
+  - Page says: "Although UV waves are invisible to the human eye, some insects, such as bumblebees, can see them."
+  - Supports the invisible-light explanation; NASA SVS supports the hot-star explanation.

@@ -79,7 +79,15 @@ export function startExplorer({
     mode: MODES.includes(prefs.mode) ? prefs.mode : 'simple',
     paused: reducedMotion(),
   }));
-  const dispatch = action => nav.dispatch(action);
+  const dispatch = action => {
+    // Validate every route after loading too, not just the first collection download.
+    if (action.type === 'openCosmos' && action.galaxyId && cosmos.galaxies
+      && !cosmos.galaxies.some(galaxy => galaxy.id === action.galaxyId)) {
+      action = { ...action, galaxyId: null };
+      history.replaceState(null, '', '#/cosmos');
+    }
+    return nav.dispatch(action);
+  };
   let scene = null;
 
   // Quiz progress lives only in memory for this visit: no storage, accounts or tracking.

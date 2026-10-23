@@ -42,5 +42,6 @@
   {"id": "nasa-messier-101", "title": "NASA Science — Messier 101 (The Pinwheel Galaxy)", "url": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-101/", "pageUpdated": "2026-08-26", "retrieved": "2026-10-22"},
   {"id": "nasa-hubble-messier-101-image", "title": "NASA Science — Hubble Image of M101", "url": "https://science.nasa.gov/asset/hubble/hubble-image-of-m101/", "pageUpdated": "2025-08-17", "retrieved": "2026-10-22"},
   {"id": "nasa-messier-104", "title": "NASA Science — Messier 104 (The Sombrero Galaxy)", "url": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-104/", "pageUpdated": "2026-08-21", "retrieved": "2026-10-22"},
-  {"id": "nasa-hubble-ngc-1300", "title": "NASA Science — Barred Spiral Galaxy NGC 1300", "url": "https://science.nasa.gov/asset/hubble/barred-spiral-galaxy-ngc-1300/", "pageUpdated": "2025-08-17", "retrieved": "2026-10-22"}
+  {"id": "nasa-hubble-ngc-1300", "title": "NASA Science — Barred Spiral Galaxy NGC 1300", "url": "https://science.nasa.gov/asset/hubble/barred-spiral-galaxy-ngc-1300/", "pageUpdated": "2025-08-17", "retrieved": "2026-10-22"},
+  {"id": "nasa-ultraviolet-waves", "title": "NASA Science — Ultraviolet Waves", "url": "https://science.nasa.gov/ems/10_ultravioletwaves/", "retrieved": "2026-10-23"}
 ]

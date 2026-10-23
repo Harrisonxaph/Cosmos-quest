@@ -294,3 +294,19 @@ test('recorded sky positions are valid J2000 coordinates and are never used to p
   assert.doesNotMatch(layout, /raDeg|decDeg|\.sky\b/);
 });
 
+
+
+test('child image captions have traceable NASA sources and cannot lose their citations', () => {
+  const validate = new Ajv({ allErrors: true }).compile(schema);
+  for (const galaxy of galaxies.filter(g => g.image.childCaption)) {
+    assert.ok(galaxy.image.childCaptionSourceIds?.length, `${galaxy.id}: caption sources`);
+    for (const id of galaxy.image.childCaptionSourceIds) {
+      assert.ok(sourcesById[id], id);
+      assert.ok(sectionFor(id)?.includes(`- Caption: ${galaxy.image.childCaption}\n  - Page says: "`), id);
+      assert.ok(galaxySourceIds(galaxy).includes(id), `${id}: included in source validation`);
+    }
+    const missing = structuredClone(galaxies);
+    delete missing.find(g => g.id === galaxy.id).image.childCaptionSourceIds;
+    assert.equal(validate(missing), false, `${galaxy.id}: schema rejects an uncited caption`);
+  }
+});
