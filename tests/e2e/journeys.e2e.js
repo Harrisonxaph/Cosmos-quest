@@ -239,7 +239,10 @@ test(`[${engineName}] Cosmos: Andromeda — select, zoom, pan, reset and open it
   await page.locator('[data-galaxy-marker="andromeda"]').tap();
   await page.waitForFunction(() => location.hash === '#/cosmos/andromeda');
   assert.equal(await page.locator('#info-panel h2').textContent(), GALAXY_KEY.andromeda.name);
-  const marker = async () => page.locator('[data-galaxy-marker="andromeda"]').boundingBox();
+  const marker = async () => {
+    const box = await page.locator('[data-galaxy-marker="andromeda"]').boundingBox();
+    return { ...box, x: box.x + box.width / 2 }; // the centre: the marker's own position on the map
+  };
   const start = await marker();
   await page.tap('[data-cosmos-control="zoomIn"]');
   await page.tap('[data-cosmos-control="zoomIn"]');

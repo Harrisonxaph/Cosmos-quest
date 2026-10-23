@@ -51,3 +51,12 @@ test('the store keeps the map where it was left and tells listeners about change
   store.dispatch({ type: 'reset' });
   assert.deepEqual(calls, ['resize', 'zoomIn', 'reset']);
 });
+
+test('reveal can bring a whole wide marker into view, not just its centre', () => {
+  const state = reduceCosmosMap(initialCosmosMapState(), { type: 'resize', size: { width: 500, height: 400 } });
+  // A point near the right of the 720 px-wide map, with a marker 160 px wide (half = 80, plus a gap).
+  const shown = reduceCosmosMap(state, { type: 'reveal', u: 0.7, v: 0.5, margin: 92 });
+  const x = shown.view.x + 0.7 * 720;
+  assert.ok(x <= 500 - 92 + 1e-9, 'the centre is at least half a marker (plus a gap) inside the edge');
+  assert.ok(x - 80 >= 0, 'and the left half is still in view');
+});

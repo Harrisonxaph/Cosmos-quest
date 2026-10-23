@@ -126,6 +126,29 @@ test('map coordinates: left to right keeps the order of distances, markers never
   await context.close();
 });
 
+test('a chosen marker settles straight away (it is bold, so wider), fully in view, and the map box never scrolls', async () => {
+  const { page, context, errors } = await openPage('#/cosmos', { viewport: { width: 1024, height: 768 } });
+  await mapReady(page);
+  for (const id of ['andromeda', 'whirlpool', 'milky-way']) {
+    const before = (await markerBoxes(page)).find(b => b.id === id);
+    await page.click(`[data-galaxy-marker="${id}"]`);
+    const now = (await markerBoxes(page)).find(b => b.id === id);
+    await page.waitForTimeout(400);
+    const later = (await markerBoxes(page)).find(b => b.id === id);
+    assert.deepEqual(later, now, `${id}: no late shift`);
+    const view = await page.locator('.cosmos-map__viewport').boundingBox();
+    assert.ok(now.left >= view.x && now.left + now.width <= view.x + view.width, `${id}: fully in view (a marker at the edge is panned in)`);
+    assert.ok(Math.abs(now.y - before.y) < now.height, `${id}: stays in its row`);
+    assert.deepEqual(await page.$eval('.cosmos-map__viewport', v => [v.scrollLeft, v.scrollTop]), [0, 0], `${id}: the map box itself is not scrolled`);
+  }
+  await page.focus('[data-galaxy-marker="messier-87"]');
+  await page.keyboard.press('Tab');
+  assert.equal(await page.evaluate(() => document.activeElement.dataset.galaxyMarker), 'ngc-1300');
+  assert.deepEqual(await page.$eval('.cosmos-map__viewport', v => [v.scrollLeft, v.scrollTop]), [0, 0], 'keyboard focus at the edge pans the map, not the box');
+  assert.deepEqual(errors, []);
+  await context.close();
+});
+
 test('zoom buttons stop at their limits, and reset returns to the start; markers keep their size', async () => {
   const { page, context, errors } = await openPage('#/cosmos');
   await mapReady(page);
