@@ -354,6 +354,8 @@ summary { cursor: pointer; min-height: 44px; padding: 0.6rem 0; box-sizing: bord
 .cosmos-figure { margin: 0 0 0.8rem; }
 .cosmos-figure__frame { display: flex; justify-content: center; border-radius: 0.6rem; overflow: hidden; background: #04060d; }
 .cosmos-figure__image { display: block; max-width: 100%; height: auto; }
+.cosmos-figure__missing { padding: 0.6rem 0.8rem; border: 1px dashed var(--border); border-radius: 0.6rem; background: var(--surface-2); }
+.cosmos-figure__missing p { margin: 0.2rem 0; }
 .cosmos-figure figcaption { font-size: 0.9rem; }
 .cosmos-figure figcaption p { margin: 0.35rem 0; }
 .cosmos-figure__note { color: var(--muted); }

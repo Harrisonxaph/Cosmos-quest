@@ -177,6 +177,7 @@ test('choosing a galaxy by pointer, keyboard and list opens its picture, facts, 
   assert.match(panel, /Image credit: NASA, ESA, Benjamin F\. Williams/);
   assert.match(panel, /Changes for this app: Resized/);
   assert.match(panel, /does not mean we are any closer/);
+  assert.match(panel, /not to the same scale as each other/);
   assert.match(panel, /In our sky, it is in the constellation Andromeda\./);
   assert.equal(await page.locator('.cosmos-links a', { hasText: 'Image source' }).getAttribute('href'), 'https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-31/');
   assert.ok(await page.locator('.cosmos-links a', { hasText: 'Usage terms' }).getAttribute('href'));
@@ -358,26 +359,87 @@ test('switching between the solar system and Cosmos keeps each one where it was'
   await context.close();
 });
 
-test('Cosmos keeps the quiz and mission progress separate', async () => {
+test('Cosmos leaves quiz, mission and experiment progress exactly as it was', async () => {
   const { page, context, errors } = await openPage();
+  // Quiz: answer one question.
   await page.click('#quiz-entry');
   await page.click('[data-quiz-action="start"]');
   const text = (await page.locator('.quiz-question').textContent()).trim();
   const question = quizQuestions.find(q => q.question === text);
   await page.locator('.quiz-answer', { hasText: ANSWER_KEY[question.id].answer }).first().click();
   await page.click('[data-quiz-action="next"]');
-  const progress = await page.locator('#quiz-entry .quiz-entry__progress').textContent();
+  const quizProgress = await page.locator('#quiz-entry .quiz-entry__progress').textContent();
+  // Mission: start one.
+  await page.click('#missions-entry');
+  await page.click('.mission-card[data-mission="rocky-neighbours"] [data-mission-action="choose"]');
+  await page.click('[data-mission-action="start"]');
+  const missionProgress = await page.locator('#missions-entry .quiz-entry__progress').textContent();
+  const missionStep = await page.locator('#info-panel h2').textContent();
+  // Experiment: change a setting and reveal a result.
+  await page.click('#experiments-entry');
+  await page.click('.mission-card[data-experiment="gravity-lab"] [data-experiment-action="choose"]');
+  await page.fill('#experiment-mass', '25');
+  await page.selectOption('#experiment-world', 'jupiter');
+  await page.click('[data-experiment-action="reveal"]');
+  const result = await page.locator('#experiment-result-title').textContent();
+
   await openCosmos(page);
-  assert.equal(await page.getAttribute('#quiz-entry', 'aria-current'), null);
-  assert.equal(await page.locator('#quiz-entry .quiz-entry__progress').textContent(), progress, 'the quiz is still waiting');
-  assert.equal(await page.locator('.quiz-resume').count(), 1, 'the waiting bar shows while exploring Cosmos');
   await page.click('[data-galaxy-marker="pinwheel"]');
+  await page.click('[data-cosmos-control="zoomIn"]');
+  assert.equal(await page.locator('#quiz-entry .quiz-entry__progress').textContent(), quizProgress, 'the quiz is still waiting');
+  assert.equal(await page.locator('#missions-entry .quiz-entry__progress').textContent(), missionProgress, 'the mission is still waiting');
+  assert.equal(await page.locator('.quiz-resume:not(.mission-bar)').count(), 1, 'the quiz waiting bar shows while exploring Cosmos');
+  assert.equal(await page.locator('.mission-bar').count(), 1, 'and the mission waiting bar');
+
   await page.click('#quiz-entry');
   assert.match(await page.locator('.quiz-progress').textContent(), /Question 2 of 5/);
+  await page.click('#missions-entry');
+  assert.equal(await page.locator('#info-panel h2').textContent(), missionStep);
+  await page.click('#experiments-entry');
+  assert.equal(await page.inputValue('#experiment-mass'), '25');
+  assert.equal(await page.inputValue('#experiment-world'), 'jupiter');
+  assert.equal(await page.locator('#experiment-result-title').textContent(), result, 'the result is still shown');
   // Explore returns to Cosmos, where the child left it.
   await page.click('#explore-entry');
   assert.equal(await hash(page), '#/cosmos/pinwheel');
+  assert.equal(await page.getAttribute('#cosmos-map', 'data-zoom'), '1.5');
   assert.deepEqual(errors, []);
+  await context.close();
+});
+
+test('a picture that cannot load is replaced by its description; the credit and source link stay', async () => {
+  const { page, context } = await openPage('#/cosmos', {}, { block: /assets\/galaxies\/whirlpool(-thumb)?\.webp$/ });
+  await page.click('.cosmos-list__button[data-galaxy="whirlpool"]');
+  await page.waitForSelector('.cosmos-figure__missing');
+  const figure = await page.locator('.cosmos-figure').innerText();
+  assert.match(figure, /The picture could not load\. It shows: The Whirlpool Galaxy/);
+  assert.match(figure, /Image credit: NASA, ESA, S\. Beckwith/);
+  assert.equal(await page.locator('.cosmos-figure img').count(), 0, 'no broken picture is left on the page');
+  assert.equal(await page.locator('.cosmos-links a', { hasText: 'Image source' }).count(), 1);
+  // Only the detailed picture failing: the small one stays, with no error message.
+  await page.click('[data-cosmos-action="list"] >> nth=0');
+  await context.route(/assets\/galaxies\/sombrero\.webp$/, route => route.abort());
+  await page.click('.cosmos-list__button[data-galaxy="sombrero"]');
+  await page.waitForFunction(() => document.querySelector('.cosmos-figure__image')?.naturalWidth > 0);
+  await page.waitForTimeout(500);
+  assert.equal(await page.getAttribute('.cosmos-figure__image', 'data-image-size'), 'thumbnail');
+  assert.equal(await page.locator('.cosmos-figure__missing').count(), 0);
+  await context.close();
+});
+
+test('if the galaxy collection cannot download, Cosmos says so and Try again works', async () => {
+  const { page, context } = await openPage();
+  let blocked = true;
+  await page.route(/galaxies-[^/]*\.json$/, route => (blocked ? route.abort() : route.continue()));
+  await page.click('.explore-switch [data-explore="cosmos"]');
+  await page.waitForSelector('article[data-cosmos-screen="error"]');
+  assert.match(await page.locator('#info-panel').innerText(), /The galaxies could not load/);
+  assert.equal(await page.locator('[data-cosmos-action="solar"]').count(), 1, 'a way back to the solar system');
+  blocked = false;
+  await page.click('[data-cosmos-action="retry"]');
+  await page.waitForSelector('article[data-cosmos-screen="list"]', { timeout: 10000 });
+  assert.equal(await page.locator('.cosmos-list__button').count(), NEAREST_FIRST.length);
+  await mapReady(page);
   await context.close();
 });
 
@@ -411,23 +473,50 @@ test('addresses: a galaxy link opens it, an unknown galaxy opens the list', asyn
   await context.close();
 });
 
-test('phones, large text and reduced motion: 44 px controls and no sideways scrolling', async () => {
-  for (const options of [{ viewport: { width: 375, height: 700 }, hasTouch: true, isMobile: true }, { viewport: { width: 768, height: 1024 }, reducedMotion: 'reduce' }]) {
+test('phones, iPad portrait and landscape, 200% text and reduced motion: 44 px controls, no sideways scrolling, a readable map', async () => {
+  const layouts = [
+    { name: 'phone portrait', viewport: { width: 375, height: 700 }, hasTouch: true, isMobile: true },
+    { name: 'iPad portrait', viewport: { width: 768, height: 1024 }, hasTouch: true, isMobile: true, reducedMotion: 'reduce' },
+    { name: 'iPad landscape', viewport: { width: 1024, height: 768 }, hasTouch: true, isMobile: true },
+  ];
+  const bands = [['milky-way'], ['large-magellanic-cloud', 'small-magellanic-cloud'], ['andromeda', 'triangulum'],
+    ['messier-81', 'cigar', 'pinwheel', 'sombrero', 'whirlpool'], ['messier-87', 'ngc-1300']];
+  for (const { name, ...options } of layouts) {
     const { page, context, errors } = await openPage('#/cosmos/andromeda', options);
     await mapReady(page);
     for (const percent of [100, 200]) {
+      const label = `${name}, ${percent}% text`;
       await page.evaluate(size => { document.documentElement.style.fontSize = size; }, `${percent}%`);
-      await page.waitForTimeout(200);
+      await page.waitForTimeout(250);
       const small = await page.evaluate(() => [...document.querySelectorAll('#cosmos button, #info-panel button, .explore-switch button, .cosmos-links a')]
         .filter(node => node.getClientRects().length && !node.closest('[hidden]'))
         .map(node => ({ name: node.textContent.trim().slice(0, 30), box: node.getBoundingClientRect() }))
         .filter(({ box }) => box.width < 44 || box.height < 44)
-        .map(({ name, box }) => `${name} ${Math.round(box.width)}×${Math.round(box.height)}`));
-      assert.deepEqual(small, [], `${percent}% text`);
-      assert.equal(await overflow(page), 0, `${percent}% text: no sideways scrolling`);
+        .map(({ name: text, box }) => `${text} ${Math.round(box.width)}×${Math.round(box.height)}`));
+      assert.deepEqual(small, [], `${label}: 44 px targets`);
+      assert.equal(await overflow(page), 0, `${label}: no sideways scrolling`);
+      // The map stays readable: markers never overlap, and the bands keep their order left to right
+      // (at large text the map is wider than the screen and pans sideways instead).
+      if (!(await page.locator('[data-cosmos-control="reset"]').isDisabled())) await page.click('[data-cosmos-control="reset"]');
+      const boxes = await markerBoxes(page);
+      const centres = Object.fromEntries(boxes.map(b => [b.id, b.x]));
+      for (let i = 1; i < bands.length; i++) {
+        assert.ok(Math.min(...bands[i].map(id => centres[id])) > Math.max(...bands[i - 1].map(id => centres[id])), `${label}: band ${i + 1} right of band ${i}`);
+      }
+      for (let i = 0; i < boxes.length; i++) {
+        for (let j = i + 1; j < boxes.length; j++) {
+          const [a, b] = [boxes[i], boxes[j]];
+          assert.equal(a.left < b.left + b.width && b.left < a.left + a.width && a.top < b.top + b.height && b.top < a.top + a.height, false, `${label}: ${a.id} overlaps ${b.id}`);
+        }
+      }
+      assert.ok(await page.$eval('.cosmos-figure__image', img => img.getBoundingClientRect().width >= 200), `${label}: the picture is at least 200 px wide`);
     }
     if (options.reducedMotion) {
       assert.equal(await page.$eval('[data-galaxy-marker="andromeda"]', node => getComputedStyle(node).transitionDuration), '0s', 'map moves are instant');
+      // Choosing from the list jumps straight to the heading, without smooth scrolling.
+      await page.click('[data-cosmos-action="list"] >> nth=0');
+      await page.click('.cosmos-list__button[data-galaxy="ngc-1300"]');
+      assert.equal(await page.evaluate(() => document.activeElement.id), 'panel-title-galaxy-ngc-1300');
     }
     assert.deepEqual(errors, []);
     await context.close();

@@ -19,6 +19,9 @@ Record the date, device, iPadOS version and the preview URL you tested.
 - [ ] Turn Labels off: the names disappear and tapping where a name was selects nothing (unless you tap the planet itself), but the card still appears for a chosen planet.
 
 ## Cosmos
+
+For a fuller physical iPad and Safari pass of Cosmos (pinch, scrolling, VoiceOver, pictures and performance), use [COSMOS_IPAD_CHECKLIST.md](COSMOS_IPAD_CHECKLIST.md).
+
 - [ ] At the top of Explore, tap **Cosmos**. The galaxy map appears with "Not to scale · illustrative map", and the panel lists 12 galaxies, nearest first.
 - [ ] Tap several galaxies on the map, including the crowded Nearby groups. Each tap opens the right galaxy; names never sit on top of each other.
 - [ ] Drag and pinch on the map: the map moves and zooms, nothing is chosen, and the page itself doesn't scroll or zoom. Outside the map, the page scrolls normally.

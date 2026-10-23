@@ -8,6 +8,7 @@ import { chromium, webkit, devices } from 'playwright';
 import { startStaticServer } from './static-server.js';
 import { ANSWER_KEY } from '../data/quiz-answer-key.js';
 import { MISSION_ANSWER_KEY } from '../data/mission-answer-key.js';
+import { GALAXY_KEY } from '../data/galaxy-key.js';
 
 const engineName = process.env.BROWSER ?? 'chromium';
 const engine = { chromium, webkit }[engineName];
@@ -222,6 +223,85 @@ test(`[${engineName}] Cosmos: switch views, choose galaxies on the map and in th
   await page.tap('.explore-switch [data-explore="cosmos"]');
   await page.waitForFunction(() => location.hash === '#/cosmos/milky-way');
   assert.equal(await page.getAttribute('#cosmos-map', 'data-zoom'), '1.5');
+  assert.deepEqual(errors, []);
+  await context.close();
+});
+
+// Picture labels expected for each kind, typed in by hand.
+const PICTURE_LABEL = { 'artist-concept': "Artist's illustration · not a photograph", composite: 'Composite image', photograph: 'Photograph' };
+
+test(`[${engineName}] Cosmos: Andromeda — select, zoom, pan, reset and open its sources`, async () => {
+  const { page, context, errors } = await openPage('', ipad(true));
+  // Source links open NASA pages in a new tab; answer them locally so the test needs no internet.
+  await context.route(url => !url.href.startsWith(server.url), route => route.fulfill({ contentType: 'text/html', body: '<title>source</title>' }));
+  await page.tap('.explore-switch [data-explore="cosmos"]');
+  await page.waitForSelector('#cosmos-map[data-map-state="ready"]');
+  await page.locator('[data-galaxy-marker="andromeda"]').tap();
+  await page.waitForFunction(() => location.hash === '#/cosmos/andromeda');
+  assert.equal(await page.locator('#info-panel h2').textContent(), GALAXY_KEY.andromeda.name);
+  const marker = async () => page.locator('[data-galaxy-marker="andromeda"]').boundingBox();
+  const start = await marker();
+  await page.tap('[data-cosmos-control="zoomIn"]');
+  await page.tap('[data-cosmos-control="zoomIn"]');
+  assert.equal(await page.getAttribute('#cosmos-map', 'data-zoom'), '2.25');
+  const zoomed = await marker();
+  assert.equal(Math.round(zoomed.width), Math.round(start.width), 'zoom does not enlarge the marker');
+  // Pan with the keyboard (the same store as dragging; drag and pinch are covered in cosmos.e2e.js).
+  await page.focus('[data-galaxy-marker="andromeda"]');
+  await page.keyboard.press('ArrowRight');
+  const panned = await marker();
+  assert.ok(panned.x < zoomed.x - 40, 'the map moved');
+  await page.tap('[data-cosmos-control="reset"]');
+  assert.equal(await page.getAttribute('#cosmos-map', 'data-zoom'), '1');
+  assert.ok(Math.abs((await marker()).x - start.x) < 1, 'reset puts the map back');
+  // Every link names a real address and opens in a new tab.
+  const links = await page.$$eval('#info-panel article a', nodes => nodes.map(a => ({ href: a.href, target: a.target, rel: a.rel })));
+  assert.ok(links.length >= 4);
+  for (const link of links) {
+    assert.match(link.href, /^https:\/\//);
+    assert.equal(link.target, '_blank');
+    assert.match(link.rel, /noopener/);
+  }
+  for (const name of ['Image source', 'Usage terms']) {
+    const [popup] = await Promise.all([context.waitForEvent('page'), page.locator('.cosmos-links a', { hasText: name }).tap()]);
+    await popup.waitForLoadState();
+    assert.match(popup.url(), /^https:\/\/(science\.nasa\.gov|www\.nasa\.gov)\//, name);
+    await popup.close();
+  }
+  const [factSource] = await Promise.all([context.waitForEvent('page'), page.locator('.panel__sources a').first().tap()]);
+  await factSource.waitForLoadState();
+  assert.equal(factSource.url(), 'https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-31/');
+  assert.deepEqual(errors, []);
+  await context.close();
+});
+
+test(`[${engineName}] Cosmos: every galaxy can be chosen from the list with the keyboard`, async () => {
+  const { page, context, errors } = await openPage('', ipad());
+  await page.tap('.explore-switch [data-explore="cosmos"]');
+  await page.waitForSelector('.cosmos-list__button');
+  const ids = await page.$$eval('.cosmos-list__button', nodes => nodes.map(n => n.dataset.galaxy));
+  assert.deepEqual([...ids].sort(), Object.keys(GALAXY_KEY).sort(), 'the list has every galaxy, and only those');
+  for (const id of ids) {
+    const key = GALAXY_KEY[id];
+    await page.focus(`.cosmos-list__button[data-galaxy="${id}"]`);
+    await page.keyboard.press('Enter');
+    await page.waitForFunction(galaxy => location.hash === `#/cosmos/${galaxy}`, id);
+    assert.equal(await page.evaluate(() => document.activeElement.id), `panel-title-galaxy-${id}`, `${id}: focus on its heading`);
+    assert.equal(await page.locator('#info-panel h2').textContent(), key.name);
+    const text = await page.locator('#info-panel').innerText();
+    assert.ok(text.includes(PICTURE_LABEL[key.imageKind]), `${id}: picture labelled ${key.imageKind}`);
+    assert.match(text, /Image credit: \S/, `${id}: credit`);
+    assert.match(text, key.distanceLy === null ? /We live inside it\./ : /About [\d.,]+( million)? light-years away/, `${id}: distance`);
+    assert.ok(await page.locator('.panel__sources li').count() >= 1, `${id}: sources`);
+    await page.waitForFunction(() => {
+      const img = document.querySelector('.cosmos-figure__image');
+      return img?.complete && img.naturalWidth > 0;
+    }, null, { timeout: 15000 });
+    assert.ok(await page.$eval('.cosmos-figure__image', img => img.alt.length > 20), `${id}: picture described`);
+    await page.focus('[data-cosmos-action="list"]');
+    await page.keyboard.press('Enter');
+    assert.equal(await page.evaluate(() => document.activeElement.dataset.galaxy), id, `${id}: back on the list at the same galaxy`);
+  }
   assert.deepEqual(errors, []);
   await context.close();
 });

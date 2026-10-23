@@ -271,3 +271,26 @@ test('every bundled galaxy file has an ASSET_CREDITS.md row with its exact credi
     assert.ok(credits.includes(galaxy.image.original.url), `${galaxy.id}: pending image is listed in ASSET_CREDITS.md`);
   }
 });
+
+test('the NASA type wording shown in quotation marks is word for word from a quote under its source', () => {
+  // The panel shows "NASA's words: “…”", so the wording must be copied exactly, not adapted (for example to the singular).
+  for (const galaxy of galaxies) {
+    const quotes = galaxy.classification.sourceIds.flatMap(id => [...sectionFor(id).matchAll(/says: "([^"]+)"/g)].map(m => m[1].toLowerCase()));
+    assert.ok(quotes.some(quote => quote.includes(galaxy.classification.nasaWording.toLowerCase())), `${galaxy.id}: "${galaxy.classification.nasaWording}"`);
+  }
+});
+
+test('recorded sky positions are valid J2000 coordinates and are never used to place galaxies on the map', () => {
+  for (const galaxy of galaxies) {
+    if (!galaxy.sky) continue;
+    const { raDeg, decDeg, epoch, frame } = galaxy.sky.position;
+    assert.ok(raDeg >= 0 && raDeg < 360, `${galaxy.id}: right ascension within 0–360°, no wraparound value`);
+    assert.ok(decDeg >= -90 && decDeg <= 90, `${galaxy.id}: declination within ±90°`);
+    assert.equal(epoch, 'J2000');
+    assert.equal(frame, 'equatorial');
+  }
+  // The map is laid out from distances only (see src/utils/cosmosLayout.js), so sky coordinates cannot leak into it.
+  const layout = readFileSync(new URL('../../src/utils/cosmosLayout.js', import.meta.url), 'utf8');
+  assert.doesNotMatch(layout, /raDeg|decDeg|\.sky\b/);
+});
+

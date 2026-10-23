@@ -101,7 +101,7 @@
     "viewpoint": "outside",
     "classification": {
       "value": "irregular",
-      "nasaWording": "irregular dwarf galaxy",
+      "nasaWording": "irregular dwarf galaxies",
       "sourceIds": [
         "nasa-nearest-galaxies"
       ]
@@ -242,7 +242,7 @@
     "viewpoint": "outside",
     "classification": {
       "value": "irregular",
-      "nasaWording": "irregular dwarf galaxy",
+      "nasaWording": "irregular dwarf galaxies",
       "sourceIds": [
         "nasa-nearest-galaxies"
       ]

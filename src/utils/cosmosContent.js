@@ -13,6 +13,12 @@ const LIGHT_WORDS = { visible: 'visible light', infrared: 'infrared light', ultr
 
 export const typeLabel = value => TYPE_LABELS[value] ?? value;
 
+/** Shown under every galaxy picture: what picture size and sharpness do and don't mean. */
+export const PICTURE_NOTES = [
+  'Each picture is resized to fit here, so the pictures are not to the same scale as each other. A galaxy that fills its picture is not necessarily bigger than another.',
+  'A bigger or sharper picture shows more detail. It does not mean we are any closer to the galaxy.',
+];
+
 const capitalise = text => text.charAt(0).toUpperCase() + text.slice(1);
 
 function listWords(words) {
@@ -78,7 +84,7 @@ export function skyVersusDistanceExample(galaxies) {
     ids: [far.id, near.id],
     sourceIds: [...new Set([...far.sky.sourceIds, ...near.sky.sourceIds, ...far.distance.sourceIds, ...near.distance.sourceIds])],
     text: `${capitalise(nameInSentence(far))} and ${nameInSentence(near)} are both in the constellation ${constellation} in our sky. `
-      + `But NASA gives their distances as ${far.distance.display} and ${near.distance.display}, so ${nameInSentence(far)} is ${howFar} ${nameInSentence(near)}.`,
+      + `But NASA gives their distances as ${far.distance.display} and ${near.distance.display}, so, working from those distances, ${nameInSentence(far)} is ${howFar} ${nameInSentence(near)}.`,
   };
 }
 

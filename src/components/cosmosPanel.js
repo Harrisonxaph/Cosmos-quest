@@ -4,7 +4,7 @@
 import { el } from './dom.js';
 import { modeToggle } from './infoPanel.js';
 import { COSMOS_BANDS, COSMOS_SCALE_NOTES, bandFor } from '../utils/cosmosLayout.js';
-import { galaxyContent, galaxyListLine, skyVersusDistanceExample } from '../utils/cosmosContent.js';
+import { galaxyContent, galaxyListLine, skyVersusDistanceExample, PICTURE_NOTES } from '../utils/cosmosContent.js';
 
 // Detail pictures already downloaded this visit, so a re-render (such as Simple / Detailed) shows them straight away.
 const loadedDetails = new Set();
@@ -75,6 +75,15 @@ function picture(image, saveData, onLoadDetail) {
     'data-image-size': useDetail ? 'detail' : 'thumbnail',
   });
   let sharper = null;
+  const frame = el('div', { className: 'cosmos-figure__frame' }, img);
+  // If the picture can't be downloaded, say so in words (with its description) instead of leaving a broken box.
+  // The credit and the link to the picture's source page stay below.
+  img.addEventListener('error', () => {
+    sharper?.remove();
+    frame.replaceWith(el('div', { className: 'cosmos-figure__missing', 'data-image-size': 'missing' },
+      el('p', {}, el('strong', {}, 'The picture could not load.'), ' It shows: ', image.alt),
+      el('p', {}, 'You can still see it on the image source page linked below.')));
+  }, { once: true });
   const loadDetail = () => {
     const detail = new Image();
     detail.decoding = 'async';
@@ -96,13 +105,13 @@ function picture(image, saveData, onLoadDetail) {
       img.addEventListener('load', loadDetail, { once: true });
     }
   }
-  return { img, sharper };
+  return { frame, sharper };
 }
 
 function detailScreen(galaxy, { mode, sourcesById, saveData, handlers }) {
   const content = galaxyContent(galaxy, sourcesById);
   const { image } = content;
-  const { img, sharper } = picture(image, saveData);
+  const { frame, sharper } = picture(image, saveData);
   const band = bandLabel(bandFor(galaxy.distance?.valueLy ?? null));
   const detailed = mode === 'detailed';
 
@@ -114,12 +123,12 @@ function detailScreen(galaxy, { mode, sourcesById, saveData, handlers }) {
       el('p', { className: 'panel__kind' }, content.type, content.aliases.length ? ` · Also called ${content.aliases.join(' or ')}` : '')),
 
     el('figure', { className: 'cosmos-figure' },
-      el('div', { className: 'cosmos-figure__frame' }, img),
+      frame,
       el('figcaption', {},
         el('p', { className: 'cosmos-figure__label' }, badge(image.label, galaxy.image.kind === 'artist-concept' ? 'model' : 'measured')),
         image.note ? el('p', { className: 'cosmos-figure__note' }, image.note) : null,
         image.colourNote ? el('p', { className: 'cosmos-figure__note' }, image.colourNote) : null,
-        el('p', { className: 'cosmos-figure__note' }, 'A bigger or sharper picture shows more detail. It does not mean we are any closer to the galaxy.'),
+        PICTURE_NOTES.map(text => el('p', { className: 'cosmos-figure__note' }, text)),
         el('p', { className: 'cosmos-credit' }, el('strong', {}, 'Image credit: '), image.credit),
         el('p', { className: 'cosmos-links' },
           link(image.sourcePage, 'Image source'), ' · ', link(image.termsUrl, 'Usage terms'),
