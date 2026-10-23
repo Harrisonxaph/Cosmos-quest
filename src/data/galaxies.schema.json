@@ -1,0 +1,212 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Cosmos Quest galaxy collection",
+  "description": "The galaxies for the planned Cosmos view (docs/COSMOS_FEASIBILITY.md). Every scientific field cites sources in src/data/sources.json. NED values are a cross-check only and are never shown. See docs/COSMOS_DATA.md for how this file is prepared.",
+  "type": "array",
+  "minItems": 10,
+  "maxItems": 12,
+  "items": { "$ref": "#/definitions/galaxy" },
+  "definitions": {
+    "sourceId": { "type": "string", "pattern": "^nasa-[a-z0-9]+(-[a-z0-9]+)*$" },
+    "sourceIds": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/definitions/sourceId" } },
+    "date": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "nasaUrl": { "type": "string", "pattern": "^https://([a-z0-9-]+\\.)*nasa\\.gov/" },
+    "sourcedText": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text", "sourceIds"],
+      "properties": {
+        "text": { "type": "string", "minLength": 20, "maxLength": 240 },
+        "sourceIds": { "$ref": "#/definitions/sourceIds" }
+      }
+    },
+    "fact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text", "sourceId"],
+      "properties": {
+        "text": { "type": "string", "minLength": 20, "maxLength": 200 },
+        "sourceId": { "$ref": "#/definitions/sourceId" }
+      }
+    },
+    "estimate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["valueLy", "display", "sourceIds"],
+      "properties": {
+        "valueLy": { "type": "number", "exclusiveMinimum": 0 },
+        "display": { "type": "string", "pattern": "^about [0-9.,]+( million)? light-years$" },
+        "sourceIds": { "$ref": "#/definitions/sourceIds" }
+      }
+    },
+    "imageFile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["file", "width", "height"],
+      "properties": {
+        "file": { "type": "string", "pattern": "^assets/galaxies/[a-z0-9-]+\\.webp$" },
+        "width": { "type": "integer", "minimum": 0 },
+        "height": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "galaxy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "aliases", "catalogue", "viewpoint", "classification", "summary", "facts", "size", "distance", "sky", "image"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+        "name": { "type": "string", "minLength": 3 },
+        "aliases": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 2 } },
+        "catalogue": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["messier", "ngc", "ned"],
+          "properties": {
+            "messier": { "type": ["string", "null"], "pattern": "^M[0-9]{1,3}$" },
+            "ngc": { "type": ["string", "null"], "pattern": "^NGC [0-9]{1,4}$" },
+            "ned": { "type": ["string", "null"], "description": "NED's preferred name, from the cross-check (provenance only)." }
+          }
+        },
+        "viewpoint": { "enum": ["inside", "outside"], "description": "inside only for the Milky Way: we observe it from within." },
+        "classification": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["value", "nasaWording", "sourceIds"],
+          "properties": {
+            "value": { "enum": ["spiral", "barred-spiral", "elliptical", "lenticular", "irregular"] },
+            "nasaWording": { "type": "string", "minLength": 5, "description": "How the cited NASA page words the type." },
+            "sourceIds": { "$ref": "#/definitions/sourceIds" },
+            "note": { "$ref": "#/definitions/sourcedText" }
+          }
+        },
+        "summary": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["simple", "sourceIds"],
+          "properties": {
+            "simple": { "type": "string", "minLength": 40, "maxLength": 240 },
+            "sourceIds": { "$ref": "#/definitions/sourceIds" }
+          }
+        },
+        "facts": { "type": "array", "minItems": 2, "maxItems": 3, "items": { "$ref": "#/definitions/fact" } },
+        "size": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["diameterLy", "sourceIds"],
+              "properties": {
+                "diameterLy": { "type": "number", "exclusiveMinimum": 0 },
+                "sourceIds": { "$ref": "#/definitions/sourceIds" }
+              }
+            }
+          ]
+        },
+        "distance": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["valueLy", "unit", "display", "sourceIds", "asOf", "selection", "otherEstimates", "crossCheck", "estimateNote", "reviewStatus"],
+              "properties": {
+                "valueLy": { "type": "number", "exclusiveMinimum": 0 },
+                "unit": { "const": "light-years" },
+                "display": { "type": "string", "pattern": "^about [0-9.,]+( million)? light-years$" },
+                "sourceIds": { "$ref": "#/definitions/sourceIds" },
+                "asOf": { "$ref": "#/definitions/date" },
+                "selection": { "type": "string", "minLength": 40, "description": "Why this value was chosen, and how sources compare." },
+                "otherEstimates": { "type": "array", "items": { "$ref": "#/definitions/estimate" } },
+                "estimateNote": {"type": "string", "minLength": 40, "maxLength": 240, "description": "Show beside the distance in the future map; source estimates are not exact measurements."},
+                "reviewStatus": {"enum": ["source-estimate", "multiple-estimates", "discrepant-estimates"], "description": "Editorial flag, not an accuracy score. Discrepant means the NED median differs by over 15%; review original methods before revising the NASA value."},
+                "context": { "$ref": "#/definitions/sourcedText" },
+                "crossCheck": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["service", "name", "retrieved", "estimates", "unit", "median", "min", "max", "note"],
+                  "properties": {
+                    "service": { "const": "NED" },
+                    "name": { "type": "string" },
+                    "retrieved": { "$ref": "#/definitions/date" },
+                    "estimates": { "type": "integer", "minimum": 1 },
+                    "unit": { "const": "Mpc" },
+                    "median": { "type": "number", "exclusiveMinimum": 0 },
+                    "min": { "type": "number", "exclusiveMinimum": 0 },
+                    "max": { "type": "number", "exclusiveMinimum": 0 },
+                    "note": { "type": "string" }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "sky": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["constellation", "sourceIds", "position"],
+              "properties": {
+                "constellation": { "type": ["string", "null"] },
+                "sourceIds": { "$ref": "#/definitions/sourceIds" },
+                "position": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["service", "name", "raDeg", "decDeg", "frame", "epoch", "retrieved", "note"],
+                  "properties": {
+                    "service": { "const": "NED" },
+                    "name": { "type": "string" },
+                    "raDeg": { "type": "number", "minimum": 0, "exclusiveMaximum": 360 },
+                    "decDeg": { "type": "number", "minimum": -90, "maximum": 90 },
+                    "frame": { "const": "equatorial" },
+                    "epoch": { "const": "J2000" },
+                    "retrieved": { "$ref": "#/definitions/date" },
+                    "note": { "type": "string" }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "image": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "telescope", "wavelengths", "composite", "colourNote", "colourNoteSourceId", "alt", "credit", "licence", "thumbnail", "detail", "original", "retrieved", "status", "permission"],
+          "properties": {
+            "kind": { "enum": ["photograph", "composite", "artist-concept"] },
+            "telescope": { "type": ["string", "null"] },
+            "wavelengths": { "type": "array", "uniqueItems": true, "items": { "enum": ["visible", "infrared", "ultraviolet", "hydrogen"] } },
+            "composite": { "type": "boolean" },
+            "colourNote": { "type": ["string", "null"] },
+            "colourNoteSourceId": { "oneOf": [{ "type": "null" }, { "$ref": "#/definitions/sourceId" }] },
+            "illustrationNote": { "type": "string", "minLength": 40 },
+            "alt": { "type": "string", "minLength": 40, "maxLength": 240 },
+            "credit": { "type": "string", "minLength": 4 },
+            "licence": { "enum": ["nasa-public-domain", "cc-by-4.0", "nasa-media-guidelines", "jpl-image-use-policy"] },
+            "thumbnail": { "$ref": "#/definitions/imageFile" },
+            "detail": { "$ref": "#/definitions/imageFile" },
+            "original": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["url", "sourcePage", "width", "height"],
+              "properties": {
+                "url": { "type": "string", "pattern": "^https://" },
+                "sourcePage": { "type": "string", "pattern": "^https://" },
+                "nasaId": { "type": "string" },
+                "width": { "type": "integer", "minimum": 1 },
+                "height": { "type": "integer", "minimum": 1 }
+              }
+            },
+            "retrieved": { "$ref": "#/definitions/date" },
+            "status": { "enum": ["ready", "pending"], "description": "pending: the original could not be downloaded yet, so no files are bundled." },
+            "childCaption": {"type": "string", "minLength": 40, "maxLength": 240},
+            "permission": {"type": "object", "additionalProperties": false, "required": ["status", "reviewed", "policyUrl", "creditMustBeVisible", "modifications", "evidence"], "properties": {"status": {"enum": ["verified", "needs-review"]}, "reviewed": {"$ref": "#/definitions/date"}, "policyUrl": {"type": "string", "pattern": "^https://"}, "licenceUrl": {"type": "string", "pattern": "^https://"}, "creditMustBeVisible": {"const": true}, "modifications": {"type": "string", "minLength": 20}, "evidence": {"type": "string", "minLength": 40}}}
+          },
+          "allOf": [{"if": {"properties": {"status": {"const": "ready"}}}, "then": {"properties": {"permission": {"properties": {"status": {"const": "verified"}}, "type": "object"}, "thumbnail": {"properties": {"width": {"minimum": 1, "type": "integer"}, "height": {"minimum": 1, "type": "integer"}}, "type": "object"}, "detail": {"properties": {"width": {"minimum": 1, "type": "integer"}, "height": {"minimum": 1, "type": "integer"}}, "type": "object"}}}}, {"if": {"properties": {"licence": {"const": "cc-by-4.0"}}}, "then": {"properties": {"permission": {"required": ["licenceUrl"], "type": "object"}}}}]
+        }
+      }
+    }
+  }
+}

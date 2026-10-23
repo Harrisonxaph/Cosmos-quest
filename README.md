@@ -68,7 +68,8 @@ npm run test:e2e:webkit           # critical journeys in WebKit with iPad emulat
 - [AGENTS.md](AGENTS.md): contributor rules; agent.md is a pointer.
 - `src/data/`: planet and Sun JSON, quiz questions, mission and experiment definitions, the source list and the JSON Schemas. Every value, question and mission step cites a NASA source.
 - `src/utils/`, `src/features/`, `src/components/`, `src/scenes/`: pure helpers, navigation and wiring, reusable UI, and the Three.js scene. See [architecture](docs/ARCHITECTURE.md).
-- `public/assets/`: bundled assets only after licence review (none yet; surface patterns are drawn by code).
+- `public/assets/`: bundled assets only after licence review. Surface patterns are drawn by code; `public/assets/galaxies/` holds the galaxy images for the planned Cosmos view, each credited in docs/ASSET_CREDITS.md.
+- [Cosmos galaxy data](docs/COSMOS_DATA.md): the galaxy collection, its sources and how to update it (the map itself is not built yet).
 - `tests/`: mirrors `src/`; `tests/e2e/` holds the browser tests. No colocated tests.
 - [Science references](docs/SCIENCE.md), [asset credits](docs/ASSET_CREDITS.md), [roadmap](docs/ROADMAP.md).
 
@@ -83,3 +84,5 @@ Every PR runs one CI job: install, lint, unit tests, build, then browser tests. 
 ## Licence
 
 Code is released under the [MIT Licence](LICENSE). Three.js is MIT-licensed by its authors. Facts are paraphrased from NASA pages listed in [docs/SCIENCE.md](docs/SCIENCE.md).
+
+The Cosmos collection currently includes all 12 sourced galaxy entries and 24 local image files; the interactive map is a later stage. Image terms, visible-attribution requirements and distance-estimate caveats are documented in [COSMOS_DATA.md](docs/COSMOS_DATA.md). External image reuse follows its recorded terms separately from the app’s MIT code licence.

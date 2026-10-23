@@ -28,5 +28,19 @@
   {"id": "nasa-uranus", "title": "NASA Science — Uranus", "url": "https://science.nasa.gov/uranus/", "retrieved": "2026-10-22"},
   {"id": "nasa-uranus-facts", "title": "NASA Science — Uranus: Facts", "url": "https://science.nasa.gov/uranus/facts/", "retrieved": "2026-10-22"},
   {"id": "nasa-neptune", "title": "NASA Science — Neptune", "url": "https://science.nasa.gov/neptune/", "retrieved": "2026-10-22"},
-  {"id": "nasa-neptune-facts", "title": "NASA Science — Neptune: Facts", "url": "https://science.nasa.gov/neptune/neptune-facts/", "retrieved": "2026-10-22"}
+  {"id": "nasa-neptune-facts", "title": "NASA Science — Neptune: Facts", "url": "https://science.nasa.gov/neptune/neptune-facts/", "retrieved": "2026-10-22"},
+  {"id": "nasa-hubble-galaxies", "title": "NASA Science — Hubble's Galaxies", "url": "https://science.nasa.gov/mission/hubble/science/universe-uncovered/hubble-galaxies/", "pageUpdated": "2026-07-22", "retrieved": "2026-10-22"},
+  {"id": "nasa-milky-way", "title": "NASA Imagine the Universe — The Milky Way Galaxy", "url": "https://imagine.gsfc.nasa.gov/science/featured_science/milkyway/", "pageUpdated": "2025-01-09", "retrieved": "2026-10-22"},
+  {"id": "nasa-nearest-galaxies", "title": "NASA Imagine the Universe — The Nearest Galaxies", "url": "https://imagine.gsfc.nasa.gov/features/cosmic/nearest_galaxy_info.html", "pageUpdated": "2020-10-22", "retrieved": "2026-10-22"},
+  {"id": "nasa-swift-magellanic-clouds", "title": "NASA Scientific Visualization Studio — NASA's Swift Mosaics of the Magellanic Clouds", "url": "https://svs.gsfc.nasa.gov/11293", "pageUpdated": "2026-08-12", "retrieved": "2026-10-22"},
+  {"id": "nasa-messier-31", "title": "NASA Science — Messier 31 (The Andromeda Galaxy)", "url": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-31/", "pageUpdated": "2026-09-04", "retrieved": "2026-10-22"},
+  {"id": "nasa-messier-33", "title": "NASA Science — Messier 33 (The Triangulum Galaxy)", "url": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-33/", "pageUpdated": "2026-09-04", "retrieved": "2026-10-22"},
+  {"id": "nasa-messier-51", "title": "NASA Science — Messier 51 (The Whirlpool Galaxy)", "url": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-51/", "pageUpdated": "2026-08-26", "retrieved": "2026-10-22"},
+  {"id": "nasa-messier-81", "title": "NASA Science — Messier 81", "url": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-81/", "pageUpdated": "2026-08-21", "retrieved": "2026-10-22"},
+  {"id": "nasa-messier-82", "title": "NASA Science — Messier 82 (The Cigar Galaxy)", "url": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-82/", "pageUpdated": "2026-02-20", "retrieved": "2026-10-22"},
+  {"id": "nasa-messier-87", "title": "NASA Science — Messier 87", "url": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-87/", "pageUpdated": "2025-04-25", "retrieved": "2026-10-22"},
+  {"id": "nasa-messier-101", "title": "NASA Science — Messier 101 (The Pinwheel Galaxy)", "url": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-101/", "pageUpdated": "2026-08-26", "retrieved": "2026-10-22"},
+  {"id": "nasa-hubble-messier-101-image", "title": "NASA Science — Hubble Image of M101", "url": "https://science.nasa.gov/asset/hubble/hubble-image-of-m101/", "pageUpdated": "2025-08-17", "retrieved": "2026-10-22"},
+  {"id": "nasa-messier-104", "title": "NASA Science — Messier 104 (The Sombrero Galaxy)", "url": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-104/", "pageUpdated": "2026-08-21", "retrieved": "2026-10-22"},
+  {"id": "nasa-hubble-ngc-1300", "title": "NASA Science — Barred Spiral Galaxy NGC 1300", "url": "https://science.nasa.gov/asset/hubble/barred-spiral-galaxy-ngc-1300/", "pageUpdated": "2025-08-17", "retrieved": "2026-10-22"}
 ]
