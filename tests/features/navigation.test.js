@@ -4,6 +4,7 @@ import planets from '../../src/data/planets.json' with { type: 'json' };
 import sun from '../../src/data/sun.json' with { type: 'json' };
 import {
   BODY_ORDER, initialState, reduce, createNavigator, parseHash, formatHash, keyToAction, shouldIgnoreKey, actionAllowedInView, SHORTCUTS,
+  validGalaxyId,
 } from '../../src/features/navigation.js';
 
 test('navigation order is the Sun then the planets in order from the Sun', () => {
@@ -11,7 +12,7 @@ test('navigation order is the Sun then the planets in order from the Sun', () =>
 });
 
 test('starts on the solar system overview, unpaused, in simple mode', () => {
-  assert.deepEqual(initialState(), { view: 'overview', selectedId: null, paused: false, mode: 'simple' });
+  assert.deepEqual(initialState(), { view: 'overview', selectedId: null, galaxyId: null, paused: false, mode: 'simple' });
 });
 
 test('selecting a world, and ignoring unknown ones', () => {
@@ -151,4 +152,77 @@ test('Science Experiments have their own view and link, and pause explorer short
   assert.deepEqual(parseHash('#/experiments'), { view: 'experiments', selectedId: null });
   assert.equal(actionAllowedInView(keyToAction('4'), 'experiments'), false);
   assert.equal(actionAllowedInView(keyToAction('Escape'), 'experiments'), true);
+});
+
+// ----- Cosmos -----
+// Hand-written ids, not read from galaxies.json.
+const SOME_GALAXIES = ['milky-way', 'andromeda', 'messier-87'];
+
+test('opening Cosmos shows the galaxy list, or one galaxy, and clears the world selection', () => {
+  const atJupiter = reduce(initialState(), { type: 'select', id: 'jupiter' });
+  const list = reduce(atJupiter, { type: 'openCosmos' });
+  assert.equal(list.view, 'cosmos');
+  assert.equal(list.selectedId, null);
+  assert.equal(list.galaxyId, null);
+  const andromeda = reduce(list, { type: 'openCosmos', galaxyId: 'andromeda' }, BODY_ORDER, SOME_GALAXIES);
+  assert.equal(andromeda.galaxyId, 'andromeda');
+  assert.equal(reduce(andromeda, { type: 'openCosmos', galaxyId: 'pluto-galaxy' }, BODY_ORDER, SOME_GALAXIES).galaxyId, null, 'an unknown galaxy opens the list');
+  assert.equal(reduce(list, { type: 'openCosmos', galaxyId: 'Not An Id!' }).galaxyId, null, 'a malformed id opens the list');
+});
+
+test('leaving Cosmos for any other view forgets the galaxy in the navigation state', () => {
+  const andromeda = reduce(initialState(), { type: 'openCosmos', galaxyId: 'andromeda' });
+  for (const action of [{ type: 'overview' }, { type: 'select', id: 'mars' }, { type: 'openQuiz' }, { type: 'openMissions' }, { type: 'openExperiments' }, { type: 'next' }]) {
+    const state = reduce(andromeda, action);
+    assert.notEqual(state.view, 'cosmos', action.type);
+    assert.equal(state.galaxyId, null, action.type);
+  }
+});
+
+test('pause and detail mode carry over into Cosmos and back', () => {
+  let state = reduce(initialState({ paused: true, mode: 'detailed' }), { type: 'openCosmos', galaxyId: 'andromeda' });
+  assert.equal(state.paused, true);
+  assert.equal(state.mode, 'detailed');
+  state = reduce(state, { type: 'select', id: 'earth' });
+  assert.equal(state.mode, 'detailed');
+});
+
+test('Cosmos addresses: #/cosmos and #/cosmos/<galaxy>', () => {
+  assert.deepEqual(parseHash('#/cosmos'), { view: 'cosmos', selectedId: null, galaxyId: null });
+  assert.deepEqual(parseHash('#/cosmos/andromeda'), { view: 'cosmos', selectedId: null, galaxyId: 'andromeda' });
+  assert.deepEqual(parseHash('#/cosmos/Andromeda'), { view: 'cosmos', selectedId: null, galaxyId: 'andromeda' }, 'case-insensitive like the world addresses');
+  assert.equal(parseHash('#/cosmos/not-here', BODY_ORDER, SOME_GALAXIES).galaxyId, null);
+  assert.equal(parseHash('#/cosmos/<script>').galaxyId, null);
+  assert.equal(formatHash(reduce(initialState(), { type: 'openCosmos' })), '#/cosmos');
+  assert.equal(formatHash(reduce(initialState(), { type: 'openCosmos', galaxyId: 'messier-87' })), '#/cosmos/messier-87');
+  for (const id of SOME_GALAXIES) {
+    const state = reduce(initialState(), { type: 'openCosmos', galaxyId: id });
+    assert.deepEqual(parseHash(formatHash(state), BODY_ORDER, SOME_GALAXIES), { view: 'cosmos', selectedId: null, galaxyId: id }, `${id} round-trips`);
+  }
+  assert.equal(parseHash('#/jupiter').view, 'body', 'existing addresses are unchanged');
+});
+
+test('galaxy ids must be well formed, and in the collection once it is known', () => {
+  assert.equal(validGalaxyId('ngc-1300'), true);
+  assert.equal(validGalaxyId('ngc-1300', SOME_GALAXIES), false);
+  assert.equal(validGalaxyId('-bad'), false);
+  assert.equal(validGalaxyId(null), false);
+  assert.equal(validGalaxyId(''), false);
+});
+
+test('in Cosmos, planet shortcuts are paused and only Escape (back to exploring) works', () => {
+  for (const key of ['1', '0', 'ArrowRight', 'ArrowLeft', ' ', 'm', '+', 'a']) {
+    const action = keyToAction(key);
+    assert.equal(actionAllowedInView(action, 'cosmos'), false, key);
+  }
+  assert.equal(actionAllowedInView(keyToAction('Escape'), 'cosmos'), true);
+});
+
+test('a navigator restricted to known galaxies ignores others', () => {
+  const nav = createNavigator(initialState(), BODY_ORDER, SOME_GALAXIES);
+  nav.dispatch({ type: 'openCosmos', galaxyId: 'whirlpool' });
+  assert.equal(nav.getState().view, 'cosmos');
+  assert.equal(nav.getState().galaxyId, null);
+  nav.dispatch({ type: 'openCosmos', galaxyId: 'messier-87' });
+  assert.equal(nav.getState().galaxyId, 'messier-87');
 });

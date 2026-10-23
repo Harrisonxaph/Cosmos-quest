@@ -423,10 +423,12 @@ export function createSolarSystemScene({ canvas, labelLayer, bodies, earth, qual
     event.preventDefault();
     onContextLost?.();
   };
+  // While another view (Cosmos) covers the 3D picture, the scene stops drawing, and starts again where it was.
+  let suspended = false;
   const onVisibility = () => {
     // Always cancel first: browsers can report "visible" more than once, which must not start a second loop.
     cancelAnimationFrame(frame);
-    if (!document.hidden && !disposed) {
+    if (!document.hidden && !disposed && !suspended) {
       lastTime = performance.now();
       needsRender = true;
       frame = requestAnimationFrame(render);
@@ -445,6 +447,7 @@ export function createSolarSystemScene({ canvas, labelLayer, bodies, earth, qual
   resize();
   canvas.parentElement.dataset.focus = 'overview';
   canvas.parentElement.dataset.transition = 'idle';
+  canvas.parentElement.dataset.suspended = 'false';
   frame = requestAnimationFrame(render);
 
   // ----- Optional surface textures, generated a few at a time to avoid a long pause -----
@@ -496,6 +499,12 @@ export function createSolarSystemScene({ canvas, labelLayer, bodies, earth, qual
     setLabelsVisible(value) {
       labelsVisible = value;
       needsRender = true;
+    },
+    setSuspended(value) {
+      if (Boolean(value) === suspended) return;
+      suspended = Boolean(value);
+      canvas.parentElement.dataset.suspended = String(suspended);
+      onVisibility();
     },
     dispose() {
       disposed = true;

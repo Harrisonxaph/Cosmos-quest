@@ -41,6 +41,8 @@ h1, h2, h3 { line-height: 1.2; }
   /* A compact two-by-two activity bar on phones, so the 3D view starts sooner. */
   .site-header__actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; gap: 0.5rem; }
   .quiz-entry { justify-content: center; padding: 0.45rem 0.6rem; border-radius: 1rem; font-size: 1rem; text-align: center; }
+  /* The tagline gives way to the Solar system | Cosmos switch, so the 3D view still starts high on the screen. */
+  .site-header__tagline { display: none; }
   /* Short names on phones; screen readers still hear the full names. */
   .quiz-entry__extra { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 }
@@ -288,3 +290,67 @@ summary { cursor: pointer; min-height: 44px; padding: 0.6rem 0; box-sizing: bord
 .experiment-card dl { display: grid; gap: 0.1rem; margin: 0; }
 .experiment-card dt { color: var(--muted); font-size: 0.85rem; }
 .experiment-card dd { margin: 0 0 0.35rem; font-weight: 600; }
+
+/* ----- Solar system | Cosmos switch ----- */
+.explore-switch { display: inline-flex; flex-wrap: wrap; align-self: flex-start; max-width: 100%; border: 1px solid var(--border); border-radius: 999px; overflow: hidden; background: var(--surface); }
+.explore-switch__option { min-height: 44px; min-width: 44px; padding: 0.4rem 1.1rem; border: 0; background: transparent; font-weight: 600; cursor: pointer; }
+.explore-switch__option:hover { background: var(--surface-2); }
+/* The chosen view is filled and has a dark bar along its bottom edge, so it isn't shown by colour alone. */
+.explore-switch__option[aria-pressed='true'] { background: var(--accent); color: #1a1300; box-shadow: inset 0 -0.3rem 0 #1a1300; }
+.stage[data-showing='cosmos'] > :is(.scene, .body-selector, .controls, .explore-help) { display: none; }
+
+/* ----- Cosmos map ----- */
+.cosmos[hidden], .cosmos-selected[hidden] { display: none; }
+.cosmos { display: flex; flex-direction: column; gap: 0.5rem; min-width: 0; }
+.cosmos__header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.25rem 0.75rem; }
+.cosmos__title { margin: 0; font-size: 1.3rem; }
+.cosmos__badge { margin: 0; padding: 0.15rem 0.6rem; border: 1px solid var(--model); border-radius: 999px; color: var(--model); font-size: 0.85rem; }
+.cosmos-map { display: flex; flex-direction: column; gap: 0.5rem; min-width: 0; }
+.cosmos-map[data-map-state='loading'], .cosmos-map[data-map-state='fallback'] { min-height: 8rem; justify-content: center; align-items: center; padding: 1rem; border: 1px solid var(--border); border-radius: 1rem; background: #04060d; text-align: center; }
+.cosmos-map__status { margin: 0; }
+.cosmos-map__toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; }
+.cosmos-map__control { font-size: 1.1rem; }
+.cosmos-map__zoom { color: var(--muted); font-size: 0.9rem; }
+.cosmos-map__hint { margin: 0; color: var(--muted); font-size: 0.9rem; }
+/* Only the map itself takes over touch gestures (drag and pinch); everywhere else the page scrolls and zooms as normal. */
+.cosmos-map__viewport { position: relative; height: clamp(20rem, 58vh, 40rem); overflow: hidden; border: 1px solid var(--border); border-radius: 1rem; background: #04060d; touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+.cosmos-map[data-dragging='true'] .cosmos-map__viewport { cursor: grabbing; }
+.cosmos-map__plane { position: absolute; left: 0; top: 0; }
+.cosmos-map__bands, .cosmos-map__markers { position: absolute; inset: 0; margin: 0; padding: 0; list-style: none; }
+.cosmos-band { position: absolute; left: 0; top: 0; display: flex; flex-direction: column; gap: 0.1rem; padding: 0.5rem 0.6rem; border-right: 1px dashed #3b4b7c; }
+.cosmos-band:nth-child(even) { background: rgb(28 41 80 / 45%); }
+.cosmos-band__label { font-weight: 700; font-size: 0.85rem; color: var(--text); }
+.cosmos-band__detail { font-size: 0.75rem; color: var(--muted); }
+.cosmos-marker { position: absolute; left: 0; top: 0; display: inline-flex; align-items: center; gap: 0.4rem; min-width: 44px; min-height: 44px; padding: 0.2rem 0.7rem 0.2rem 0.45rem; border: 1px solid #5f73ad; border-radius: 999px; background: rgb(11 17 36 / 88%); color: var(--text); font-size: 0.85rem; white-space: nowrap; cursor: pointer; }
+.cosmos-marker:hover { border-color: var(--accent); }
+.cosmos-marker__dot { flex: none; width: 0.8rem; height: 0.8rem; border-radius: 50%; background: radial-gradient(circle, #fff6d8 0%, #c7a6ff 70%); }
+.cosmos-marker__home { padding: 0 0.4rem; border: 1px solid currentColor; border-radius: 999px; color: var(--accent); font-size: 0.75rem; font-weight: 700; }
+.cosmos-marker[aria-pressed='true'] { background: var(--accent); border-color: var(--accent); color: #1a1300; font-weight: 700; box-shadow: 0 0 0 3px #1a1300, 0 0 0 5px var(--accent); }
+.cosmos-marker[aria-pressed='true'] .cosmos-marker__home { color: #1a1300; }
+.cosmos-map__axis { position: absolute; left: 0.5rem; right: 0.5rem; bottom: 0.4rem; display: flex; justify-content: space-between; margin: 0; color: var(--muted); font-size: 0.8rem; pointer-events: none; }
+.cosmos-map__axis span { padding: 0 0.4rem; border-radius: 999px; background: rgb(11 17 36 / 80%); }
+.cosmos-selected { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.4rem 0.75rem; padding: 0.5rem 0.8rem; border: 1px solid var(--border); border-radius: 0.75rem; background: var(--surface); }
+.cosmos-selected p { margin: 0; }
+
+/* ----- Cosmos panel ----- */
+.cosmos-panel h2:focus { outline: none; }
+.cosmos-panel h2:focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; }
+.cosmos-panel__back { margin: 0 0 0.6rem; }
+.cosmos-notes { margin: 0; padding-left: 1.2rem; }
+.cosmos-notes li + li { margin-top: 0.3rem; }
+.cosmos-list__group h4 { margin: 0.8rem 0 0.4rem; }
+.cosmos-list__band-detail { font-weight: 400; color: var(--muted); font-size: 0.9rem; }
+.cosmos-list ul { display: grid; gap: 0.4rem; margin: 0; padding: 0; list-style: none; }
+.cosmos-list__button { display: flex; flex-direction: column; align-items: flex-start; width: 100%; min-height: 44px; padding: 0.45rem 0.9rem; border: 1px solid var(--border); border-radius: 0.6rem; background: var(--surface-2); text-align: left; cursor: pointer; }
+.cosmos-list__button:hover { border-color: var(--accent); }
+.cosmos-list__name { font-weight: 700; }
+.cosmos-list__line { color: var(--muted); font-size: 0.9rem; }
+.cosmos-figure { margin: 0 0 0.8rem; }
+.cosmos-figure__frame { display: flex; justify-content: center; border-radius: 0.6rem; overflow: hidden; background: #04060d; }
+.cosmos-figure__image { display: block; max-width: 100%; height: auto; }
+.cosmos-figure figcaption { font-size: 0.9rem; }
+.cosmos-figure figcaption p { margin: 0.35rem 0; }
+.cosmos-figure__note { color: var(--muted); }
+.cosmos-credit, .cosmos-changes { color: var(--muted); }
+.cosmos-links a { display: inline-flex; align-items: center; min-height: 44px; }
+.cosmos-others { margin: 0; padding-left: 1.2rem; }

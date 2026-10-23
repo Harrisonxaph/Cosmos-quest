@@ -1,6 +1,6 @@
 # Cosmos galaxy collection: data and update process
 
-The galaxy collection for the planned Cosmos view (see [COSMOS_FEASIBILITY.md](COSMOS_FEASIBILITY.md)). Only the data and images exist so far; the interactive map is not built yet.
+The galaxy collection shown in Cosmos, the galaxy map beside the solar system (see [COSMOS_FEASIBILITY.md](COSMOS_FEASIBILITY.md) for the design and [ARCHITECTURE.md](ARCHITECTURE.md#cosmos-galaxy-map) for how it is built).
 
 ## What is here
 
@@ -23,7 +23,7 @@ These were agreed before the collection was prepared:
 
 - **Sources.** Displayed values, descriptions and facts cite NASA pages only (`nasa.gov` hosts). NED is a cross-check: its preferred names, positions and distance statistics are recorded as provenance and never shown.
 - **Distances.** Retain the approximate value on the NASA release selected for the galaxy's image/science context, keep other NASA values in `otherEstimates`, and explain the source-consistent editorial choice in `selection`. This does not establish that one estimate is scientifically superior. Do not select values by proximity to NED's median: its non-homogenised compilation mixes measurement methods and dates. Inspect original publications and methods before replacing a value. Never average sources or treat NED's minimum–maximum range as an uncertainty interval. No distance here is calculated from redshift.
-- **Distance review flags.** Every external galaxy has an `estimateNote` for the future card: "NASA estimates this distance; other studies can give different values." `reviewStatus` is `source-estimate`, `multiple-estimates` (alternative NASA values), or `discrepant-estimates` (NED median differs by more than 15% of the retained NASA value). The 15% threshold is an editorial attention flag, not a scientific error bar or accuracy score. NGC 1300, Whirlpool and Sombrero are flagged. Original distance values are unchanged; the underlying papers have not been adjudicated.
+- **Distance review flags.** Every external galaxy has an `estimateNote`, shown beside its distance in the Cosmos panel: "NASA estimates this distance; other studies can give different values." `reviewStatus` is `source-estimate`, `multiple-estimates` (alternative NASA values), or `discrepant-estimates` (NED median differs by more than 15% of the retained NASA value). The 15% threshold is an editorial attention flag, not a scientific error bar or accuracy score. NGC 1300, Whirlpool and Sombrero are flagged. Original distance values are unchanged; the underlying papers have not been adjudicated.
 - **Milky Way.** No photograph of the whole Milky Way from outside can exist, because we are inside it. Its image is a NASA artist's concept (PIA10748). The data marks it as `kind: "artist-concept"` with an `illustrationNote`, and the tests require both.
 - **Disputed types.** The Sombrero Galaxy and the Cigar Galaxy keep NASA's own wording: both pages list them as "Spiral Galaxy". The Cigar Galaxy has a note saying NASA calls its fast star formation a starburst. Leave both out of any quiz or mission.
 - **Sky positions** are recorded (NED, J2000 equatorial) because they cost nothing to keep, but the approved first map uses distance bands, not the sky.
@@ -55,7 +55,7 @@ All twelve image pairs are now bundled (24 WebP files). File `status` and `permi
 - [ESA/Hubble usage terms](https://esahubble.org/copyright/) and [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/): Triangulum heic1901a uses this specific release's licence. Its exact ESA credit includes the comma after **J. Dalcanton,**; preserve it. The visible unaltered credit must accompany the image, with active source and licence links and a notice of resizing/WebP conversion. Credit alone is not a substitute for the other conditions.
 - [SVS help](https://svs.gsfc.nasa.gov/help/): content is public domain unless otherwise noted. The selected Swift UV mosaics carry the recorded NASA/Swift credit without an exception. The separately credited visible-light photos are not included.
 
-NASA, JPL and ESA/Hubble terms were accessible for this review. HubbleSite's copyright URL redirects to NASA's guidelines; it is not independent permission evidence. Per-image evidence, policy URLs and review dates are in `image.permission`; the asset table records both derivatives separately. Preserve `permission.modifications` and the source/terms links when the future map renders pictures, including thumbnails. No map or UI is added by this PR.
+NASA, JPL and ESA/Hubble terms were accessible for this review. HubbleSite's copyright URL redirects to NASA's guidelines; it is not independent permission evidence. Per-image evidence, policy URLs and review dates are in `image.permission`; the asset table records both derivatives separately. The Cosmos panel shows `permission.modifications` and the source/terms links with every picture, thumbnail or detailed. The map itself shows no pictures.
 
 ## Updating the collection
 
@@ -78,7 +78,7 @@ python3 scripts/galaxies/asset_credit_rows.py   # then paste all rows into ASSET
 npm test
 ```
 
-The tests require all twelve pairs, positive dimensions, verified permission metadata, and per-file credit rows with policy/licence links. A missing image or unverified permission fails the collection's readiness checks; do not add a broken-image placeholder to the future map.
+The tests require all twelve pairs, positive dimensions, verified permission metadata, and per-file credit rows with policy/licence links. A missing image or unverified permission fails the collection's readiness checks; do not add a broken-image placeholder to the map.
 
 ## Open questions
 

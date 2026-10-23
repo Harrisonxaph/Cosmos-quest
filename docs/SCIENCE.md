@@ -295,17 +295,28 @@ Calculations keep full precision. Inputs are always shown exactly as entered: th
 
 ## Galaxies (Cosmos collection)
 
-Data for the planned Cosmos view lives in [src/data/galaxies.json](../src/data/galaxies.json), validated by `galaxies.schema.json`. How it is prepared and updated is in [docs/COSMOS_DATA.md](COSMOS_DATA.md). NASA pages were retrieved on 2026-10-22; the NED cross-check on 2026-10-23. Every fact below appears under its source with the exact sentence from the NASA page that supports it, checked word for word against a saved copy of the page when the data was prepared. Tests check structure and consistency only; a person still needs to review the meaning against each page.
+Data for the Cosmos view lives in [src/data/galaxies.json](../src/data/galaxies.json), validated by `galaxies.schema.json`. How it is prepared and updated is in [docs/COSMOS_DATA.md](COSMOS_DATA.md). NASA pages were retrieved on 2026-10-22; the NED cross-check on 2026-10-23. Every fact below appears under its source with the exact sentence from the NASA page that supports it, checked word for word against a saved copy of the page when the data was prepared. Tests check structure and consistency only; a person still needs to review the meaning against each page.
 
 ### How to read galaxy values
 
 - **Apparent size, physical size and distance are different things.** Apparent size is how big a galaxy looks in our sky (Andromeda looks six times as wide as the full Moon). Physical size is how big it really is (the Pinwheel is about 170,000 light-years across). Distance is how far away it is. A big galaxy far away can look smaller than a small galaxy nearby.
 - **Distances are estimates.** Each galaxy shows one NASA value, rounded and introduced with "about". Where NASA pages disagree, the other values are kept in `otherEstimates` and the choice is explained in `selection`. NED lists many published estimates for each galaxy (from 21 for M82 to 824 for the Large Magellanic Cloud), and they spread widely; NED says its summary statistics are original published values with no homogenisation.
 - **Selection rule.** Retain the approximate estimate on the NASA release selected for the galaxy's image/science context, preserve other NASA values separately, and document the editorial rationale. Do not choose a value by proximity to NED's median or average incompatible estimates. NED's compilation is not a preferred distance or consensus; its minimum–maximum range is not an uncertainty interval. Reviewing original publications and measurement methods is required before replacing a source estimate.
-- **Distance notes and review flags.** The future map must show each `estimateNote` beside the distance. A NED median differing by more than 15% of the NASA value receives `reviewStatus: "discrepant-estimates"`; alternative NASA values without that discrepancy receive `multiple-estimates`; the rest receive `source-estimate`. This threshold prompts editorial attention, not a scientific uncertainty calculation. NED remains background provenance, not displayed data.
+- **Distance notes and review flags.** The Cosmos panel shows each `estimateNote` beside the distance. A NED median differing by more than 15% of the NASA value receives `reviewStatus: "discrepant-estimates"`; alternative NASA values without that discrepancy receive `multiple-estimates`; the rest receive `source-estimate`. This threshold prompts editorial attention, not a scientific uncertainty calculation. NED remains background provenance, not displayed data.
 - **Redshift is not used as a distance.** For nearby galaxies, a galaxy's own motion can outweigh the stretching of light by the expanding universe. In the NED cross-check, the Andromeda Galaxy, the Triangulum Galaxy and Messier 81 all have negative redshifts (they are moving towards us), so their redshifts say nothing useful about their distances. No distance here is worked out from a redshift.
 - **The Milky Way is different.** We live inside it, so it has no distance from us and no single position in the sky, and nobody has photographed the whole galaxy from outside. Its picture is an artist's concept and is labelled that way; its size and our distance from its centre come from NASA's Imagine the Universe page.
 - **Sky positions** are NED J2000 equatorial coordinates, recorded only as a cross-check. The approved first map arranges galaxies by distance band and does not use them.
+
+### How the Cosmos map presents galaxies
+
+The map is an illustration, not a measurement. Its rules live in `src/utils/cosmosLayout.js` (`COSMOS_SCALE_NOTES`, shown on screen) and are tested in `tests/utils/cosmosLayout.test.js` and `tests/e2e/cosmos.e2e.js`.
+
+- **Left to right is distance.** Bands: Home (the Milky Way), Closest neighbours (under 1 million ly), the Local Group (1–5 million ly), Nearby groups (5–40 million ly) and Much farther (40–100 million ly). The bands have equal widths although each covers far more distance than the last, so the map is not to scale. Within a band, positions follow the logarithm of each galaxy's displayed NASA distance, so the order of distances is always kept. Band edges are presentation choices.
+- **Up and down mean nothing.** Galaxies are spread vertically only so names don't overlap.
+- **Not a sky map.** Galaxies near each other in our sky can be far apart in space. The panel's example is worked out from the data: Messier 87 and the Sombrero Galaxy are both in Virgo, at about 54 million and about 28 million light-years.
+- **Sizes are not shown.** Every marker is the same size. Physical sizes appear only as text, where NASA gives one.
+- **Zoom is not travel.** Zooming spreads the markers out, and a sharper picture shows more detail; neither means getting closer to a galaxy.
+- **Pictures are labelled** as a photograph, a composite image (with the telescope and the light used) or an artist's illustration, with the full credit, source and terms links and the changes made for the app.
 
 ### Galaxy distances
 

@@ -5,29 +5,45 @@ export const BODY_ORDER = ['sun', 'mercury', 'venus', 'earth', 'mars', 'jupiter'
 export const MODES = ['simple', 'detailed'];
 
 export function initialState(overrides = {}) {
-  return { view: 'overview', selectedId: null, paused: false, mode: 'simple', ...overrides };
+  return { view: 'overview', selectedId: null, galaxyId: null, paused: false, mode: 'simple', ...overrides };
 }
 
-/** Pure transition function: (state, action) → new state. Unknown or invalid actions return the same state. */
-export function reduce(state, action, order = BODY_ORDER) {
+const GALAXY_ID = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+
+/** A galaxy id is accepted if it is a well-formed id and, once the collection has loaded, one of its galaxies. */
+export function validGalaxyId(id, galaxyIds = null) {
+  if (typeof id !== 'string' || !GALAXY_ID.test(id)) return false;
+  return !galaxyIds || galaxyIds.length === 0 || galaxyIds.includes(id);
+}
+
+/**
+ * Pure transition function: (state, action) → new state. Unknown or invalid actions return the same state.
+ * galaxyIds (optional) limits which galaxies can be chosen once the Cosmos collection has loaded.
+ */
+export function reduce(state, action, order = BODY_ORDER, galaxyIds = null) {
   switch (action.type) {
     case 'select':
       if (!order.includes(action.id)) return state;
-      return { ...state, view: 'body', selectedId: action.id };
+      return { ...state, view: 'body', selectedId: action.id, galaxyId: null };
     case 'overview':
-      return { ...state, view: 'overview', selectedId: null };
+      return { ...state, view: 'overview', selectedId: null, galaxyId: null };
     case 'openQuiz':
-      return { ...state, view: 'quiz', selectedId: null };
+      return { ...state, view: 'quiz', selectedId: null, galaxyId: null };
     case 'openMissions':
-      return { ...state, view: 'missions', selectedId: null };
+      return { ...state, view: 'missions', selectedId: null, galaxyId: null };
     case 'openExperiments':
-      return { ...state, view: 'experiments', selectedId: null };
+      return { ...state, view: 'experiments', selectedId: null, galaxyId: null };
+    case 'openCosmos': {
+      // The Cosmos view: the galaxy list, or one galaxy. An unknown galaxy opens the list instead.
+      const galaxyId = validGalaxyId(action.galaxyId, galaxyIds) ? action.galaxyId : null;
+      return { ...state, view: 'cosmos', selectedId: null, galaxyId };
+    }
     case 'next':
     case 'previous': {
       const step = action.type === 'next' ? 1 : -1;
       const index = state.selectedId === null ? (step === 1 ? -1 : 0) : order.indexOf(state.selectedId);
       const nextIndex = (index + step + order.length) % order.length;
-      return { ...state, view: 'body', selectedId: order[nextIndex] };
+      return { ...state, view: 'body', selectedId: order[nextIndex], galaxyId: null };
     }
     case 'togglePause':
       return { ...state, paused: !state.paused };
@@ -43,14 +59,14 @@ export function reduce(state, action, order = BODY_ORDER) {
 }
 
 /** Small store around `reduce` so the UI and the 3D scene can react to the same state. */
-export function createNavigator(initial = initialState(), order = BODY_ORDER) {
+export function createNavigator(initial = initialState(), order = BODY_ORDER, galaxyIds = null) {
   let state = initial;
   const listeners = new Set();
   return {
     getState: () => state,
     dispatch(action) {
       const previous = state;
-      state = reduce(state, action, order);
+      state = reduce(state, action, order, galaxyIds);
       if (state !== previous) for (const listener of listeners) listener(state, previous);
       return state;
     },
@@ -61,9 +77,13 @@ export function createNavigator(initial = initialState(), order = BODY_ORDER) {
   };
 }
 
-/** "#/jupiter" → { view: 'body', selectedId: 'jupiter' }; "#/quiz" → quiz; anything else → overview. */
-export function parseHash(hash, order = BODY_ORDER) {
+/** "#/jupiter" → { view: 'body', selectedId: 'jupiter' }; "#/quiz" → quiz; "#/cosmos/andromeda" → a galaxy; anything else → overview. */
+export function parseHash(hash, order = BODY_ORDER, galaxyIds = null) {
   const id = String(hash ?? '').replace(/^#\/?/, '').trim().toLowerCase();
+  if (id === 'cosmos' || id.startsWith('cosmos/')) {
+    const galaxyId = id.slice('cosmos/'.length);
+    return { view: 'cosmos', selectedId: null, galaxyId: validGalaxyId(galaxyId, galaxyIds) ? galaxyId : null };
+  }
   if (id === 'quiz') return { view: 'quiz', selectedId: null };
   if (id === 'missions') return { view: 'missions', selectedId: null };
   if (id === 'experiments') return { view: 'experiments', selectedId: null };
@@ -71,6 +91,7 @@ export function parseHash(hash, order = BODY_ORDER) {
 }
 
 export function formatHash(state) {
+  if (state.view === 'cosmos') return state.galaxyId ? `#/cosmos/${state.galaxyId}` : '#/cosmos';
   if (state.view === 'quiz') return '#/quiz';
   if (state.view === 'missions') return '#/missions';
   if (state.view === 'experiments') return '#/experiments';
@@ -78,11 +99,11 @@ export function formatHash(state) {
 }
 
 /**
- * During the quiz, missions and experiments, explorer shortcuts are switched off so a number or arrow key can't
+ * During the quiz, missions, experiments and Cosmos, explorer shortcuts are switched off so a number or arrow key can't
  * jump away mid-task. Escape still returns to exploring (progress is kept).
  */
 export function actionAllowedInView(action, view) {
-  if (!['quiz', 'missions', 'experiments'].includes(view)) return true;
+  if (!['quiz', 'missions', 'experiments', 'cosmos'].includes(view)) return true;
   return action.type === 'overview';
 }
 

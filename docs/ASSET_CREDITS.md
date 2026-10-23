@@ -1,6 +1,6 @@
 # Asset credits
 
-No external textures, audio or fonts are bundled. The app uses CSS and the device's system font; no font file is distributed. The only external images are the galaxy pictures for the planned Cosmos view, listed below. This is an inventory statement, not a blanket licence for future assets.
+No external textures, audio or fonts are bundled. The app uses CSS and the device's system font; no font file is distributed. The only external images are the galaxy pictures for the Cosmos view, listed below. This is an inventory statement, not a blanket licence for future assets.
 
 ## Generated in code (no files)
 
@@ -54,7 +54,7 @@ Prepared by `scripts/galaxies/prepare_images.py` from the originals named in `sr
 - [JPL image-use policy](https://www.jpl.nasa.gov/jpl-image-use-policy/) permits educational use with the caption credit. [PIA10748's current Photojournal page](https://science.nasa.gov/photojournal/our-milky-way-gets-a-makeover-artist-concept/) confirms **NASA/JPL-Caltech**, with no longer credit or image-specific restriction shown.
 - **Triangulum heic1901a:** [ESA/Hubble terms](https://esahubble.org/copyright/) and [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Preserve the exact full credit visibly beside each displayed picture, including the comma after **J. Dalcanton,**. Include active original-source and licence links plus a notice of resizing/WebP conversion. Attribution alone is not the entire licence obligation. Do not assume this release's terms automatically describe other NASA-hosted images.
 - **Magellanic Clouds:** the selected Swift UV mosaics are covered by [SVS's public-domain-unless-noted policy](https://svs.gsfc.nasa.gov/help/), with the individual UV captions checked. The separately credited visible-light photographs by Axel Mellinger and AAO/David Malin are not bundled. Show the `childCaption` explaining UV light and assigned colours; replace only after separately verifying a suitable visible-light image's rights and coverage.
-- **Future map display contract:** show the unaltered credit adjacent to the image, active source and terms/licence links, the modification notice, and its illustration/UV/composite label as appropriate. Apply this to thumbnails and detail views. Keep these requirements accessible on small screens; a repository-only credit table does not replace visible attribution.
+- **Display contract (met by the Cosmos panel; the map shows no pictures):** show the unaltered credit adjacent to the image, active source and terms/licence links, the modification notice, and its illustration/UV/composite label as appropriate. Apply this to thumbnails and detail views. Keep these requirements accessible on small screens; a repository-only credit table does not replace visible attribution.
 
 ## Adding real assets later
 

@@ -18,6 +18,16 @@ Record the date, device, iPadOS version and the preview URL you tested.
 - [ ] The facts card shows the planet's kind, its place from the Sun and three facts, and the planet stays visible beside it. **Hide card** keeps the planet chosen, **More facts** jumps to the full facts, and **Solar system** goes back. On an iPhone it is a strip that opens with **Quick facts**.
 - [ ] Turn Labels off: the names disappear and tapping where a name was selects nothing (unless you tap the planet itself), but the card still appears for a chosen planet.
 
+## Cosmos
+- [ ] At the top of Explore, tap **Cosmos**. The galaxy map appears with "Not to scale · illustrative map", and the panel lists 12 galaxies, nearest first.
+- [ ] Tap several galaxies on the map, including the crowded Nearby groups. Each tap opens the right galaxy; names never sit on top of each other.
+- [ ] Drag and pinch on the map: the map moves and zooms, nothing is chosen, and the page itself doesn't scroll or zoom. Outside the map, the page scrolls normally.
+- [ ] **+**, **−** and **Reset map** work, and + and − turn grey at their limits.
+- [ ] A galaxy shows a small picture first, then a sharper one. The credit, **Image source** and **Usage terms** links, the picture label and "Changes for this app" are visible under it. Triangulum also shows a CC BY 4.0 licence link.
+- [ ] The Milky Way says "Artist's illustration · not a photograph" and "We live inside it", with no distance.
+- [ ] Switch to **Solar system** and back: each is where you left it (same planet, same galaxy, same zoom). Esc in Cosmos (with a keyboard) returns to the solar system.
+- [ ] VoiceOver: swipe to a galaxy on the map ("Andromeda Galaxy. The Local Group, about 2.5 million light-years") and double-tap; "Now showing the Andromeda Galaxy" is read once. Choose one in the list: its heading is read.
+
 ## Activities
 - [ ] **Quiz:** answer a question, tap **Back to exploring**, visit a planet, then use **Back to the quiz**. You return to the same place on the page, and a round can be finished.
 - [ ] **Missions:** complete *Meet our rocky neighbours*. Opening a planet alone never completes a step.

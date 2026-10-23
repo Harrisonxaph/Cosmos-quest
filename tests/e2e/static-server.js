@@ -10,6 +10,7 @@ const TYPES = {
   '.json': 'application/json',
   '.svg': 'image/svg+xml',
   '.png': 'image/png',
+  '.webp': 'image/webp',
 };
 
 export function startStaticServer(root, port = 0) {

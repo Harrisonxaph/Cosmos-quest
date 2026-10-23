@@ -192,3 +192,36 @@ test(`[${engineName}] 2D view, 200% text and portrait/landscape iPad layouts`, a
     await context.close();
   }
 });
+
+test(`[${engineName}] Cosmos: switch views, choose galaxies on the map and in the list, and come back`, async () => {
+  const { page, context, errors } = await openPage('#/saturn');
+  await page.tap('.explore-switch [data-explore="cosmos"]');
+  await page.waitForSelector('#cosmos-map[data-map-state="ready"]');
+  assert.equal(await page.getAttribute('[data-explore="cosmos"]', 'aria-pressed'), 'true');
+  assert.equal(await page.getAttribute('#explore-entry', 'aria-current'), 'page');
+  // Tap a galaxy on the map: its picture, credit and facts open in the panel.
+  await page.locator('[data-galaxy-marker="andromeda"]').tap();
+  await page.waitForFunction(() => location.hash === '#/cosmos/andromeda');
+  assert.equal(await page.locator('#info-panel h2').textContent(), 'Andromeda Galaxy');
+  const panel = await page.locator('#info-panel').innerText();
+  assert.match(panel, /Composite image/);
+  assert.match(panel, /Image credit: NASA/);
+  assert.match(panel, /About 2\.5 million light-years away/);
+  await page.waitForSelector('.cosmos-figure__image[data-image-size="detail"]');
+  // Zoom, then the list: the Milky Way is an illustration, with no distance.
+  await page.tap('[data-cosmos-control="zoomIn"]');
+  assert.equal(await page.getAttribute('#cosmos-map', 'data-zoom'), '1.5');
+  await page.locator('[data-cosmos-action="list"]').first().tap();
+  await page.locator('.cosmos-list__button[data-galaxy="milky-way"]').tap();
+  assert.match(await page.locator('#info-panel').innerText(), /Artist's illustration · not a photograph/);
+  assert.deepEqual(await smallTargets(page), []);
+  assert.equal(await overflow(page), 0);
+  // Back to the solar system, at Saturn; then Cosmos again, where it was left.
+  await page.tap('.explore-switch [data-explore="solar"]');
+  assert.equal(await panelBody(page), 'saturn');
+  await page.tap('.explore-switch [data-explore="cosmos"]');
+  await page.waitForFunction(() => location.hash === '#/cosmos/milky-way');
+  assert.equal(await page.getAttribute('#cosmos-map', 'data-zoom'), '1.5');
+  assert.deepEqual(errors, []);
+  await context.close();
+});
