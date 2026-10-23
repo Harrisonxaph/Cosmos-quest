@@ -318,8 +318,10 @@ summary { cursor: pointer; min-height: 44px; padding: 0.6rem 0; box-sizing: bord
 .cosmos-map__control { font-size: 1.1rem; }
 .cosmos-map__zoom { color: var(--muted); font-size: 0.9rem; }
 .cosmos-map__hint { margin: 0; color: var(--muted); font-size: 0.9rem; }
+/* The map box itself never scrolls (overflow: clip): only the map's own pan moves the markers, so focusing a marker at
+   the edge can't shift the picture out of step with the pan. */
 /* Only the map itself takes over touch gestures (drag and pinch); everywhere else the page scrolls and zooms as normal. */
-.cosmos-map__viewport { position: relative; height: clamp(20rem, 58vh, 40rem); overflow: hidden; border: 1px solid var(--border); border-radius: 1rem; background: #04060d; touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+.cosmos-map__viewport { position: relative; height: clamp(20rem, 58vh, 40rem); overflow: hidden; overflow: clip; border: 1px solid var(--border); border-radius: 1rem; background: #04060d; touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
 .cosmos-map[data-dragging='true'] .cosmos-map__viewport { cursor: grabbing; }
 .cosmos-map__plane { position: absolute; left: 0; top: 0; }
 .cosmos-map__bands, .cosmos-map__markers { position: absolute; inset: 0; margin: 0; padding: 0; list-style: none; }
@@ -354,6 +356,8 @@ summary { cursor: pointer; min-height: 44px; padding: 0.6rem 0; box-sizing: bord
 .cosmos-figure { margin: 0 0 0.8rem; }
 .cosmos-figure__frame { display: flex; justify-content: center; border-radius: 0.6rem; overflow: hidden; background: #04060d; }
 .cosmos-figure__image { display: block; max-width: 100%; height: auto; }
+.cosmos-figure__missing { padding: 0.6rem 0.8rem; border: 1px dashed var(--border); border-radius: 0.6rem; background: var(--surface-2); }
+.cosmos-figure__missing p { margin: 0.2rem 0; }
 .cosmos-figure figcaption { font-size: 0.9rem; }
 .cosmos-figure figcaption p { margin: 0.35rem 0; }
 .cosmos-figure__note { color: var(--muted); }

@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import galaxies from '../../src/data/galaxies.json' with { type: 'json' };
 import sources from '../../src/data/sources.json' with { type: 'json' };
-import { imageLabel, galaxyContent, galaxyListLine, galaxySourceIds, nameInSentence, skyVersusDistanceExample } from '../../src/utils/cosmosContent.js';
+import { imageLabel, galaxyContent, galaxyListLine, galaxySourceIds, nameInSentence, skyVersusDistanceExample, PICTURE_NOTES } from '../../src/utils/cosmosContent.js';
 import { galaxySourceIds as everyCitedId } from '../data/galaxy-checks.js';
 import { GALAXY_KEY } from '../data/galaxy-key.js';
 
@@ -85,3 +85,15 @@ test('names read naturally in sentences', () => {
   assert.equal(nameInSentence(byId['large-magellanic-cloud']), 'the Large Magellanic Cloud');
   assert.equal(nameInSentence(byId['messier-87']), 'Messier 87');
 });
+
+test('picture notes say pictures are not to the same scale and that a bigger picture is not getting closer', () => {
+  const text = PICTURE_NOTES.join(' ');
+  assert.match(text, /not to the same scale/);
+  assert.match(text, /not necessarily bigger/);
+  assert.match(text, /does not mean we are any closer/);
+});
+
+test('the sky example says its comparison is worked out, not quoted', () => {
+  assert.match(skyVersusDistanceExample(galaxies).text, /working from those distances/);
+});
+

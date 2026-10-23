@@ -26,6 +26,9 @@ export function createCosmosMap({ container, galaxies, placements, store, onSele
     el('span', { className: 'cosmos-band__label' }, bandById[edge.id].label),
     el('span', { className: 'cosmos-band__detail' }, bandById[edge.id].detail)));
 
+  // Bring the whole marker into view, not just its centre: the margin is at least half its width (plus a gap).
+  const revealAction = (button, place) => ({ type: 'reveal', u: place.x, v: place.y, margin: Math.max(60, button.offsetWidth / 2 + 12) });
+
   const markers = new Map();
   for (const galaxy of galaxies) {
     const place = placeById[galaxy.id];
@@ -41,7 +44,7 @@ export function createCosmosMap({ container, galaxies, placements, store, onSele
       onClick: () => onSelect(galaxy.id),
       // Keyboard focus pans a galaxy into view. A tap or click doesn't, so the marker never moves under the finger.
       onFocus: event => {
-        if (event.currentTarget.matches(':focus-visible')) store.dispatch({ type: 'reveal', u: place.x, v: place.y });
+        if (event.currentTarget.matches(':focus-visible')) store.dispatch(revealAction(event.currentTarget, place));
       },
     },
     el('span', { className: 'cosmos-marker__dot', 'aria-hidden': 'true' }),
@@ -210,6 +213,12 @@ export function createCosmosMap({ container, galaxies, placements, store, onSele
   viewport.addEventListener('click', onClickCapture, true);
   viewport.addEventListener('wheel', onWheel, { passive: false });
   viewport.addEventListener('keydown', onKeyDown);
+  // Browsers without overflow: clip (Safari before 16) can still scroll a hidden-overflow box when a marker near the
+  // edge gets focus; undo that, since the map's own pan (store) is what positions the markers.
+  const onScroll = () => {
+    if (viewport.scrollLeft || viewport.scrollTop) viewport.scrollTo(0, 0);
+  };
+  viewport.addEventListener('scroll', onScroll);
   // Stop Safari's own page pinch starting on the map (touch-action covers other browsers).
   const onGesture = event => event.preventDefault();
   viewport.addEventListener('gesturestart', onGesture);
@@ -221,11 +230,12 @@ export function createCosmosMap({ container, galaxies, placements, store, onSele
   return {
     setSelected(id) {
       for (const [markerId, { button }] of markers) button.setAttribute('aria-pressed', String(markerId === id));
+      draw(); // the chosen marker is bold, so wider: re-centre it now rather than at the next redraw
     },
     /** Pans just enough to show a galaxy (instantly: the map never animates). */
     reveal(id) {
       const marker = markers.get(id);
-      if (marker) store.dispatch({ type: 'reveal', u: marker.place.x, v: marker.place.y });
+      if (marker) store.dispatch(revealAction(marker.button, marker.place));
     },
     focusMarker(id) {
       markers.get(id)?.button.focus({ preventScroll: true });

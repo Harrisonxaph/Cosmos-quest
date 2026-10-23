@@ -4,6 +4,7 @@ import sources from './data/sources.json';
 import quizQuestions from './data/quiz.json';
 import missions from './data/missions.json';
 import experiments from './data/experiments.json';
+import galaxiesUrl from './data/galaxies.json?url';
 import { startExplorer } from './features/explorer.js';
 import './style.css';
 
@@ -41,6 +42,11 @@ startExplorer({
   quizQuestions,
   missions,
   experiments,
-  // The galaxy collection is downloaded only when Cosmos is first opened.
-  loadGalaxies: () => import('./data/galaxies.json').then(module => module.default),
+  // The galaxy collection is downloaded only when Cosmos is first opened. It is fetched rather than imported
+  // because browsers remember a failed import() and never retry it, which would break "Try again".
+  loadGalaxies: async () => {
+    const response = await fetch(galaxiesUrl);
+    if (!response.ok) throw new Error(`Galaxy collection: HTTP ${response.status}`);
+    return response.json();
+  },
 });

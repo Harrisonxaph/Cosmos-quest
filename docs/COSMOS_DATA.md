@@ -80,6 +80,17 @@ npm test
 
 The tests require all twelve pairs, positive dimensions, verified permission metadata, and per-file credit rows with policy/licence links. A missing image or unverified permission fails the collection's readiness checks; do not add a broken-image placeholder to the map.
 
+## Release review (2026-10-23)
+
+Every galaxy source page and image page was fetched again and checked by script against the data and the quotes in SCIENCE.md:
+
+- All 123 checks matched: every "page says" quote, each displayed distance and other estimate, NASA's type wording, constellations, sizes, image credits and that each image page names its galaxy. Two remaining script flags were formatting only (link markup inside the NGC 1300 credit; the LMC distance appears as "163,000 and 200,000 light-years").
+- Fixed: the Magellanic Clouds' type was shown in quotation marks as "irregular dwarf galaxy", but the page says "irregular dwarf galaxies". The data now uses the exact words, and a test requires each type wording to appear word for word in a quote under its source.
+- The Pinwheel and Sombrero picture notes are accurate paraphrases of their pages (filters F435W, F555W, F814W; "one of the largest mosaics ever assembled from Hubble observations"); they are shown as plain captions, not quotes.
+- Pictures were checked by eye against their galaxies: all twelve match.
+- Terms re-read: ESA/Hubble (CC BY 4.0, with a clear, visible credit) and NASA SVS (public domain unless noted). The NASA media guidelines, JPL image-use policy, Creative Commons licence and images.nasa.gov pages could not be reached from the review environment, so the earlier same-day permission review in `image.permission` stands for those; the Milky Way credit (NASA/JPL-Caltech, "Artist Concept") was re-confirmed through the NASA Images API.
+- Catalogue identities: Messier numbers and NGC 1300/NGC 5457 match the image pages ("M101, NGC 5457, The Pinwheel Galaxy"). NED records M81 under the name "SN 1993J HOST"; its position (RA 148.89°, Dec +69.07°) is M81's, so the cross-check refers to the right galaxy. NGC numbers are recorded only where a cited page gives them.
+
 ## Open questions
 
 **Source changes and future use**

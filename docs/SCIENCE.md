@@ -316,6 +316,8 @@ The map is an illustration, not a measurement. Its rules live in `src/utils/cosm
 - **Not a sky map.** Galaxies near each other in our sky can be far apart in space. The panel's example is worked out from the data: Messier 87 and the Sombrero Galaxy are both in Virgo, at about 54 million and about 28 million light-years.
 - **Sizes are not shown.** Every marker is the same size. Physical sizes appear only as text, where NASA gives one.
 - **Zoom is not travel.** Zooming spreads the markers out, and a sharper picture shows more detail; neither means getting closer to a galaxy.
+- **No sky projection.** Sky positions are never used to place galaxies, so the map has none of the problems of a sky map: no right-ascension wraparound at 0°/360° (Andromeda, the Small Magellanic Cloud and Triangulum all lie within 25° of that seam, at about 10.7°, 13.2° and 23.5°), no stretching near the celestial poles (the Magellanic Clouds are near −70°), and no false impression that the Magellanic Clouds, which cover large areas of the southern sky, sit at single points. A future "Where is it in our sky?" view would need to handle all three. Tests check the recorded positions are valid J2000 values and that the layout code never reads them.
+- **Pictures are not to the same scale.** Each picture is resized to fit the panel, so a galaxy that fills its picture is not necessarily bigger than another; the panel says so under every picture.
 - **Pictures are labelled** as a photograph, a composite image (with the telescope and the light used) or an artist's illustration, with the full credit, source and terms links and the changes made for the app.
 
 ### Galaxy distances
@@ -388,6 +390,7 @@ Open scientific questions (also listed in the pull request): NGC 1300 (NASA 69 m
 
 - Source: [NASA Science — Messier 31 (The Andromeda Galaxy)](https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-31/)
 - Used for: Milky Way summary; Andromeda Galaxy type; Andromeda Galaxy summary; Andromeda Galaxy distance; Andromeda Galaxy constellation; Andromeda Galaxy image description
+- Type, the page's object type field says: "Spiral Galaxy"
 - Milky Way summary, page says: "That's because we are embedded inside the Milky Way."
 - Andromeda summary, page says: "M31, also well-known as the Andromeda Galaxy, is the nearest major galaxy to our own, the Milky Way."
 - Andromeda summary, page says: "It is easily visible with the unaided eye from a dark sky site."
@@ -402,6 +405,7 @@ Open scientific questions (also listed in the pull request): NGC 1300 (NASA 69 m
 
 - Source: [NASA Science — Messier 33 (The Triangulum Galaxy)](https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-33/)
 - Used for: Triangulum Galaxy type; Triangulum Galaxy summary; Triangulum Galaxy distance; Triangulum Galaxy constellation; Triangulum Galaxy image description
+- Type, the page's object type field says: "Spiral Galaxy"
 - Triangulum summary, page says: "About half the size of our Milky Way galaxy, M33 is the third-largest member of our Local Group of galaxies following the Andromeda galaxy (M31) and the Milky Way."
 - Fact: On average, new stars are forming in the Triangulum Galaxy ten times faster than in the Andromeda Galaxy.
   - Page says: "Hubble's observations reveal that the Triangulum galaxy's star formation rate is ten times higher than the average found in the Andromeda galaxy"
@@ -414,6 +418,7 @@ Open scientific questions (also listed in the pull request): NGC 1300 (NASA 69 m
 
 - Source: [NASA Science — Messier 51 (The Whirlpool Galaxy)](https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-51/)
 - Used for: Whirlpool Galaxy type; Whirlpool Galaxy summary; Whirlpool Galaxy distance; Whirlpool Galaxy constellation; Whirlpool Galaxy image description
+- Type, the page's object type field says: "Spiral Galaxy"
 - Whirlpool summary, page says: "It highlights the attributes of a typical spiral galaxy, including graceful, curving arms, pink star-forming regions, and brilliant blue strands of star clusters."
 - Fact: A small galaxy called NGC 5195 has been gliding past the Whirlpool for hundreds of millions of years.
   - Page says: "The small galaxy has been gliding past the Whirlpool for hundreds of millions of years."
@@ -426,6 +431,7 @@ Open scientific questions (also listed in the pull request): NGC 1300 (NASA 69 m
 
 - Source: [NASA Science — Messier 81](https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-81/)
 - Used for: Messier 81 type; Messier 81 summary; Messier 81 distance; Messier 81 constellation; Messier 81 image description
+- Type, the page's object type field says: "Spiral Galaxy"
 - M81 summary, page says: "The galaxy's spiral arms, which wind all the way down into its nucleus, are made up of young, bluish, hot stars formed in the past few million years."
 - Fact: M81 is one of the brightest galaxies in the night sky.
   - Page says: "M81 is one of the brightest galaxies in the night sky."
@@ -438,6 +444,7 @@ Open scientific questions (also listed in the pull request): NGC 1300 (NASA 69 m
 
 - Source: [NASA Science — Messier 82 (The Cigar Galaxy)](https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-82/)
 - Used for: Cigar Galaxy type; Cigar Galaxy summary; Cigar Galaxy distance; Cigar Galaxy constellation; Cigar Galaxy image description; Cigar Galaxy type note
+- Type, the page's object type field says: "Spiral Galaxy"
 - Cigar Galaxy summary, page says: "The Cigar galaxy experiences gravitational interactions with its galactic neighbor, M81, causing it to have an extraordinarily high rate of star formation — a starburst."
 - Fact: Around its centre, young stars are being born 10 times faster than in our whole Milky Way.
   - Page says: "Around the galaxy's center, young stars are being born 10 times faster than they are inside our entire Milky Way galaxy."
@@ -450,6 +457,7 @@ Open scientific questions (also listed in the pull request): NGC 1300 (NASA 69 m
 
 - Source: [NASA Science — Messier 87](https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-87/)
 - Used for: Messier 87 type; Messier 87 summary; Messier 87 distance; Messier 87 constellation
+- Type, the page's object type field says: "Elliptical Galaxy"
 - M87 summary, page says: "The monstrous M87 is the dominant member of the neighboring Virgo cluster of galaxies, which contains some 2,000 galaxies."
 - Fact: M87 is home to several trillion stars, a supermassive black hole and about 15,000 globular star clusters.
   - Page says: "The elliptical galaxy M87 is the home of several trillion stars, a supermassive black hole and a family of roughly 15,000 globular star clusters."
@@ -462,6 +470,7 @@ Open scientific questions (also listed in the pull request): NGC 1300 (NASA 69 m
 
 - Source: [NASA Science — Messier 101 (The Pinwheel Galaxy)](https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-101/)
 - Used for: Pinwheel Galaxy type; Pinwheel Galaxy summary; Pinwheel Galaxy size; Pinwheel Galaxy other distance estimate; Pinwheel Galaxy constellation
+- Type, the page's object type field says: "Spiral Galaxy"
 - Fact: The Pinwheel Galaxy is about 170,000 light-years across, nearly twice as wide as our Milky Way.
   - Page says: "The giant spiral disk of stars, dust, and gas is 170,000 light-years across — nearly twice the diameter of our galaxy, the Milky Way."
 - Fact: Astronomers estimate that it contains at least one trillion stars.
@@ -482,6 +491,7 @@ Open scientific questions (also listed in the pull request): NGC 1300 (NASA 69 m
 
 - Source: [NASA Science — Messier 104 (The Sombrero Galaxy)](https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-104/)
 - Used for: Sombrero Galaxy type; Sombrero Galaxy summary; Sombrero Galaxy distance; Sombrero Galaxy constellation; Sombrero Galaxy image description; Sombrero Galaxy type note
+- Type, the page's object type field says: "Spiral Galaxy"
 - Sombrero summary, page says: "Looking like a broad-brimmed Mexican hat, the "Sombrero" Galaxy, M104, is a spiral galaxy seen nearly edge-on."
 - Fact: It has nearly 2,000 globular star clusters, about 10 times as many as our Milky Way.
   - Page says: "Hubble easily resolves the Sombrero Galaxy's rich system of globular clusters, estimated to be nearly 2,000 in number — 10 times more than the number of globular clusters in our Milky Way Galaxy."
@@ -495,6 +505,7 @@ Open scientific questions (also listed in the pull request): NGC 1300 (NASA 69 m
 
 - Source: [NASA Science — Barred Spiral Galaxy NGC 1300](https://science.nasa.gov/asset/hubble/barred-spiral-galaxy-ngc-1300/)
 - Used for: NGC 1300 type; NGC 1300 summary; NGC 1300 distance; NGC 1300 constellation; NGC 1300 image description
+- Type, the page's object description field says: "Barred Spiral Galaxy"
 - NGC 1300 summary, page says: "Barred spirals differ from normal spiral galaxies in that the arms of the galaxy do not spiral all the way into the center, but are connected to the two ends of a straight bar of stars containing the nucleus at its center."
 - Fact: Astronomers see NGC 1300 as a classic example of a barred spiral galaxy.
   - Page says: "NGC 1300 is considered to be prototypical of barred spiral galaxies."
