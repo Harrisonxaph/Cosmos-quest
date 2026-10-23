@@ -109,7 +109,7 @@
             {
               "type": "object",
               "additionalProperties": false,
-              "required": ["valueLy", "unit", "display", "sourceIds", "asOf", "selection", "otherEstimates", "crossCheck"],
+              "required": ["valueLy", "unit", "display", "sourceIds", "asOf", "selection", "otherEstimates", "crossCheck", "estimateNote", "reviewStatus"],
               "properties": {
                 "valueLy": { "type": "number", "exclusiveMinimum": 0 },
                 "unit": { "const": "light-years" },
@@ -118,6 +118,8 @@
                 "asOf": { "$ref": "#/definitions/date" },
                 "selection": { "type": "string", "minLength": 40, "description": "Why this value was chosen, and how sources compare." },
                 "otherEstimates": { "type": "array", "items": { "$ref": "#/definitions/estimate" } },
+                "estimateNote": {"type": "string", "minLength": 40, "maxLength": 240, "description": "Show beside the distance in the future map; source estimates are not exact measurements."},
+                "reviewStatus": {"enum": ["source-estimate", "multiple-estimates", "discrepant-estimates"], "description": "Editorial flag, not an accuracy score. Discrepant means the NED median differs by over 15%; review original methods before revising the NASA value."},
                 "context": { "$ref": "#/definitions/sourcedText" },
                 "crossCheck": {
                   "type": "object",
@@ -171,7 +173,7 @@
         "image": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["kind", "telescope", "wavelengths", "composite", "colourNote", "colourNoteSourceId", "alt", "credit", "licence", "thumbnail", "detail", "original", "retrieved", "status"],
+          "required": ["kind", "telescope", "wavelengths", "composite", "colourNote", "colourNoteSourceId", "alt", "credit", "licence", "thumbnail", "detail", "original", "retrieved", "status", "permission"],
           "properties": {
             "kind": { "enum": ["photograph", "composite", "artist-concept"] },
             "telescope": { "type": ["string", "null"] },
@@ -182,7 +184,7 @@
             "illustrationNote": { "type": "string", "minLength": 40 },
             "alt": { "type": "string", "minLength": 40, "maxLength": 240 },
             "credit": { "type": "string", "minLength": 4 },
-            "licence": { "enum": ["nasa-public-domain", "cc-by-4.0"] },
+            "licence": { "enum": ["nasa-public-domain", "cc-by-4.0", "nasa-media-guidelines", "jpl-image-use-policy"] },
             "thumbnail": { "$ref": "#/definitions/imageFile" },
             "detail": { "$ref": "#/definitions/imageFile" },
             "original": {
@@ -198,8 +200,11 @@
               }
             },
             "retrieved": { "$ref": "#/definitions/date" },
-            "status": { "enum": ["ready", "pending"], "description": "pending: the original could not be downloaded yet, so no files are bundled." }
-          }
+            "status": { "enum": ["ready", "pending"], "description": "pending: the original could not be downloaded yet, so no files are bundled." },
+            "childCaption": {"type": "string", "minLength": 40, "maxLength": 240},
+            "permission": {"type": "object", "additionalProperties": false, "required": ["status", "reviewed", "policyUrl", "creditMustBeVisible", "modifications", "evidence"], "properties": {"status": {"enum": ["verified", "needs-review"]}, "reviewed": {"$ref": "#/definitions/date"}, "policyUrl": {"type": "string", "pattern": "^https://"}, "licenceUrl": {"type": "string", "pattern": "^https://"}, "creditMustBeVisible": {"const": true}, "modifications": {"type": "string", "minLength": 20}, "evidence": {"type": "string", "minLength": 40}}}
+          },
+          "allOf": [{"if": {"properties": {"status": {"const": "ready"}}}, "then": {"properties": {"permission": {"properties": {"status": {"const": "verified"}}, "type": "object"}, "thumbnail": {"properties": {"width": {"minimum": 1, "type": "integer"}, "height": {"minimum": 1, "type": "integer"}}, "type": "object"}, "detail": {"properties": {"width": {"minimum": 1, "type": "integer"}, "height": {"minimum": 1, "type": "integer"}}, "type": "object"}}}}, {"if": {"properties": {"licence": {"const": "cc-by-4.0"}}}, "then": {"properties": {"permission": {"required": ["licenceUrl"], "type": "object"}}}}]
         }
       }
     }

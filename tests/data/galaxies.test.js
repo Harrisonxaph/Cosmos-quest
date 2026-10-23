@@ -90,17 +90,65 @@ test('distances: light-years, a rounded "about" display, and other NASA estimate
       assert.notEqual(estimate.valueLy, distance.valueLy, `${galaxy.id}: an "other" estimate equals the chosen one`);
       assert.ok(Math.abs(displayedLightYears(estimate.display) - estimate.valueLy) / estimate.valueLy <= 0.05, estimate.display);
     }
-    if (expectedOthers.length) assert.match(distance.selection, /NASA pages differ.*NED/s, `${galaxy.id} explains the choice`);
+    if (expectedOthers.length) assert.match(distance.selection, /NASA pages differ/s, `${galaxy.id} explains the choice`);
   }
 });
 
-test('the NED cross-check is in megaparsecs and broadly agrees with the NASA distance (no unit mix-ups)', () => {
+test('the NED cross-check passes a broad unit sanity check, without claiming scientific agreement', () => {
   for (const galaxy of outside) {
     const check = galaxy.distance.crossCheck;
     assert.equal(check.unit, 'Mpc');
     assert.ok(check.min <= check.median && check.median <= check.max, `${galaxy.id} median within range`);
     const ratio = (check.median * LIGHT_YEARS_PER_MPC) / galaxy.distance.valueLy;
     assert.ok(ratio > 0.6 && ratio < 1.6, `${galaxy.id}: NED median is ${ratio.toFixed(2)} × the NASA value`);
+  }
+});
+
+test('distance disagreements are explicit without selecting a value from the NED median', () => {
+  for (const galaxy of outside) {
+    const d = galaxy.distance;
+    assert.match(d.estimateNote, /NASA estimates this distance/);
+    assert.doesNotMatch(d.selection, /closer to|closest to|nearer.*median/i);
+    const difference = Math.abs(d.crossCheck.median * LIGHT_YEARS_PER_MPC - d.valueLy) / d.valueLy;
+    const expected = difference > 0.15 ? 'discrepant-estimates' : d.otherEstimates.length ? 'multiple-estimates' : 'source-estimate';
+    assert.equal(d.reviewStatus, expected, galaxy.id);
+    assert.match(d.crossCheck.note, /not an uncertainty interval/);
+  }
+  for (const id of ['ngc-1300', 'whirlpool', 'sombrero']) {
+    assert.equal(byId[id].distance.reviewStatus, 'discrepant-estimates');
+  }
+});
+
+test('all twelve image pairs are ready and permissions are reviewed separately from file readiness', () => {
+  for (const galaxy of galaxies) {
+    const image = galaxy.image;
+    assert.equal(image.status, 'ready', galaxy.id);
+    assert.equal(image.permission.status, 'verified', galaxy.id);
+    assert.match(image.permission.reviewed, /^\d{4}-\d{2}-\d{2}$/);
+    assert.ok(image.permission.policyUrl.startsWith('https://'));
+    assert.equal(image.permission.creditMustBeVisible, true);
+    assert.match(image.permission.modifications, /Resized.*WebP/);
+    assert.ok(image.permission.evidence.length >= 40);
+  }
+  assert.equal(byId.triangulum.image.permission.licenceUrl, 'https://creativecommons.org/licenses/by/4.0/');
+  assert.equal(byId['milky-way'].image.licence, 'jpl-image-use-policy');
+  assert.equal(byId.andromeda.image.licence, 'nasa-media-guidelines');
+  for (const id of ['large-magellanic-cloud', 'small-magellanic-cloud']) {
+    assert.match(byId[id].image.childCaption, /Ultraviolet light.*our eyes cannot see/);
+  }
+});
+
+test('the schema rejects unreviewed ready images and zero dimensions', () => {
+  const validate = new Ajv({ allErrors: true }).compile(schema);
+  for (const mutate of [
+    image => { delete image.permission; },
+    image => { image.permission.status = 'needs-review'; },
+    image => { image.detail.width = 0; },
+    image => { image.thumbnail.height = 0; },
+  ]) {
+    const invalid = structuredClone(galaxies);
+    mutate(invalid[0].image);
+    assert.equal(validate(invalid), false);
   }
 });
 
@@ -210,6 +258,8 @@ test('every bundled galaxy file has an ASSET_CREDITS.md row with its exact credi
       assert.equal(owner, galaxy.image.credit, `${file}: creator must match the data's credit word for word`);
       assert.equal(attribution, galaxy.image.credit, `${file}: required attribution must match the data's credit word for word`);
       assert.ok(source.includes(galaxy.image.original.url), `${file}: original source URL`);
+      assert.ok(row.includes(galaxy.image.permission.policyUrl), `${file}: reviewed usage terms`);
+      if (galaxy.image.permission.licenceUrl) assert.ok(row.includes(galaxy.image.permission.licenceUrl), `${file}: licence link`);
       assert.match(row, /\| \d{4}-\d{2}-\d{2} \|$/, `${file}: verification date`);
     }
   }

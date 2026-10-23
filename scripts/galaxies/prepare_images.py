@@ -48,6 +48,8 @@ def main():
         if args.only and galaxy['id'] not in args.only:
             continue
         image = galaxy['image']
+        if image.get('permission', {}).get('status') != 'verified':
+            sys.exit(f"{galaxy['id']}: review the source caption and usage terms before preparing files")
         original = os.path.join(args.cache, f"{galaxy['id']}.orig")
         if not os.path.exists(original):
             if not args.download:

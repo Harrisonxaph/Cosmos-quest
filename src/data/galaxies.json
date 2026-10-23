@@ -56,7 +56,7 @@
       "colourNoteSourceId": null,
       "alt": "Artist's illustration of the Milky Way seen from above: a glowing yellow bar across the centre, with blue spiral arms of stars winding out from its ends.",
       "credit": "NASA/JPL-Caltech",
-      "licence": "nasa-public-domain",
+      "licence": "jpl-image-use-policy",
       "thumbnail": {
         "file": "assets/galaxies/milky-way-thumb.webp",
         "width": 300,
@@ -76,7 +76,15 @@
       },
       "retrieved": "2026-10-22",
       "status": "ready",
-      "illustrationNote": "Artist's concept, not a photograph. We live inside the Milky Way, so no camera has ever been outside it to take a picture of the whole galaxy. This drawing shows what scientists think it looks like from above."
+      "illustrationNote": "Artist's concept, not a photograph. We live inside the Milky Way, so no camera has ever been outside it to take a picture of the whole galaxy. This drawing shows what scientists think it looks like from above.",
+      "permission": {
+        "status": "verified",
+        "reviewed": "2026-10-23",
+        "policyUrl": "https://www.jpl.nasa.gov/jpl-image-use-policy/",
+        "creditMustBeVisible": true,
+        "modifications": "Resized with the original aspect ratio and converted to WebP; no cropping, recolouring or retouching.",
+        "evidence": "Reviewed PIA10748 on the current NASA Photojournal page and the JPL image-use policy on 2026-10-23. PIA10748 gives the credit NASA/JPL-Caltech and no additional image-specific restriction. JPL permits educational use with the specified credit and without implied endorsement."
+      }
     }
   },
   {
@@ -133,7 +141,7 @@
         "nasa-swift-magellanic-clouds"
       ],
       "asOf": "2026-10-22",
-      "selection": "Two NASA pages differ: the SVS page (2013) gives 163,000 light-years and the Imagine the Universe page (updated 2020) gives 179,000. We use 163,000 because it is closer to the median of the published estimates in NED (cross-check below).",
+      "selection": "NASA pages differ. Retain the estimate in the NASA Swift/SVS release used for this galaxy’s image and science context, and preserve the alternative NASA estimate separately. This is a source-consistent editorial choice, not a claim that this estimate is more accurate or a choice based on NED’s median.",
       "otherEstimates": [
         {
           "valueLy": 179000,
@@ -158,8 +166,10 @@
         "median": 0.05,
         "min": 0.033,
         "max": 0.071,
-        "note": "NED quick-look summary of published distances: original values, not homogenised. Used only to check the NASA value; not shown in the app."
-      }
+        "note": "NED quick-look summary of original published distances, not homogenised. A cross-check only, not a preferred distance or consensus; the minimum–maximum range is not an uncertainty interval. Not shown in the app."
+      },
+      "estimateNote": "NASA estimates this distance; other studies can give different values.",
+      "reviewStatus": "multiple-estimates"
     },
     "sky": {
       "constellation": null,
@@ -206,7 +216,16 @@
         "height": 10000
       },
       "retrieved": "2026-10-22",
-      "status": "ready"
+      "status": "ready",
+      "childCaption": "Ultraviolet light, which our eyes cannot see; colours help reveal hot stars. This is not how the galaxy looks to our eyes.",
+      "permission": {
+        "status": "verified",
+        "reviewed": "2026-10-23",
+        "policyUrl": "https://svs.gsfc.nasa.gov/help/",
+        "creditMustBeVisible": true,
+        "modifications": "Resized with the original aspect ratio and converted to WebP; no cropping, recolouring or retouching.",
+        "evidence": "Reviewed the specific Swift UV mosaic caption on SVS 11293 and the SVS reuse policy on 2026-10-23. The UV mosaic has the stated NASA/Swift credit and no exception notice; SVS declares its content public domain unless otherwise noted. The separately credited optical photographs on that page are excluded."
+      }
     }
   },
   {
@@ -254,7 +273,7 @@
         "nasa-swift-magellanic-clouds"
       ],
       "asOf": "2026-10-22",
-      "selection": "Two NASA pages differ: the SVS page (2013) gives 200,000 light-years and the Imagine the Universe page (updated 2020) gives 210,000. We use 200,000 because it is closer to the median of the published estimates in NED (cross-check below).",
+      "selection": "NASA pages differ. Retain the estimate in the NASA Swift/SVS release used for this galaxy’s image and science context, and preserve the alternative NASA estimate separately. This is a source-consistent editorial choice, not a claim that this estimate is more accurate or a choice based on NED’s median.",
       "otherEstimates": [
         {
           "valueLy": 210000,
@@ -279,8 +298,10 @@
         "median": 0.061,
         "min": 0.039,
         "max": 0.098,
-        "note": "NED quick-look summary of published distances: original values, not homogenised. Used only to check the NASA value; not shown in the app."
-      }
+        "note": "NED quick-look summary of original published distances, not homogenised. A cross-check only, not a preferred distance or consensus; the minimum–maximum range is not an uncertainty interval. Not shown in the app."
+      },
+      "estimateNote": "NASA estimates this distance; other studies can give different values.",
+      "reviewStatus": "multiple-estimates"
     },
     "sky": {
       "constellation": null,
@@ -327,7 +348,16 @@
         "height": 7200
       },
       "retrieved": "2026-10-22",
-      "status": "ready"
+      "status": "ready",
+      "childCaption": "Ultraviolet light, which our eyes cannot see; colours help reveal hot stars. This is not how the galaxy looks to our eyes.",
+      "permission": {
+        "status": "verified",
+        "reviewed": "2026-10-23",
+        "policyUrl": "https://svs.gsfc.nasa.gov/help/",
+        "creditMustBeVisible": true,
+        "modifications": "Resized with the original aspect ratio and converted to WebP; no cropping, recolouring or retouching.",
+        "evidence": "Reviewed the specific Swift UV mosaic caption on SVS 11293 and the SVS reuse policy on 2026-10-23. The UV mosaic has the stated NASA/Swift credit and no exception notice; SVS declares its content public domain unless otherwise noted. The separately credited optical photographs on that page are excluded."
+      }
     }
   },
   {
@@ -390,8 +420,10 @@
         "median": 0.779,
         "min": 0.44,
         "max": 2.8,
-        "note": "NED quick-look summary of published distances: original values, not homogenised. Used only to check the NASA value; not shown in the app."
-      }
+        "note": "NED quick-look summary of original published distances, not homogenised. A cross-check only, not a preferred distance or consensus; the minimum–maximum range is not an uncertainty interval. Not shown in the app."
+      },
+      "estimateNote": "NASA estimates this distance; other studies can give different values.",
+      "reviewStatus": "source-estimate"
     },
     "sky": {
       "constellation": "Andromeda",
@@ -418,16 +450,16 @@
       "colourNoteSourceId": "nasa-messier-31",
       "alt": "A very long, thin strip showing part of the Andromeda Galaxy: a bright yellowish centre on the left, then a disk of countless stars crossed by dark dust lanes and blue patches of young stars.",
       "credit": "NASA, ESA, Benjamin F. Williams (UWashington), Zhuo Chen (UWashington), L. Clifton Johnson (Northwestern); Image Processing: Joseph DePasquale (STScI)",
-      "licence": "nasa-public-domain",
+      "licence": "nasa-media-guidelines",
       "thumbnail": {
         "file": "assets/galaxies/andromeda-thumb.webp",
-        "width": 0,
-        "height": 0
+        "width": 400,
+        "height": 94
       },
       "detail": {
         "file": "assets/galaxies/andromeda.webp",
-        "width": 0,
-        "height": 0
+        "width": 1600,
+        "height": 374
       },
       "original": {
         "url": "https://assets.science.nasa.gov/content/dam/science/missions/hubble/galaxies/andromeda/Hubble_M31Mosaic_2025_10552x2468_STScI-01JGY92V0Z2HJTVH605N4WH9XQ.jpg",
@@ -435,8 +467,16 @@
         "width": 10552,
         "height": 2468
       },
-      "retrieved": "2026-10-22",
-      "status": "pending"
+      "retrieved": "2026-10-23",
+      "status": "ready",
+      "permission": {
+        "status": "verified",
+        "reviewed": "2026-10-23",
+        "policyUrl": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+        "creditMustBeVisible": true,
+        "modifications": "Resized with the original aspect ratio and converted to WebP; no cropping, recolouring or retouching.",
+        "evidence": "Reviewed the NASA source image caption and NASA media guidelines on 2026-10-23. The caption lists the credited mission/science/processing contributors and identifies no separate copyright restriction for this image. Educational and informational reuse is covered by the guidelines; this is not a blanket public-domain claim for NASA-hosted or jointly credited material."
+      }
     }
   },
   {
@@ -499,8 +539,10 @@
         "median": 0.859,
         "min": 0.6,
         "max": 3.05,
-        "note": "NED quick-look summary of published distances: original values, not homogenised. Used only to check the NASA value; not shown in the app."
-      }
+        "note": "NED quick-look summary of original published distances, not homogenised. A cross-check only, not a preferred distance or consensus; the minimum–maximum range is not an uncertainty interval. Not shown in the app."
+      },
+      "estimateNote": "NASA estimates this distance; other studies can give different values.",
+      "reviewStatus": "source-estimate"
     },
     "sky": {
       "constellation": "Triangulum",
@@ -526,7 +568,7 @@
       "colourNote": "This gigantic image of the Triangulum Galaxy — also known as Messier 33 — is a composite of about 54 different pointings with Hubble's Advanced Camera for Surveys.",
       "colourNoteSourceId": "nasa-messier-33",
       "alt": "The middle of the Triangulum Galaxy: a golden centre surrounded by millions of stars, with dark dust and pink and blue patches where stars are forming.",
-      "credit": "NASA, ESA, and M. Durbin, J. Dalcanton and B. F. Williams (University of Washington)",
+      "credit": "NASA, ESA, and M. Durbin, J. Dalcanton, and B. F. Williams (University of Washington)",
       "licence": "cc-by-4.0",
       "thumbnail": {
         "file": "assets/galaxies/triangulum-thumb.webp",
@@ -545,7 +587,16 @@
         "height": 1688
       },
       "retrieved": "2026-10-22",
-      "status": "ready"
+      "status": "ready",
+      "permission": {
+        "status": "verified",
+        "reviewed": "2026-10-23",
+        "policyUrl": "https://esahubble.org/copyright/",
+        "creditMustBeVisible": true,
+        "modifications": "Resized with the original aspect ratio and converted to WebP; no cropping, recolouring or retouching.",
+        "evidence": "Reviewed ESA/Hubble heic1901a, its complete image credit, ESA/Hubble usage terms and CC BY 4.0 on 2026-10-23. Preserve the unaltered credit visibly beside the image, active source and licence links, and a notice of resizing and WebP conversion. Applies to the ESA/Hubble release, including this copy.",
+        "licenceUrl": "https://creativecommons.org/licenses/by/4.0/"
+      }
     }
   },
   {
@@ -607,8 +658,10 @@
         "median": 3.63,
         "min": 1.4,
         "max": 5.0,
-        "note": "NED quick-look summary of published distances: original values, not homogenised. Used only to check the NASA value; not shown in the app."
-      }
+        "note": "NED quick-look summary of original published distances, not homogenised. A cross-check only, not a preferred distance or consensus; the minimum–maximum range is not an uncertainty interval. Not shown in the app."
+      },
+      "estimateNote": "NASA estimates this distance; other studies can give different values.",
+      "reviewStatus": "source-estimate"
     },
     "sky": {
       "constellation": "Ursa Major",
@@ -638,7 +691,7 @@
       "colourNoteSourceId": "nasa-messier-81",
       "alt": "Spiral galaxy M81 seen at a slant: a smooth, golden centre with blue spiral arms and thin, dark dust lanes winding into it.",
       "credit": "NASA, ESA and the Hubble Heritage Team (STScI/AURA)",
-      "licence": "nasa-public-domain",
+      "licence": "nasa-media-guidelines",
       "thumbnail": {
         "file": "assets/galaxies/messier-81-thumb.webp",
         "width": 400,
@@ -656,7 +709,15 @@
         "height": 1840
       },
       "retrieved": "2026-10-22",
-      "status": "ready"
+      "status": "ready",
+      "permission": {
+        "status": "verified",
+        "reviewed": "2026-10-23",
+        "policyUrl": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+        "creditMustBeVisible": true,
+        "modifications": "Resized with the original aspect ratio and converted to WebP; no cropping, recolouring or retouching.",
+        "evidence": "Reviewed the NASA source image caption and NASA media guidelines on 2026-10-23. The caption lists the credited mission/science/processing contributors and identifies no separate copyright restriction for this image. Educational and informational reuse is covered by the guidelines; this is not a blanket public-domain claim for NASA-hosted or jointly credited material."
+      }
     }
   },
   {
@@ -725,8 +786,10 @@
         "median": 3.7,
         "min": 2.4,
         "max": 5.5,
-        "note": "NED quick-look summary of published distances: original values, not homogenised. Used only to check the NASA value; not shown in the app."
-      }
+        "note": "NED quick-look summary of original published distances, not homogenised. A cross-check only, not a preferred distance or consensus; the minimum–maximum range is not an uncertainty interval. Not shown in the app."
+      },
+      "estimateNote": "NASA estimates this distance; other studies can give different values.",
+      "reviewStatus": "source-estimate"
     },
     "sky": {
       "constellation": "Ursa Major",
@@ -757,7 +820,7 @@
       "colourNoteSourceId": "nasa-messier-82",
       "alt": "The Cigar Galaxy seen edge-on: a long bluish-white disk with bright red plumes of glowing gas billowing out above and below its centre.",
       "credit": "NASA, ESA and the Hubble Heritage Team (STScI/AURA); Acknowledgment: J. Gallagher (University of Wisconsin), M. Mountain (STScI) and P. Puxley (National Science Foundation)",
-      "licence": "nasa-public-domain",
+      "licence": "nasa-media-guidelines",
       "thumbnail": {
         "file": "assets/galaxies/cigar-thumb.webp",
         "width": 385,
@@ -775,7 +838,15 @@
         "height": 1928
       },
       "retrieved": "2026-10-22",
-      "status": "ready"
+      "status": "ready",
+      "permission": {
+        "status": "verified",
+        "reviewed": "2026-10-23",
+        "policyUrl": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+        "creditMustBeVisible": true,
+        "modifications": "Resized with the original aspect ratio and converted to WebP; no cropping, recolouring or retouching.",
+        "evidence": "Reviewed the NASA source image caption and NASA media guidelines on 2026-10-23. The caption lists the credited mission/science/processing contributors and identifies no separate copyright restriction for this image. Educational and informational reuse is covered by the guidelines; this is not a blanket public-domain claim for NASA-hosted or jointly credited material."
+      }
     }
   },
   {
@@ -834,7 +905,7 @@
         "nasa-hubble-messier-101-image"
       ],
       "asOf": "2026-10-22",
-      "selection": "Two NASA pages differ: the Hubble image page gives 21.8 million light-years (6.7 megaparsecs) and the Messier catalogue page gives 25 million. We use 21.8 million because it is closer to the median of the published estimates in NED (cross-check below).",
+      "selection": "NASA pages differ. Retain the 21.8 million light-year estimate from the NASA Hubble-only image release selected for this collection, with 25 million preserved as an alternative. This is a source-consistent editorial choice, not a claim of greater accuracy or a choice based on NED’s median.",
       "otherEstimates": [
         {
           "valueLy": 25000000,
@@ -853,8 +924,10 @@
         "median": 6.73,
         "min": 2.6,
         "max": 8.99,
-        "note": "NED quick-look summary of published distances: original values, not homogenised. Used only to check the NASA value; not shown in the app."
-      }
+        "note": "NED quick-look summary of original published distances, not homogenised. A cross-check only, not a preferred distance or consensus; the minimum–maximum range is not an uncertainty interval. Not shown in the app."
+      },
+      "estimateNote": "NASA estimates this distance; other studies can give different values.",
+      "reviewStatus": "multiple-estimates"
     },
     "sky": {
       "constellation": "Ursa Major",
@@ -884,16 +957,16 @@
       "colourNoteSourceId": "nasa-hubble-messier-101-image",
       "alt": "The Pinwheel Galaxy seen face-on: a bright yellow centre with long, lacy blue spiral arms dotted with pink star-forming clouds.",
       "credit": "NASA, ESA, K. Kuntz (JHU), F. Bresolin (University of Hawaii), J. Trauger (Jet Propulsion Lab), J. Mould (NOAO), Y.-H. Chu (University of Illinois, Urbana), and STScI",
-      "licence": "nasa-public-domain",
+      "licence": "nasa-media-guidelines",
       "thumbnail": {
         "file": "assets/galaxies/pinwheel-thumb.webp",
-        "width": 0,
-        "height": 0
+        "width": 300,
+        "height": 300
       },
       "detail": {
         "file": "assets/galaxies/pinwheel.webp",
-        "width": 0,
-        "height": 0
+        "width": 1200,
+        "height": 1200
       },
       "original": {
         "url": "https://assets.science.nasa.gov/content/dam/science/missions/hubble/releases/2009/02/STScI-01EVT5S0014XSYMBAATA2CC769.tif/jcr:content/renditions/6000x6000.jpg",
@@ -901,8 +974,16 @@
         "width": 6000,
         "height": 6000
       },
-      "retrieved": "2026-10-22",
-      "status": "pending"
+      "retrieved": "2026-10-23",
+      "status": "ready",
+      "permission": {
+        "status": "verified",
+        "reviewed": "2026-10-23",
+        "policyUrl": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+        "creditMustBeVisible": true,
+        "modifications": "Resized with the original aspect ratio and converted to WebP; no cropping, recolouring or retouching.",
+        "evidence": "Reviewed the NASA source image caption and NASA media guidelines on 2026-10-23. The caption lists the credited mission/science/processing contributors and identifies no separate copyright restriction for this image. Educational and informational reuse is covered by the guidelines; this is not a blanket public-domain claim for NASA-hosted or jointly credited material."
+      }
     }
   },
   {
@@ -960,7 +1041,7 @@
         "nasa-messier-104"
       ],
       "asOf": "2026-10-22",
-      "selection": "The NASA page gives one value, 28 million light-years. NED's published estimates have a median of about 32 million light-years (cross-check below); this difference is listed as an open question.",
+      "selection": "Retain the approximate estimate on the cited NASA page. The NED compilation differs substantially, so the distance carries a discrepant-estimates flag and a child-facing estimate note. Reviewing the underlying measurement methods and publications is required before replacing this value; no consensus or uncertainty is inferred from the compilation.",
       "otherEstimates": [],
       "crossCheck": {
         "service": "NED",
@@ -971,8 +1052,10 @@
         "median": 9.95,
         "min": 6.22,
         "max": 21.7,
-        "note": "NED quick-look summary of published distances: original values, not homogenised. Used only to check the NASA value; not shown in the app."
-      }
+        "note": "NED quick-look summary of original published distances, not homogenised. A cross-check only, not a preferred distance or consensus; the minimum–maximum range is not an uncertainty interval. Not shown in the app."
+      },
+      "estimateNote": "NASA estimates this distance; other studies can give different values.",
+      "reviewStatus": "discrepant-estimates"
     },
     "sky": {
       "constellation": "Virgo",
@@ -999,7 +1082,7 @@
       "colourNoteSourceId": "nasa-messier-104",
       "alt": "The Sombrero Galaxy seen almost edge-on: a glowing white centre with a thick dark lane of dust running across it like the brim of a hat.",
       "credit": "NASA and The Hubble Heritage Team (STScI/AURA)",
-      "licence": "nasa-public-domain",
+      "licence": "nasa-media-guidelines",
       "thumbnail": {
         "file": "assets/galaxies/sombrero-thumb.webp",
         "width": 400,
@@ -1017,7 +1100,15 @@
         "height": 1568
       },
       "retrieved": "2026-10-22",
-      "status": "ready"
+      "status": "ready",
+      "permission": {
+        "status": "verified",
+        "reviewed": "2026-10-23",
+        "policyUrl": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+        "creditMustBeVisible": true,
+        "modifications": "Resized with the original aspect ratio and converted to WebP; no cropping, recolouring or retouching.",
+        "evidence": "Reviewed the NASA source image caption and NASA media guidelines on 2026-10-23. The caption lists the credited mission/science/processing contributors and identifies no separate copyright restriction for this image. Educational and informational reuse is covered by the guidelines; this is not a blanket public-domain claim for NASA-hosted or jointly credited material."
+      }
     }
   },
   {
@@ -1070,7 +1161,7 @@
         "nasa-hubble-galaxies"
       ],
       "asOf": "2026-10-22",
-      "selection": "Both NASA pages give 31 million light-years. NED's published estimates (for NGC 5194, the Whirlpool itself) have a median of about 25 million light-years and range widely (cross-check below); this difference is listed as an open question.",
+      "selection": "Retain the approximate estimate on the cited NASA page. The NED compilation differs substantially, so the distance carries a discrepant-estimates flag and a child-facing estimate note. Reviewing the underlying measurement methods and publications is required before replacing this value; no consensus or uncertainty is inferred from the compilation.",
       "otherEstimates": [],
       "crossCheck": {
         "service": "NED",
@@ -1081,8 +1172,10 @@
         "median": 7.8,
         "min": 2.45,
         "max": 12.2,
-        "note": "NED quick-look summary of published distances: original values, not homogenised. Used only to check the NASA value; not shown in the app."
-      }
+        "note": "NED quick-look summary of original published distances, not homogenised. A cross-check only, not a preferred distance or consensus; the minimum–maximum range is not an uncertainty interval. Not shown in the app."
+      },
+      "estimateNote": "NASA estimates this distance; other studies can give different values.",
+      "reviewStatus": "discrepant-estimates"
     },
     "sky": {
       "constellation": "Canes Venatici",
@@ -1113,7 +1206,7 @@
       "colourNoteSourceId": "nasa-messier-51",
       "alt": "The Whirlpool Galaxy seen face-on: two curving spiral arms with pink and blue patches, and a small yellowish companion galaxy at the end of one arm.",
       "credit": "NASA, ESA, S. Beckwith (STScI) and the Hubble Heritage Team (STScI/AURA)",
-      "licence": "nasa-public-domain",
+      "licence": "nasa-media-guidelines",
       "thumbnail": {
         "file": "assets/galaxies/whirlpool-thumb.webp",
         "width": 400,
@@ -1131,7 +1224,15 @@
         "height": 1936
       },
       "retrieved": "2026-10-22",
-      "status": "ready"
+      "status": "ready",
+      "permission": {
+        "status": "verified",
+        "reviewed": "2026-10-23",
+        "policyUrl": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+        "creditMustBeVisible": true,
+        "modifications": "Resized with the original aspect ratio and converted to WebP; no cropping, recolouring or retouching.",
+        "evidence": "Reviewed the NASA source image caption and NASA media guidelines on 2026-10-23. The caption lists the credited mission/science/processing contributors and identifies no separate copyright restriction for this image. Educational and informational reuse is covered by the guidelines; this is not a blanket public-domain claim for NASA-hosted or jointly credited material."
+      }
     }
   },
   {
@@ -1193,8 +1294,10 @@
         "median": 16.4,
         "min": 9.2,
         "max": 29.1,
-        "note": "NED quick-look summary of published distances: original values, not homogenised. Used only to check the NASA value; not shown in the app."
-      }
+        "note": "NED quick-look summary of original published distances, not homogenised. A cross-check only, not a preferred distance or consensus; the minimum–maximum range is not an uncertainty interval. Not shown in the app."
+      },
+      "estimateNote": "NASA estimates this distance; other studies can give different values.",
+      "reviewStatus": "source-estimate"
     },
     "sky": {
       "constellation": "Virgo",
@@ -1221,7 +1324,7 @@
       "colourNoteSourceId": null,
       "alt": "Messier 87: a huge, smooth yellow glow of stars, brightest at the centre, surrounded by many small points of light from star clusters.",
       "credit": "NASA, ESA and the Hubble Heritage Team (STScI/AURA); Acknowledgment: P. Cote (Herzberg Institute of Astrophysics) and E. Baltz (Stanford University)",
-      "licence": "nasa-public-domain",
+      "licence": "nasa-media-guidelines",
       "thumbnail": {
         "file": "assets/galaxies/messier-87-thumb.webp",
         "width": 303,
@@ -1239,7 +1342,15 @@
         "height": 3815
       },
       "retrieved": "2026-10-22",
-      "status": "ready"
+      "status": "ready",
+      "permission": {
+        "status": "verified",
+        "reviewed": "2026-10-23",
+        "policyUrl": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+        "creditMustBeVisible": true,
+        "modifications": "Resized with the original aspect ratio and converted to WebP; no cropping, recolouring or retouching.",
+        "evidence": "Reviewed the NASA source image caption and NASA media guidelines on 2026-10-23. The caption lists the credited mission/science/processing contributors and identifies no separate copyright restriction for this image. Educational and informational reuse is covered by the guidelines; this is not a blanket public-domain claim for NASA-hosted or jointly credited material."
+      }
     }
   },
   {
@@ -1288,7 +1399,7 @@
         "nasa-hubble-ngc-1300"
       ],
       "asOf": "2026-10-22",
-      "selection": "The NASA page gives one value, 69 million light-years (21 megaparsecs). NED's published estimates have a median of about 47 million light-years (cross-check below). This large difference is listed as an open question for scientific review.",
+      "selection": "Retain the approximate estimate on the cited NASA page. The NED compilation differs substantially, so the distance carries a discrepant-estimates flag and a child-facing estimate note. Reviewing the underlying measurement methods and publications is required before replacing this value; no consensus or uncertainty is inferred from the compilation.",
       "otherEstimates": [],
       "crossCheck": {
         "service": "NED",
@@ -1299,8 +1410,10 @@
         "median": 14.5,
         "min": 8.67,
         "max": 22.6,
-        "note": "NED quick-look summary of published distances: original values, not homogenised. Used only to check the NASA value; not shown in the app."
-      }
+        "note": "NED quick-look summary of original published distances, not homogenised. A cross-check only, not a preferred distance or consensus; the minimum–maximum range is not an uncertainty interval. Not shown in the app."
+      },
+      "estimateNote": "NASA estimates this distance; other studies can give different values.",
+      "reviewStatus": "discrepant-estimates"
     },
     "sky": {
       "constellation": "Eridanus",
@@ -1331,7 +1444,7 @@
       "colourNoteSourceId": "nasa-hubble-ngc-1300",
       "alt": "NGC 1300: a bright bar of stars across the middle, with two blue spiral arms curving out from its ends and dark streaks of dust.",
       "credit": "NASA, ESA, and The Hubble Heritage Team (STScI/AURA); Acknowledgment: P. Knezek (WIYN)",
-      "licence": "nasa-public-domain",
+      "licence": "nasa-media-guidelines",
       "thumbnail": {
         "file": "assets/galaxies/ngc-1300-thumb.webp",
         "width": 400,
@@ -1350,7 +1463,15 @@
         "nasaId": "GSFC_20171208_Archive_e002154"
       },
       "retrieved": "2026-10-22",
-      "status": "ready"
+      "status": "ready",
+      "permission": {
+        "status": "verified",
+        "reviewed": "2026-10-23",
+        "policyUrl": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+        "creditMustBeVisible": true,
+        "modifications": "Resized with the original aspect ratio and converted to WebP; no cropping, recolouring or retouching.",
+        "evidence": "Reviewed the NASA source image caption and NASA media guidelines on 2026-10-23. The caption lists the credited mission/science/processing contributors and identifies no separate copyright restriction for this image. Educational and informational reuse is covered by the guidelines; this is not a blanket public-domain claim for NASA-hosted or jointly credited material."
+      }
     }
   }
 ]

@@ -84,3 +84,5 @@ Every PR runs one CI job: install, lint, unit tests, build, then browser tests. 
 ## Licence
 
 Code is released under the [MIT Licence](LICENSE). Three.js is MIT-licensed by its authors. Facts are paraphrased from NASA pages listed in [docs/SCIENCE.md](docs/SCIENCE.md).
+
+The Cosmos collection currently includes all 12 sourced galaxy entries and 24 local image files; the interactive map is a later stage. Image terms, visible-attribution requirements and distance-estimate caveats are documented in [COSMOS_DATA.md](docs/COSMOS_DATA.md). External image reuse follows its recorded terms separately from the app’s MIT code licence.

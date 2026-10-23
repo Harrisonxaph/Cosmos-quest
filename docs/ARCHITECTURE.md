@@ -108,3 +108,7 @@ Tests live only under `tests/` and mirror `src/`:
 - `tests/e2e/`: browser tests with Playwright and Chromium against the built app (navigation, panels, picking, controls, keyboard, Back button, focus kept on mode change, no unexpected page scrolling, 2D fallback, reduced motion, phone tap-target sizes). `tests/e2e/quiz.e2e.js` plays complete rounds by mouse and keyboard, explores mid-quiz and resumes, checks 44 × 44 pixel targets on a phone, and plays without 3D.
 
 The single CI job runs install → lint → unit tests → build → browser tests on every pull request and push to `main`. A dependent job deploys `dist/` to GitHub Pages from `main` only. Vite uses a relative asset base for the Pages repository path.
+
+### Cosmos collection readiness
+
+All 12 galaxy image pairs are bundled. `image.status` describes files; `image.permission.status` records a separate source-caption and terms review. A ready image requires positive dimensions and verified permission. The future map must display the full credit, active source and policy/licence links, modification notice, and relevant illustration/UV caption. `distance.estimateNote` accompanies the source estimate; `reviewStatus` highlights conflicting estimates without treating the NED median as consensus or its range as an error bar. See [COSMOS_DATA.md](COSMOS_DATA.md).
