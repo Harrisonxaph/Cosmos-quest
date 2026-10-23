@@ -1,5 +1,19 @@
 # Cosmos on a real iPad: Safari checklist
 
+**Physical-device release check: NOT TESTED.** Automated results do not complete this check. Before marking the family release final, record the test below and complete the checklist. Leave failed or untested items open.
+
+| Test record | Result |
+| --- | --- |
+| Date and tester | Not recorded |
+| iPad model and iPadOS/Safari version | Not recorded |
+| Tested URL and commit | Not recorded |
+| Pinch, drag and page scrolling | Not tested |
+| VoiceOver navigation and announcements | Not tested |
+| Largest system text size and picture readability | Not tested |
+| Performance and switching views | Not tested |
+| Remaining issues / release decision | Pending physical-device check |
+
+
 Automated tests use Chromium and Playwright's WebKit with iPad emulation and synthetic touches. They are not a real iPad, Safari or VoiceOver. Do these checks by hand before a family release (about 10 minutes) and record the date, iPad model, iPadOS version and preview URL. Mark anything not done as **not tested**.
 
 ## Pinch and drag

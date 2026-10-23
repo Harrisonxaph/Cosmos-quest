@@ -10,8 +10,8 @@
 export const COSMOS_BANDS = [
   { id: 'home', label: 'Home', detail: 'Our own galaxy', maxLy: null },
   { id: 'neighbours', label: 'Closest neighbours', detail: 'Less than 1 million light-years', maxLy: 1e6 },
-  { id: 'local-group', label: 'The Local Group', detail: '1 to 5 million light-years', maxLy: 5e6 },
-  { id: 'nearby-groups', label: 'Nearby groups', detail: '5 to 40 million light-years', maxLy: 40e6 },
+  { id: 'local-group', label: '1–5 million light-years', detail: '1 to 5 million light-years', maxLy: 5e6 },
+  { id: 'nearby-groups', label: '5–40 million light-years', detail: '5 to 40 million light-years', maxLy: 40e6 },
   { id: 'farther', label: 'Much farther', detail: '40 to 100 million light-years', maxLy: 100e6 },
 ];
 

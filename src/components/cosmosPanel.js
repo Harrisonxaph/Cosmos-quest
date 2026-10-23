@@ -127,6 +127,7 @@ function detailScreen(galaxy, { mode, sourcesById, saveData, handlers }) {
       el('figcaption', {},
         el('p', { className: 'cosmos-figure__label' }, badge(image.label, galaxy.image.kind === 'artist-concept' ? 'model' : 'measured')),
         image.note ? el('p', { className: 'cosmos-figure__note' }, image.note) : null,
+        image.noteSources.length ? el('p', { className: 'panel__source' }, 'Caption sources: ', sourceLinks(image.noteSources)) : null,
         image.colourNote ? el('p', { className: 'cosmos-figure__note' }, image.colourNote) : null,
         PICTURE_NOTES.map(text => el('p', { className: 'cosmos-figure__note' }, text)),
         el('p', { className: 'cosmos-credit' }, el('strong', {}, 'Image credit: '), image.credit),

@@ -217,7 +217,8 @@
       },
       "retrieved": "2026-10-22",
       "status": "ready",
-      "childCaption": "Ultraviolet light, which our eyes cannot see; colours help reveal hot stars. This is not how the galaxy looks to our eyes.",
+      "childCaption": "Ultraviolet light is light our eyes cannot see. These ultraviolet pictures help reveal the hottest stars.",
+      "childCaptionSourceIds": ["nasa-ultraviolet-waves", "nasa-swift-magellanic-clouds"],
       "permission": {
         "status": "verified",
         "reviewed": "2026-10-23",
@@ -349,7 +350,8 @@
       },
       "retrieved": "2026-10-22",
       "status": "ready",
-      "childCaption": "Ultraviolet light, which our eyes cannot see; colours help reveal hot stars. This is not how the galaxy looks to our eyes.",
+      "childCaption": "Ultraviolet light is light our eyes cannot see. These ultraviolet pictures help reveal the hottest stars.",
+      "childCaptionSourceIds": ["nasa-ultraviolet-waves", "nasa-swift-magellanic-clouds"],
       "permission": {
         "status": "verified",
         "reviewed": "2026-10-23",

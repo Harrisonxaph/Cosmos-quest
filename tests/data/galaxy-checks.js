@@ -7,6 +7,7 @@ export function galaxySourceIds(galaxy) {
     ...(galaxy.classification.note?.sourceIds ?? []),
     ...galaxy.summary.sourceIds,
     ...galaxy.facts.map(fact => fact.sourceId),
+    ...(galaxy.image.childCaptionSourceIds ?? []),
     ...(galaxy.size?.sourceIds ?? []),
     ...(galaxy.sky?.sourceIds ?? []),
   ];

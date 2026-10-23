@@ -202,8 +202,10 @@
             "retrieved": { "$ref": "#/definitions/date" },
             "status": { "enum": ["ready", "pending"], "description": "pending: the original could not be downloaded yet, so no files are bundled." },
             "childCaption": {"type": "string", "minLength": 40, "maxLength": 240},
+            "childCaptionSourceIds": { "$ref": "#/definitions/sourceIds" },
             "permission": {"type": "object", "additionalProperties": false, "required": ["status", "reviewed", "policyUrl", "creditMustBeVisible", "modifications", "evidence"], "properties": {"status": {"enum": ["verified", "needs-review"]}, "reviewed": {"$ref": "#/definitions/date"}, "policyUrl": {"type": "string", "pattern": "^https://"}, "licenceUrl": {"type": "string", "pattern": "^https://"}, "creditMustBeVisible": {"const": true}, "modifications": {"type": "string", "minLength": 20}, "evidence": {"type": "string", "minLength": 40}}}
           },
+          "dependencies": { "childCaption": ["childCaptionSourceIds"], "childCaptionSourceIds": ["childCaption"] },
           "allOf": [{"if": {"properties": {"status": {"const": "ready"}}}, "then": {"properties": {"permission": {"properties": {"status": {"const": "verified"}}, "type": "object"}, "thumbnail": {"properties": {"width": {"minimum": 1, "type": "integer"}, "height": {"minimum": 1, "type": "integer"}}, "type": "object"}, "detail": {"properties": {"width": {"minimum": 1, "type": "integer"}, "height": {"minimum": 1, "type": "integer"}}, "type": "object"}}}}, {"if": {"properties": {"licence": {"const": "cc-by-4.0"}}}, "then": {"properties": {"permission": {"required": ["licenceUrl"], "type": "object"}}}}]
         }
       }
